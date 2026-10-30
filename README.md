@@ -89,6 +89,9 @@ SDDM、Plymouth、引导菜单与浏览器专属皮肤不在本版范围。
 [一球咸鱼](https://space.bilibili.com/3585839)。本版保留已经验证的本地
 `Kaltsit-Sihengtu` 32px 转换版本及别名；独立指针项目还提供多尺寸构建。
 两者不共享一份安装目录，也不会替换彼此的文件。
+作者视频（用户提供）：[b23.tv/zHvHCpF](https://b23.tv/zHvHCpF)；
+既有原 Windows 作品链接：[凯尔希 · 思衡托](https://www.bilibili.com/video/BV1L5Vq6vEaX/)。
+这些署名链接不改变已有授权范围。
 
 壁纸是既有 4K 动画的第 707 帧，保持原始 JPEG 字节，不附带整段视频。
 原始画面 3840×2160；KDE 按显示器比例裁切，无需固定为某台电脑的分辨率。

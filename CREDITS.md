@@ -11,6 +11,7 @@ KDE Breeze 控件、装饰与图标由系统依赖提供；本项目通过主题
 
 - 原作者：[一球咸鱼](https://space.bilibili.com/3585839)。
 - 原 Windows 作品：[凯尔希 · 思衡托](https://www.bilibili.com/video/BV1L5Vq6vEaX/)。
+- 作者视频（用户提供的短链接）：[b23.tv/zHvHCpF](https://b23.tv/zHvHCpF)。
 - 本主题中的指针对应维护者的 [kaltsit-cursors](https://github.com/JohnSmith-dink/kaltsit-cursors) 项目。
 - [已有授权记录](https://github.com/JohnSmith-dink/kaltsit-cursors/blob/main/CREDITS.md)
   与 [许可范围](https://github.com/JohnSmith-dink/kaltsit-cursors/blob/main/LICENSE)：
@@ -19,6 +20,7 @@ KDE Breeze 控件、装饰与图标由系统依赖提供；本项目通过主题
 本版包含已经在桌面验证的旧有本地 `Kaltsit-Sihengtu` 转换结果，保留原始动态帧与别名；
 独立项目的主题名为 `Kaltsit`，提供多尺寸构建。指针绘图与转换后图像保留原作者权利。
 已有专项授权不等于通用 MIT / GPL / CC 许可，也不推定商业使用或再授权权利。
+新增作者视频链接用于署名与来源说明，不改变上述已有授权范围。
 
 ## 壁纸
 

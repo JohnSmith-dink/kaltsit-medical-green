@@ -20,6 +20,8 @@
   "cursor_credit": "Original Windows artwork by 一球咸鱼, 凯尔希 · 思衡托. Existing non-commercial Linux adaptation and nixpkgs submission permission documented in kaltsit-cursors; no general-purpose free license or broader sublicensing grant asserted.",
   "cursor_upstream": "https://github.com/JohnSmith-dink/kaltsit-cursors",
   "cursor_original_work": "https://www.bilibili.com/video/BV1L5Vq6vEaX/",
+  "cursor_creator_video": "https://b23.tv/zHvHCpF",
+  "cursor_creator_video_source": "Provided by the user as the cursor creator's video link. The existing full original-work URL is retained separately; this attribution reference does not change the recorded permission scope.",
   "cursor_permission_record": "https://github.com/JohnSmith-dink/kaltsit-cursors/blob/main/CREDITS.md",
   "cursor_identity": "Maintainer confirmed that this is the cursor artwork included in the theme; this release preserves the previously tested Kaltsit-Sihengtu conversion."
 }

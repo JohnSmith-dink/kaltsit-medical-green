@@ -1,6 +1,7 @@
 Bundled cursor artwork: 凯尔希 · 思衡托
 Original creator: 一球咸鱼
 Original work: https://www.bilibili.com/video/BV1L5Vq6vEaX/
+Creator video link (provided by the user): https://b23.tv/zHvHCpF
 Creator profile: https://space.bilibili.com/3585839
 
 The maintainer confirmed that the cursor artwork included in this theme is
@@ -12,6 +13,8 @@ adaptation and its nixpkgs submission, with attribution and a link to the
 original work. It is not a general-purpose MIT, GPL, Creative Commons, or
 other free license for the image data, and no broader redistribution,
 commercial-use or sublicensing rights are asserted by this theme.
+The additional creator video link is an attribution/source reference and
+does not change this recorded permission scope.
 
 Permission context and scope:
 https://github.com/JohnSmith-dink/kaltsit-cursors/blob/main/CREDITS.md

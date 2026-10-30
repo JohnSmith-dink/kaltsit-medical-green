@@ -1,0 +1,21 @@
+{
+    "KPackageStructure": "Plasma/LookAndFeel",
+    "KPlugin": {
+        "Id": "org.xinyan.kaltsit.medicalgreen",
+        "Name": "凯尔希 · 医疗白绿",
+        "Name[zh_CN]": "凯尔希 · 医疗白绿",
+        "Description": "A warm white and medical green desktop inspired by Kaltsit. Uses Breeze widgets and keeps the existing desktop layout.",
+        "Description[zh_CN]": "以暖白与医疗青绿呈现凯尔希意象，使用 Breeze 控件并保留现有桌面布局。",
+        "Authors": [
+            {
+                "Name": "Xinyan"
+            }
+        ],
+        "License": "MIT",
+        "Version": "1.0.0",
+        "EnabledByDefault": false,
+        "Name[en_US]": "Kaltsit · Medical Green",
+        "Name[en_GB]": "Kaltsit · Medical Green"
+    },
+    "Keywords": "Kaltsit;Medical;Green;Light;Breeze;凯尔希;医疗白绿;"
+}

@@ -1,0 +1,25 @@
+{
+  "source": "Existing local assets/kaltsit-4k60.vbg",
+  "source_sha256": "f11a0237a981c1a201a023d890010745f9e4c223271f36c1c8dd6e2070a98d94",
+  "format": "Visor VBG v3, independent JPEG frames",
+  "frame_index_zero_based": 707,
+  "frame_offset": 235975272,
+  "frame_bytes": 331729,
+  "frame_sha256": "1427f0b9f220686a1c1b0bb654c1145302a54c9ba0a44d90dcdcbf5317ae2e8b",
+  "image_dimensions": [
+    3840,
+    2160
+  ],
+  "display_dimensions": [
+    3120,
+    2080
+  ],
+  "display_mode": "preserveAspectCrop",
+  "artwork_credit": "Existing maintainer-provided Kaltsit animation. Original author and general redistribution license not recorded; original rights retained; not covered by MIT.",
+  "cursor_source": "Existing assets/cursors/Kaltsit-Sihengtu; preserved unchanged including symlinks",
+  "cursor_credit": "Original Windows artwork by 一球咸鱼, 凯尔希 · 思衡托. Existing non-commercial Linux adaptation and nixpkgs submission permission documented in kaltsit-cursors; no general-purpose free license or broader sublicensing grant asserted.",
+  "cursor_upstream": "https://github.com/JohnSmith-dink/kaltsit-cursors",
+  "cursor_original_work": "https://www.bilibili.com/video/BV1L5Vq6vEaX/",
+  "cursor_permission_record": "https://github.com/JohnSmith-dink/kaltsit-cursors/blob/main/CREDITS.md",
+  "cursor_identity": "Maintainer confirmed that this is the cursor artwork included in the theme; this release preserves the previously tested Kaltsit-Sihengtu conversion."
+}

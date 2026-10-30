@@ -1,0 +1,21 @@
+Bundled cursor artwork: 凯尔希 · 思衡托
+Original creator: 一球咸鱼
+Original work: https://www.bilibili.com/video/BV1L5Vq6vEaX/
+Creator profile: https://space.bilibili.com/3585839
+
+The maintainer confirmed that the cursor artwork included in this theme is
+the artwork represented by the kaltsit-cursors project. This release keeps
+the previously tested legacy Kaltsit-Sihengtu Xcursor conversion.
+
+The original creator's 2026-10-24 permission covers the non-commercial Linux
+adaptation and its nixpkgs submission, with attribution and a link to the
+original work. It is not a general-purpose MIT, GPL, Creative Commons, or
+other free license for the image data, and no broader redistribution,
+commercial-use or sublicensing rights are asserted by this theme.
+
+Permission context and scope:
+https://github.com/JohnSmith-dink/kaltsit-cursors/blob/main/CREDITS.md
+https://github.com/JohnSmith-dink/kaltsit-cursors/blob/main/LICENSE
+
+Arknights character and original game artwork rights remain with their
+respective rights holders. See CREDITS.md and docs/asset-provenance.json.

@@ -1,0 +1,25 @@
+# SPDX-FileCopyrightText: 2026 Xinyan
+# SPDX-License-Identifier: MIT
+
+background = #F4F7F2
+foreground = #25352D
+cursor-color = #2E6B57
+cursor-text = #FFFFFF
+selection-background = #2E6B57
+selection-foreground = #FFFFFF
+palette = 0=#25352D
+palette = 1=#A73544
+palette = 2=#2E6B57
+palette = 3=#7A5B1B
+palette = 4=#285D83
+palette = 5=#725280
+palette = 6=#176A6A
+palette = 7=#59665D
+palette = 8=#4B5C50
+palette = 9=#9C2539
+palette = 10=#246047
+palette = 11=#725410
+palette = 12=#1C527C
+palette = 13=#6F427C
+palette = 14=#0C6265
+palette = 15=#526151

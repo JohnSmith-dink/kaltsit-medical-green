@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+/result
+/result-*
+/dist/
+/build/
+.direnv/
+.env
+.env.*
+active.json

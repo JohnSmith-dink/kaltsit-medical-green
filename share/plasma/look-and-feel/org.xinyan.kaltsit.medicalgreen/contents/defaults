@@ -1,0 +1,21 @@
+# SPDX-FileCopyrightText: 2026 Xinyan
+# SPDX-License-Identifier: MIT
+
+[kdeglobals][KDE]
+widgetStyle=Breeze
+
+[kdeglobals][General]
+ColorScheme=KaltsitMedicalGreen
+
+[kdeglobals][Icons]
+Theme=KaltsitMedicalGreen
+
+[plasmarc][Theme]
+name=default
+
+[kcminputrc][Mouse]
+cursorTheme=Kaltsit-Sihengtu
+
+[kwinrc][org.kde.kdecoration2]
+library=org.kde.breeze
+theme=Breeze

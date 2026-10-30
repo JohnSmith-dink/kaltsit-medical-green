@@ -1,0 +1,101 @@
+{
+  "environment": "private D-Bus + virtual KWin/Plasma 6.6.6; temporary HOME; software rendering",
+  "output_before": {
+    "clones": [],
+    "connected": true,
+    "currentModeId": "1",
+    "enabled": true,
+    "followPreferredMode": false,
+    "icon": "",
+    "id": 1,
+    "modes": [
+      {
+        "id": "1",
+        "name": "3120x2080@60",
+        "refreshRate": 60,
+        "size": {
+          "height": 2080,
+          "width": 3120
+        }
+      }
+    ],
+    "name": "Virtual-0",
+    "pos": {
+      "x": 0,
+      "y": 0
+    },
+    "preferredModes": [
+      "1"
+    ],
+    "priority": 1,
+    "replicationSource": 0,
+    "rotation": 1,
+    "scale": 1.75,
+    "size": {
+      "height": 2080,
+      "width": 3120
+    },
+    "sizeMM": {
+      "height": -1,
+      "width": -1
+    },
+    "type": 0
+  },
+  "output_after": {
+    "clones": [],
+    "connected": true,
+    "currentModeId": "1",
+    "enabled": true,
+    "followPreferredMode": false,
+    "icon": "",
+    "id": 1,
+    "modes": [
+      {
+        "id": "1",
+        "name": "3120x2080@60",
+        "refreshRate": 60,
+        "size": {
+          "height": 2080,
+          "width": 3120
+        }
+      }
+    ],
+    "name": "Virtual-0",
+    "pos": {
+      "x": 0,
+      "y": 0
+    },
+    "preferredModes": [
+      "1"
+    ],
+    "priority": 1,
+    "replicationSource": 0,
+    "rotation": 1,
+    "scale": 1.75,
+    "size": {
+      "height": 2080,
+      "width": 3120
+    },
+    "sizeMM": {
+      "height": -1,
+      "width": -1
+    },
+    "type": 0
+  },
+  "layout_preserved": true,
+  "apply": "applied",
+  "apply_warnings": [],
+  "second_apply": "already-applied",
+  "restore": "restored",
+  "restore_warnings": [],
+  "restore_record_removed": true,
+  "assertions": [
+    "original custom accent restored",
+    "wallpaper accent switch restored",
+    "authored selection and link colors applied",
+    "cursorSize=36 preserved",
+    "font and fixed-font preserved",
+    "scale=1.75 before and after",
+    "desktop and panel widget IDs preserved"
+  ]
+}

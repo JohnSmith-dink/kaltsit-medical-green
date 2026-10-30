@@ -1,0 +1,10 @@
+{
+  "KPlugin": {
+    "Id": "KaltsitMedicalGreen",
+    "Name": "Kal'tsit · Medical Green",
+    "Name[zh_CN]": "凯尔希 · 医疗白绿",
+    "Description": "A static frame from the user's existing Kal'tsit animation",
+    "Authors": [{"Name": "Original artwork author not recorded; existing user-provided asset"}]
+  },
+  "KPackageStructure": "Wallpaper/Images"
+}

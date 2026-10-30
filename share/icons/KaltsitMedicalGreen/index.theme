@@ -1,0 +1,30 @@
+# SPDX-FileCopyrightText: 2026 Xinyan
+# SPDX-License-Identifier: MIT
+
+[Icon Theme]
+Name=Kaltsit Medical Green
+Name[zh_CN]=凯尔希 · 医疗白绿
+Comment=Original medical green folders with Breeze application icons
+Comment[zh_CN]=原创医疗青绿文件夹，继承 Breeze 应用图标
+Inherits=breeze,hicolor
+Example=folder
+FollowsColorScheme=false
+DesktopDefault=48
+DesktopSizes=16,22,32,48,64,96,128,256
+ToolbarDefault=22
+ToolbarSizes=16,22,32,48
+SmallDefault=16
+SmallSizes=16,22,32,48
+PanelDefault=48
+PanelSizes=16,22,32,48,64,96,128,256
+DialogDefault=32
+DialogSizes=16,22,32,48,64,96,128,256
+KDE-Extensions=.svg
+Directories=places/scalable
+
+[places/scalable]
+Size=64
+MinSize=16
+MaxSize=512
+Context=Places
+Type=Scalable

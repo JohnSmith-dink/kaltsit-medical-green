@@ -1,6 +1,8 @@
 # 凯尔希 · 医疗白绿
 
-**Kal'tsit Medical Green 1.1.0-dev.1 · 克制日常**
+**Kal'tsit Medical Green 1.1.0-dev.2 · 克制日常**
+
+[English](README.en.md)
 
 适用于 NixOS / KDE Plasma 6 的浅色主题：暖白 `#F4F7F2`、白色面板、
 深灰绿正文 `#25352D`、青绿强调色 `#2E6B57`。轻边框与柔和阴影覆盖面板和弹窗，
@@ -9,7 +11,7 @@
 
 ![Dolphin 实际渲染：独立 Plasma 测试会话，3120×2080，175%](previews/actual/dolphin.png)
 
-上图来自本机独立 KWin/Plasma 会话中的真实应用，并非概念样图。
+上图来自 dev.2 在本机独立 KWin/Plasma 会话中的真实应用，并非概念样图。
 完整的桌面、菜单、Dolphin、终端、通知与锁屏画面见 [预览说明](previews/README.md)
 或本地打开 [预览画廊](previews/index.html)。物理屏幕上的最终观感仍需用户确认。
 
@@ -42,9 +44,33 @@ kaltsit-theme status
 kaltsit-theme restore
 ```
 
-首次使用可直接 `apply`。重复应用同版本不覆盖备份；旧版本处于 active 状态时，
-v1.1 会明确要求先 restore 再 apply。`status` 显示安装版本、应用版本和当前 Plasma 样式。
+首次使用可直接 `apply`。相同版本、相同选项的重复应用不覆盖备份；旧版本处于 active 状态，
+或需要改变组件选择、壁纸时，先 restore 再 apply。`status` 可在没有 Plasma 会话时读取记录，
+显示安装版本、应用版本、当前 Plasma 样式及各组件的应用或跳过状态。
 主题也能在 KDE 全局主题列表中发现，但完整切换请用命令，以覆盖终端等附加设置。
+
+## 预演与可选组件
+
+```sh
+# 只读取配置和会话状态，列出组件、跳过原因及拟修改的值
+kaltsit-theme apply --dry-run
+
+# 可多次传入 --skip；core 是必需组件，不能跳过
+kaltsit-theme apply --skip cursor --skip gtk
+
+# 自选图片同时用于桌面和锁屏，保持比例、居中裁切
+kaltsit-theme apply --wallpaper /absolute/path/to/wallpaper.png
+```
+
+组件为 `core`、`cursor`、`wallpaper`、`lockscreen`、`gtk`、`ghostty` 和 `konsole`。
+`core` 包含配色、Plasma 样式、控件、窗口装饰和图标。其配置若由符号链接管理，
+整个 apply 在修改前拒绝执行；可选组件的目标配置为符号链接时，跳过整个组件并说明原因。
+手动 `--skip` 与自动跳过都会记录，其他组件继续应用；成功退出不表示所有组件均已应用，
+请查看返回结果或 `status`。`--skip` 名称和自选图片会在修改前校验。
+
+`--dry-run` 不创建备份目录、不写配置、不切换主题，也不发送刷新通知。
+实际 apply 按启用组件检查所需命令；优先使用当前 PATH 中的系统工具，打包工具作为后备。
+真正修改桌面仍需处于已登录的 KDE Plasma 会话。
 
 ## Home Manager
 
@@ -61,6 +87,20 @@ v1.1 会明确要求先 restore 再 apply。`status` 显示安装版本、应用
 `programs.kaltsit-theme.package` 指定 flake 的 `packages.x86_64-linux.kaltsit-theme`。
 模块默认关闭，只安装主题与 Breeze GTK，不包含 activation 切换命令。
 无需 Stylix 或 plasma-manager。旧式入口 `nix-build` 使用本机 `<nixpkgs>`。
+
+Ghostty 配置由 Home Manager 管理时，可只安装主题文件并声明选择：
+
+```nix
+{
+  programs.kaltsit-theme.enable = true;
+  programs.kaltsit-theme.ghosttyThemeFile = true;
+  programs.ghostty.settings.theme = "Kaltsit Medical Green";
+}
+```
+
+`ghosttyThemeFile` 默认为 `false`；启用主题模块后，设为 `true` 会安装
+`$XDG_CONFIG_HOME/ghostty/themes/Kaltsit Medical Green`，本选项不修改 Ghostty 配置。
+使用声明式主题设置时，切换命令可显式传入 `--skip ghostty`。
 
 ## 覆盖与恢复
 
@@ -79,10 +119,13 @@ v1.1 会明确要求先 restore 再 apply。`status` 显示安装版本、应用
 若用户目录存在同名旧指针（`~/.icons` 或 XDG 用户图标目录），apply 会将其原样移入
 私有备份目录，再链接至已安装的新资源；restore 会还原原目录或原链接。
 这避免旧 32px 副本遮盖 Nix 的多尺寸版本。同名主题会重新加载动画，尺寸设置保持不变。
-恢复记录格式升级为 2，仍能读取旧格式；降级安装前必须用 v1.1 执行 restore，
-旧版工具会拒绝新记录，以免丢失指针目录备份。
+恢复记录格式升级为 3，记录实际应用的组件与跳过原因；只恢复已应用组件。
+仍能读取格式 1 和格式 2 的完整主题记录，并保留格式 2 的指针目录备份。
+降级安装前必须用当前工具执行 restore，旧版工具会拒绝新记录。
+旧 Ghostty 备份引用的 Nix 路径已被回收，也不妨碍清理本工具的配置块和恢复原配置；
+恢复配置不等于重新下载已经丢失的旧资源。
 
-配置为只读符号链接时拒绝覆盖。声明式用户可自行引用素材，或让相关键由 KDE 管理。
+声明式用户可自行引用素材并跳过相关组件，或让相关键由 KDE 管理。
 SDDM、Plymouth、引导界面与浏览器专属皮肤不在本版范围；独立绘制界面的应用可能保留自己的样式。
 
 ## 指针与素材来源
@@ -103,12 +146,15 @@ SDDM、Plymouth、引导界面与浏览器专属皮肤不在本版范围；独�
 
 ```sh
 python3 scripts/generate-assets.py
-python3 -m unittest discover -s tests -v
+nix develop --command python3 -m unittest discover -s tests -v
 nix flake check --no-write-lock-file path:.
 ```
 
-43 项测试覆盖原有 29 项及新增样式恢复、旧版记录、文件夹尺寸、指针完整性和本地副本恢复。
-真实 KDE 会话验证了应用、重复应用、恢复、失败回滚和从 v1.0 恢复后升级。
-libXcursor 成功加载 85 组指针/尺寸并核对全部动画与热点。
-正文对比度约 11.95:1，KDE 普通前景最低 4.75:1；ANSI 普通/Intense 最低 5.58:1，Faint 最低 4.51:1。
+67 项测试通过，覆盖原有检查以及组件跳过、只读预演、恢复格式兼容、自选壁纸、样式恢复、文件夹尺寸与指针完整性。
+dev.2 在真实独立 KDE 会话中验证了应用、重复应用、恢复、失败回滚和从 v1.0 恢复后升级；
+完整检查结果及组件边界见 [验收记录](docs/VALIDATION.md)。六张实际预览已在 dev.2 重拍。
+既有 libXcursor 检查成功加载 85 组指针/尺寸；本轮资源未变，重新核对哈希、动画与热点。
+正文对比度约 11.95:1；KDE 全部前景色在本组常规及交替背景上最低 4.56:1。
+ANSI 普通/Intense 最低 5.58:1，Faint 最低 4.51:1。
 检查范围、运行方式和待确认事项见 [验收记录](docs/VALIDATION.md)。
+CI 工作流已加入；本轮运行的是本地检查，尚未触发 GitHub 托管任务。

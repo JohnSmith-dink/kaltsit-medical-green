@@ -1,8 +1,18 @@
 {
-  "version": "1.1.0-dev.1",
+  "version": "1.1.0-dev.2",
   "date": "2026-10-31",
   "environment": "NixOS 26.05, Plasma 6.6.6, virtual Wayland output, software rendering",
-  "unit_tests": 43,
+  "unit_tests": 67,
+  "unit_tests_result": "passed",
+  "nix_validation": {
+    "offline_build": "passed",
+    "flake_check": "passed",
+    "flake_lock_changed": false
+  },
+  "hosted_ci_run": false,
+  "evidence_run": "validation-dev2-05",
+  "screenshot_run": "validation-dev2-02",
+  "screenshot_manifest": "../previews/manifest.json",
   "output_before": {
     "clones": [],
     "connected": true,
@@ -144,7 +154,38 @@
     "v1_0_to_v1_1": "legacy apply; backup protected; restore; apply; repeat; restore",
     "legacy_backup_unchanged": true
   },
+  "component_probes": {
+    "gtkconfig_module_loaded": true,
+    "managed_components": [
+      "cursor",
+      "wallpaper",
+      "lockscreen",
+      "gtk",
+      "ghostty",
+      "konsole"
+    ],
+    "managed_links_and_targets_unchanged_after_apply_repeat_restore": true,
+    "dry_run_configuration_and_state_unchanged": true,
+    "custom_wallpaper_desktop_and_lockscreen_fill_mode_2": true,
+    "custom_wallpaper_restored": true,
+    "gtk_only_skip_preserves_targets_with_live_cursor_apply_restore": true,
+    "same_id_cursor_reload_events": [
+      "breeze_cursors",
+      "Kaltsit-Sihengtu",
+      "breeze_cursors",
+      "Kaltsit-Sihengtu"
+    ],
+    "existing_custom_gtk_fonts_preserved": true,
+    "independent_gtk_cursor_restored_after_daemon_settles": true
+  },
   "libXcursor_combinations_verified": 85,
+  "libXcursor_evidence_version": "1.1.0-dev.1; identical cursor resource hashes rechecked in dev.2",
+  "kde_foreground_background_pairs": 128,
+  "kde_minimum_contrast": 4.556221635924023,
   "physical_desktop_acceptance": false,
-  "restore_record_schema": 2
+  "daily_session_modified": false,
+  "private_nixos_configuration_modified": false,
+  "restore_record_schema": 3,
+  "current_color_scheme_when_applied": "KaltsitMedicalGreen",
+  "current_icons_when_applied": "KaltsitMedicalGreen"
 }

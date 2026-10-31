@@ -1,5 +1,5 @@
 {
-  "version": "1.1.0-dev.1",
+  "version": "1.1.0-dev.2",
   "environment": "NixOS 26.05, Plasma 6.6.6, virtual Wayland output, software rendering",
   "scale": 1.75,
   "physical_desktop_acceptance": false,
@@ -14,7 +14,7 @@
         3120,
         2080
       ],
-      "sha256": "3e41090aa03a76a32fcb38dc98ab05206108f8a2484a64ada91b52960917315f",
+      "sha256": "339eba49714b996ffb6f138453deaaa37073180821d65bb78c9b1c84be4cc2aa",
       "kind": "native KDE screenshot in isolated session"
     },
     {
@@ -24,7 +24,7 @@
         3120,
         2080
       ],
-      "sha256": "ee0a826d8d29a4ad9b95e7986aabb37de8d493b516ab865820907fa77c17237d",
+      "sha256": "3ac819845a8b517c739775c57d36634c711a35e49104f81d60811b97191080e4",
       "kind": "native KDE screenshot in isolated session"
     },
     {
@@ -34,7 +34,7 @@
         3120,
         2080
       ],
-      "sha256": "274c8a2c0711905486ec79dda36d7fceaf9da67554cd4dbfa6d5c759cc8d8290",
+      "sha256": "823cbe59a2a8f15404ab73861852a65aace1d3bb5e069c4eb6d70c0672f30ec2",
       "kind": "native KDE screenshot in isolated session"
     },
     {
@@ -44,7 +44,7 @@
         3120,
         2080
       ],
-      "sha256": "924dfa885677620c7d9f3b7272bd0846e6d95e8eb61c691b1d3e55bee6691daf",
+      "sha256": "e329d54334fce29bb3b71afabe207481a8c6ff85638bb2733dda7bbc0dab4f82",
       "kind": "native KDE screenshot in isolated session"
     },
     {
@@ -54,7 +54,7 @@
         3120,
         2080
       ],
-      "sha256": "f9feb0a8b668eac2c10ba4cd928d0fc4dbb19af1b129c021e7a745361b9c38f5",
+      "sha256": "8481766236be007b2bb50eba2061cd7d909189e91a6a5a12ca11581b6bbd276b",
       "kind": "native KDE screenshot in isolated session"
     },
     {
@@ -64,7 +64,7 @@
         3120,
         2080
       ],
-      "sha256": "beaf33e9169529259a2da0f108db156fc9cf2f63ccfb472b88c94924888411fe",
+      "sha256": "1d7be2328d8dc741105cd818419cba819dbdbd909d6aaef14b158bbcc8e1cd71",
       "kind": "native KDE screenshot in isolated session"
     }
   ]

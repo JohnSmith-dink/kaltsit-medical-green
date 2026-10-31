@@ -251,9 +251,12 @@ class ThemeAssetTests(unittest.TestCase):
         groups = [group for group in colors.sections() if group.startswith("Colors:")]
         self.assertGreaterEqual(len(groups), 8)
         for group in groups:
-            for key in ("ForegroundNormal", "ForegroundInactive", "ForegroundLink"):
-                with self.subTest(group=group, key=key):
-                    self.assertGreaterEqual(contrast(colors[group][key], colors[group]["BackgroundNormal"]), 4.5)
+            foregrounds = [key for key in colors[group] if key.startswith("Foreground")]
+            self.assertEqual(len(foregrounds), 8)
+            for background in ("BackgroundNormal", "BackgroundAlternate"):
+                for foreground in foregrounds:
+                    with self.subTest(group=group, foreground=foreground, background=background):
+                        self.assertGreaterEqual(contrast(colors[group][foreground], colors[group][background]), 4.5)
 
     def test_konsole_complete_palette_and_contrast(self):
         colors = read_ini(SHARE / "konsole/KaltsitMedicalGreen.colorscheme")

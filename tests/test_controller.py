@@ -5,6 +5,7 @@ import json
 import os
 from pathlib import Path
 import re
+import shutil
 import subprocess
 import tempfile
 import types
@@ -97,6 +98,9 @@ class ControllerTests(unittest.TestCase):
         wallpaper = self.share / f"wallpapers/{theme.SCHEME}/contents/images/3840x2160.jpg"
         wallpaper.parent.mkdir(parents=True)
         wallpaper.write_bytes(b"fake image; no image decoder needed for the controller")
+        scheme = self.share / "color-schemes/KaltsitMedicalGreen.colors"
+        scheme.parent.mkdir(parents=True)
+        shutil.copyfile(Path(__file__).resolve().parents[1] / "share/color-schemes/KaltsitMedicalGreen.colors", scheme)
         self.env = {"HOME": str(self.home), "PATH": "/not-used"}
         self.process = FakeProcess(self.config)
         self.backend = theme.Backend(self.env, runner=self.process)
@@ -221,7 +225,7 @@ class ControllerTests(unittest.TestCase):
         self.assertTrue(path.is_symlink())
         self.assertEqual(path.resolve(), self.share / "icons" / theme.CURSOR)
         state = self.controller.load()
-        self.assertEqual(state["version"], 2, "Old controllers must reject records containing resource backups")
+        self.assertEqual(state["version"], 3, "Old controllers must reject component-aware resource backups")
         backup = Path(state["cursor_overrides"][0]["backup"])
         self.assertEqual((backup / "original").read_bytes(), b"untouched original cursor directory")
         self.assertEqual(self.controller.restore()["result"], "restored")
@@ -347,7 +351,7 @@ class ControllerTests(unittest.TestCase):
         self.assertEqual(self.entries("kdeglobals"), old)
         self.assertEqual(self.entries("kdedefaults/kdeglobals"), defaults)
 
-    def test_kwriteconfig_uses_relative_name_and_explicit_xdg_root(self):
+    def test_kwriteconfig_uses_relative_names_and_final_batched_notifications(self):
         self.controller.apply()
         writes = [(call, env) for call, env in zip(self.process.calls, self.process.environments)
                   if call[0] == "kwriteconfig6"]
@@ -355,7 +359,13 @@ class ControllerTests(unittest.TestCase):
         for call, env in writes:
             self.assertFalse(Path(call[call.index("--file") + 1]).is_absolute())
             self.assertEqual(env["XDG_CONFIG_HOME"], str(self.config))
-            self.assertIn("--notify", call)
+        # Palette keys are written silently before a single final notification,
+        # preventing kded from exporting an intermediate, incomplete palette.
+        palette_writes = [call for call, _ in writes if call[call.index("--file") + 1] == "kdeglobals"]
+        self.assertTrue(all("--notify" not in call for call in palette_writes))
+        notified = {call[3] for call in self.process.calls if call[0] == "busctl"}
+        self.assertIn("/kdeglobals", notified)
+        self.assertIn("/plasmarc", notified)
 
     def test_exact_kconfig_notification_signature_paths_and_removed_keys(self):
         before = {"gtk-3.0/settings.ini": "[Top][Nested]\nRemoved=old\nSame=keep\n"}
@@ -380,8 +390,12 @@ class ControllerTests(unittest.TestCase):
         self.assertEqual(self.process.cursor_inputs[-1][("[Mouse]", "cursorTheme")], theme.CURSOR)
         self.assertEqual(self.entries("kcminputrc"), original)
         emitted_paths = {args[3] for args in restore_calls if args[0] == "busctl"}
-        self.assertIn("/kcminputrc", emitted_paths)
-        self.assertIn("/kdeglobals", emitted_paths)
+        # Restore refreshes Qt/KWin through native global signals, without
+        # triggering a new GTK export over precisely restored CSS files.
+        self.assertNotIn("/kcminputrc", emitted_paths)
+        self.assertNotIn("/kdeglobals", emitted_paths)
+        self.assertTrue(any(args[0] == "dbus-send" and args[4] == "org.kde.KGlobalSettings.notifyChange"
+                            for args in restore_calls))
 
     def test_terminal_blocks_restore_only_their_own_content(self):
         self.put("ghostty/config", "font-size = 14\ncommand = zsh\n")
@@ -441,17 +455,20 @@ class ControllerTests(unittest.TestCase):
         self.process.set_key("kdeglobals", "[General]", "ColorScheme", "Original")
         self.assertEqual(self.controller.restore()["result"], "restored")
 
-    def test_symlink_managed_configuration_refused_without_breaking_link(self):
+    def test_symlink_managed_ghostty_skipped_without_breaking_link(self):
         target = self.home / "managed-ghostty"
         target.write_text("font-size = 16\n")
         path = self.config / "ghostty/config"
         path.parent.mkdir(parents=True)
         path.symlink_to(target)
-        with self.assertRaisesRegex(theme.ThemeError, "符号链接"):
-            self.controller.apply()
+        result = self.controller.apply()
+        self.assertEqual(result["result"], "partially-applied")
+        self.assertEqual(self.controller.status()["components"]["ghostty"]["status"], "skipped")
         self.assertTrue(path.is_symlink())
         self.assertEqual(target.read_text(), "font-size = 16\n")
-        self.assertEqual(self.process.calls, [])
+        self.assertEqual(self.controller.restore()["result"], "restored")
+        self.assertTrue(path.is_symlink())
+        self.assertEqual(target.read_text(), "font-size = 16\n")
 
     def test_xdg_overrides_honored(self):
         env = dict(self.env, XDG_CONFIG_HOME=str(self.home / "custom-config"),

@@ -1,6 +1,6 @@
 # 预览来源
 
-`actual/` 中六张原始 PNG 来自本机独立 KDE Plasma 6.6.6 / Wayland 会话：
+`actual/` 中六张 dev.2 原始 PNG 来自本机独立 KDE Plasma 6.6.6 / Wayland 会话：
 3120×2080、175% 缩放、软件渲染，使用临时 HOME 和独立 D-Bus。
 它们是真实应用截图，不是 HTML、AI 概念图或日常物理屏幕的验收截图。
 

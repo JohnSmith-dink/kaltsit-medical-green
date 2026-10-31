@@ -49,6 +49,8 @@ python3 "$KALTSIT_CONTROLLER" --data-dir "$KALTSIT_SHARE" apply >"$KALTSIT_TEST_
 python3 "$KALTSIT_CONTROLLER" --data-dir "$KALTSIT_SHARE" apply >"$KALTSIT_TEST_ROOT/apply-again.json"
 python3 "$KALTSIT_CONTROLLER" --data-dir "$KALTSIT_SHARE" status >"$KALTSIT_TEST_ROOT/status-applied.json"
 test "$(kreadconfig6 --file plasmarc --group Theme --key name)" = KaltsitMedicalGreen
+test "$(kreadconfig6 --file kdeglobals --group General --key ColorScheme)" = KaltsitMedicalGreen
+test "$(kreadconfig6 --file kdeglobals --group Icons --key Theme)" = KaltsitMedicalGreen
 test "$(kreadconfig6 --file kdeglobals --group 'Colors:Selection' --key BackgroundNormal)" = '46,107,87'
 test "$(kreadconfig6 --file kdeglobals --group 'Colors:View' --key ForegroundLink)" = '40,93,131'
 test "$(kreadconfig6 --file kdeglobals --group General --key accentColorFromWallpaper)" = false
@@ -65,6 +67,7 @@ test "$(kreadconfig6 --file kdeglobals --group General --key fixed)" = 'Monospac
 test "$(kreadconfig6 --file kdeglobals --group General --key AccentColor)" = '180,40,60'
 test "$(kreadconfig6 --file kdeglobals --group General --key accentColorFromWallpaper)" = false
 python3 "$(dirname "$0")/session-transactions.py"
+python3 "$(dirname "$0")/session-components.py"
 python3 - <<'PY'
 import json, os
 from pathlib import Path
@@ -73,6 +76,8 @@ records={p.stem:json.loads(p.read_text()) for p in root.glob('*.json')}
 assert records['apply']['result']=='applied', records
 assert records['apply-again']['result']=='already-applied', records
 assert records['restore']['result']=='restored', records
+assert records['status-applied']['current_color_scheme']=='KaltsitMedicalGreen', records['status-applied']
+assert records['status-applied']['current_icons']=='KaltsitMedicalGreen', records['status-applied']
 assert records['status-before']['current_color_scheme']==records['status-restored']['current_color_scheme'], records
 assert records['status-restored']['restore_available'] is False, records
 assert records['layout-before']==records['layout-after'], records

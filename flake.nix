@@ -29,5 +29,9 @@
 
       homeManagerModules.default = import ./home-manager.nix;
       checks.${system}.theme = theme;
+      devShells.${system}.default = pkgs.mkShell {
+        packages = [ (pkgs.python3.withPackages (packages: [ packages.pillow ])) ];
+        PYTHONDONTWRITEBYTECODE = "1";
+      };
     };
 }

@@ -81,7 +81,8 @@ if legacy_path:
     else:
         raise AssertionError("legacy backup was not protected")
     assert controller.state_file.read_bytes() == record
-    assert controller.restore()["result"] == "restored"
+    restored = controller.restore()
+    assert restored["result"] == "restored", restored
     assert owned() == original
     assert controller.apply()["result"] == "applied"
     assert local_cursor.resolve() == share / "icons" / theme.CURSOR
@@ -92,7 +93,8 @@ if legacy_path:
     else:
         raise AssertionError("old controller accepted a resource backup it cannot restore")
     assert controller.apply()["result"] == "already-applied"
-    assert controller.restore()["result"] == "restored"
+    restored = controller.restore()
+    assert restored["result"] == "restored", restored
     assert owned() == original
     assert os.readlink(local_cursor) == original_target
     results["v1_0_to_v1_1"] = "legacy apply; backup protected; restore; apply; repeat; restore"

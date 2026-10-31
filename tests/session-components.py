@@ -136,8 +136,8 @@ for version in (3, 4):
     assert theme.ini_entries(theme.read_text(controller.config / f"gtk-{version}.0/settings.ini"))[("[Settings]", "gtk-font-name")] == "Theme preservation fixture 11"
 assert all(item["image"] == custom.as_uri() and item["fill_mode"] == 2 for item in controller.backend.wallpapers())
 lock = theme.ini_entries(theme.read_text(controller.config / "kscreenlockerrc"))
-assert lock[("[Greeter][Wallpaper][org.kde.image][General]", "Image")] == custom.as_uri()
-assert lock[("[Greeter][Wallpaper][org.kde.image][General]", "FillMode")] == "2"
+assert lock[(f"[Greeter][Wallpaper][{theme.LOCK_WALLPAPER}][General]", "Image")] == custom.as_uri()
+assert lock[(f"[Greeter][Wallpaper][{theme.LOCK_WALLPAPER}][General]", "FillMode")] == "2"
 assert controller.restore()["result"] == "restored"
 time.sleep(3)
 for version in (3, 4):

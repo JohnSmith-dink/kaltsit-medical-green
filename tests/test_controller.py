@@ -101,6 +101,8 @@ class ControllerTests(unittest.TestCase):
         scheme = self.share / "color-schemes/KaltsitMedicalGreen.colors"
         scheme.parent.mkdir(parents=True)
         shutil.copyfile(Path(__file__).resolve().parents[1] / "share/color-schemes/KaltsitMedicalGreen.colors", scheme)
+        shutil.copytree(Path(__file__).resolve().parents[1] / "share/plasma/wallpapers" / theme.LOCK_WALLPAPER,
+                        self.share / "plasma/wallpapers" / theme.LOCK_WALLPAPER)
         self.env = {"HOME": str(self.home), "PATH": "/not-used"}
         self.process = FakeProcess(self.config)
         self.backend = theme.Backend(self.env, runner=self.process)
@@ -125,7 +127,7 @@ class ControllerTests(unittest.TestCase):
         original_wallpapers = list(self.process.desktops)
         self.controller.apply()
         self.assertTrue(all(item["fill_mode"] == 2 for item in self.process.desktops))
-        self.assertEqual(self.entries("kscreenlockerrc")[("[Greeter][Wallpaper][org.kde.image][General]", "FillMode")], "2")
+        self.assertEqual(self.entries("kscreenlockerrc")[(f"[Greeter][Wallpaper][{theme.LOCK_WALLPAPER}][General]", "FillMode")], "2")
         self.process.set_key("kdeglobals", "[General]", "BrowserApplication", "new-browser.desktop")
         self.process.set_key("kdeglobals", "[UserSettings]", "NewValue", "retained")
         result = self.controller.restore()

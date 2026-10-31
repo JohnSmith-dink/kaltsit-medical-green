@@ -8,7 +8,26 @@ for category in Documents Downloads Pictures Music Videos; do
   printf '[Desktop Entry]\nIcon=folder-%s\n' "${category,,}" >"$HOME/Medical Green/$category/.directory"
 done
 capture() {
-  spectacle --background --nonotify --fullscreen --output "$KALTSIT_TEST_ROOT/screenshots/$1.png" >"$KALTSIT_TEST_ROOT/capture-$1.log" 2>&1
+  timeout 30s spectacle --new-instance --background --nonotify --fullscreen --output "$KALTSIT_TEST_ROOT/screenshots/$1.png" >"$KALTSIT_TEST_ROOT/capture-$1.log" 2>&1
+  # A successful process exit is insufficient: DBus screenshot permission or
+  # asynchronous capture failures can otherwise leave an empty gallery.
+  python3 - "$KALTSIT_TEST_ROOT/screenshots/$1.png" <<'PY'
+import sys
+import time
+from pathlib import Path
+from PIL import Image
+path = Path(sys.argv[1])
+for _ in range(40):
+    if path.is_file():
+        break
+    time.sleep(0.1)
+if not path.is_file():
+    raise SystemExit(f"Screenshot was not written: {path}; inspect the capture log and XDG_DATA_DIRS")
+with Image.open(path) as image:
+    image.verify()
+    if image.width < 1 or image.height < 1:
+        raise SystemExit(f"Screenshot has no pixels: {path}")
+PY
 }
 sleep 5
 qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.activateLauncherMenu
@@ -45,10 +64,25 @@ kill "$konsole_pid" 2>/dev/null || true
 wait "$konsole_pid" 2>/dev/null || true
 # Testing mode renders the actual native greeter without locking or auth changes.
 if [[ -n "${KALTSIT_GREETER:-}" ]]; then
-  "$KALTSIT_GREETER" --testing --immediateLock >"$KALTSIT_TEST_ROOT/lockscreen.log" 2>&1 &
+  if [[ -n "${KALTSIT_GREETER_WAKEUP:-}" ]]; then
+    LD_PRELOAD="$KALTSIT_GREETER_WAKEUP" "$KALTSIT_GREETER" --testing --immediateLock >"$KALTSIT_TEST_ROOT/lockscreen.log" 2>&1 &
+  else
+    "$KALTSIT_GREETER" --testing --immediateLock >"$KALTSIT_TEST_ROOT/lockscreen.log" 2>&1 &
+  fi
   greeter_pid=$!
   sleep 4
   capture lockscreen
+  if [[ -n "${KALTSIT_GREETER_WAKEUP:-}" ]]; then
+    test "$WAYLAND_DISPLAY" = kaltsit-test
+    touch "$KALTSIT_TEST_ROOT/show-unlock"
+    for attempt in $(seq 1 50); do
+      test -f "$KALTSIT_TEST_ROOT/unlock-shown" && break
+      sleep 0.1
+    done
+    test -f "$KALTSIT_TEST_ROOT/unlock-shown"
+    sleep 2
+    capture lockscreen-unlock
+  fi
   kill "$greeter_pid" 2>/dev/null || true
   wait "$greeter_pid" 2>/dev/null || true
 fi

@@ -16,15 +16,15 @@ def surface(radius, margin, shadow):
     r, c, s = radius, 8, shadow
     parts = [HEADER, '<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240">',
              '<defs><linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">'
-             '<stop stop-color="#25352D" stop-opacity="0"/><stop offset="1" stop-color="#25352D" stop-opacity=".13"/>'
+             '<stop stop-color="#25352D" stop-opacity="0"/><stop offset="1" stop-color="#25352D" stop-opacity=".16"/>'
              '</linearGradient><radialGradient id="corner" cx="1" cy="1" r="1">'
-             '<stop stop-color="#25352D" stop-opacity=".13"/><stop offset="1" stop-color="#25352D" stop-opacity="0"/>'
+             '<stop stop-color="#25352D" stop-opacity=".16"/><stop offset="1" stop-color="#25352D" stop-opacity="0"/>'
              '</radialGradient></defs>']
     positions = {'topleft': (0, 0, 0), 'topright': (r+c, 0, 90),
                  'bottomright': (r+c, r+c, 180), 'bottomleft': (0, r+c, 270)}
     for prefix, oy in (("", 0), ("mask-", 40)):
         fill = '#FFFFFF' if not prefix else '#000000'
-        border = '#D3DDD5' if not prefix else '#000000'
+        border = '#C5D2C8' if not prefix else '#000000'
         parts.append(f'<rect id="{prefix}center" x="{r}" y="{oy+r}" width="{c}" height="{c}" fill="{fill}"/>')
         for name, (x, y, rotation) in positions.items():
             parts.append(f'<g id="{prefix}{name}" transform="translate({x},{oy+y}) rotate({rotation},{r/2},{r/2})">'

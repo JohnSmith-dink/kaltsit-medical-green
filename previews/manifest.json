@@ -1,8 +1,11 @@
 {
-  "version": "1.1.0-dev.2",
-  "environment": "NixOS 26.05, Plasma 6.6.6, virtual Wayland output, software rendering",
-  "scale": 1.75,
+  "version": "1.1.0-rc.1",
+  "date": "2026-11-01",
+  "date_timezone": "Asia/Shanghai",
+  "environment": "NixOS 26.05, Plasma 6.6.6, isolated virtual Wayland output",
   "physical_desktop_acceptance": false,
+  "lockscreen_authentication_performed": false,
+  "image_processing": "none; original screenshot bytes",
   "concept_images": [
     "kaltsit-medical-green.html"
   ],
@@ -14,17 +17,23 @@
         3120,
         2080
       ],
-      "sha256": "339eba49714b996ffb6f138453deaaa37073180821d65bb78c9b1c84be4cc2aa",
+      "scale": 1.75,
+      "renderer": "Qt Quick RHI / Mesa software OpenGL",
+      "run": "rhi",
+      "sha256": "76b5b6f2e16493ce092dac2b04f6e3a3b5c8fe469f7fd8c36ce360e4e8cf9f5b",
       "kind": "native KDE screenshot in isolated session"
     },
     {
       "file": "actual/launcher.png",
-      "title": "启动菜单",
+      "title": "原生启动菜单",
       "pixels": [
         3120,
         2080
       ],
-      "sha256": "3ac819845a8b517c739775c57d36634c711a35e49104f81d60811b97191080e4",
+      "scale": 1.75,
+      "renderer": "Qt Quick RHI / Mesa software OpenGL",
+      "run": "rhi",
+      "sha256": "6619416f2280366df96a589651177d22beeb4545817a849e98e4223ac7809a7f",
       "kind": "native KDE screenshot in isolated session"
     },
     {
@@ -34,7 +43,10 @@
         3120,
         2080
       ],
-      "sha256": "823cbe59a2a8f15404ab73861852a65aace1d3bb5e069c4eb6d70c0672f30ec2",
+      "scale": 1.75,
+      "renderer": "Qt Quick RHI / Mesa software OpenGL",
+      "run": "rhi",
+      "sha256": "c255853dd1decaf047f5db4b93c4e15f0f6a05b36511b6aa85420e8098a93963",
       "kind": "native KDE screenshot in isolated session"
     },
     {
@@ -44,7 +56,10 @@
         3120,
         2080
       ],
-      "sha256": "e329d54334fce29bb3b71afabe207481a8c6ff85638bb2733dda7bbc0dab4f82",
+      "scale": 1.75,
+      "renderer": "Qt Quick RHI / Mesa software OpenGL",
+      "run": "rhi",
+      "sha256": "33f3e99750db9290bf44948da992047fb70f2a299a2959bd572229bc0689f2e7",
       "kind": "native KDE screenshot in isolated session"
     },
     {
@@ -54,17 +69,88 @@
         3120,
         2080
       ],
-      "sha256": "8481766236be007b2bb50eba2061cd7d909189e91a6a5a12ca11581b6bbd276b",
+      "scale": 1.75,
+      "renderer": "Qt Quick RHI / Mesa software OpenGL",
+      "run": "rhi",
+      "sha256": "5ec44272669ed16a6205a859415056b46d6de503cf384c725917e859c43a6a55",
       "kind": "native KDE screenshot in isolated session"
     },
     {
       "file": "actual/lockscreen.png",
-      "title": "原生锁屏（测试模式，待机画面）",
+      "title": "原生锁屏 · 待机",
       "pixels": [
         3120,
         2080
       ],
-      "sha256": "1d7be2328d8dc741105cd818419cba819dbdbd909d6aaef14b158bbcc8e1cd71",
+      "scale": 1.75,
+      "renderer": "Qt Quick RHI / Mesa software OpenGL",
+      "run": "rhi",
+      "sha256": "e95f63f198f86cc06f35a60acd3d41ffa93fc5d81ddab4abf599ac69c69a7cbf",
+      "kind": "native KDE screenshot in isolated session"
+    },
+    {
+      "file": "actual/lockscreen-unlock.png",
+      "title": "原生锁屏 · 解锁提示",
+      "pixels": [
+        3120,
+        2080
+      ],
+      "scale": 1.75,
+      "renderer": "Qt Quick RHI / Mesa software OpenGL",
+      "run": "rhi",
+      "sha256": "cff0d0e42ddf2299631b903688d1ebff2761e3e0db4f99a8171bd37e1152757e",
+      "kind": "native KDE screenshot in isolated session"
+    },
+    {
+      "file": "actual/wide/desktop.png",
+      "title": "桌面",
+      "pixels": [
+        1920,
+        1080
+      ],
+      "scale": 1,
+      "renderer": "Qt Quick software",
+      "run": "wide",
+      "sha256": "56d055f776f58c3413b8e39d3e548a9b22dd0a74e2e6f8593789de1353f0cb50",
+      "kind": "native KDE screenshot in isolated session"
+    },
+    {
+      "file": "actual/wide/lockscreen.png",
+      "title": "原生锁屏 · 待机",
+      "pixels": [
+        1920,
+        1080
+      ],
+      "scale": 1,
+      "renderer": "Qt Quick software",
+      "run": "wide",
+      "sha256": "6f5322bcd0d3b9738d29652df94e78e53ad237773531301f6625b3657b76a752",
+      "kind": "native KDE screenshot in isolated session"
+    },
+    {
+      "file": "actual/wide/lockscreen-unlock.png",
+      "title": "原生锁屏 · 解锁提示",
+      "pixels": [
+        1920,
+        1080
+      ],
+      "scale": 1,
+      "renderer": "Qt Quick software",
+      "run": "wide",
+      "sha256": "246c9702b353f431f12f60ecb02341959722c8bb181a3082a879eee1b80a3945",
+      "kind": "native KDE screenshot in isolated session"
+    },
+    {
+      "file": "actual/software/lockscreen-unlock.png",
+      "title": "原生锁屏 · 解锁提示",
+      "pixels": [
+        3120,
+        2080
+      ],
+      "scale": 1.75,
+      "renderer": "Qt Quick software",
+      "run": "software",
+      "sha256": "4311e183618b8d9fdfa56a014db45eb0803f78950d289574fb08962544a3bccf",
       "kind": "native KDE screenshot in isolated session"
     }
   ]

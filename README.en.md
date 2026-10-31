@@ -1,6 +1,6 @@
 # Kal'tsit · Medical Green
 
-**1.1.0-dev.2 — a restrained light theme for NixOS and KDE Plasma 6 / Wayland.**
+**1.1.0-rc.1 — a restrained light theme for NixOS and KDE Plasma 6 / Wayland.**
 
 [中文说明](README.md)
 
@@ -9,9 +9,13 @@ Warm white `#F4F7F2`, white panels, dark green-grey text `#25352D`, and teal acc
 elements use Breeze. Native application controls and the light terminal palette
 remain intact. Installation does not activate the theme.
 
+rc.1 refines the native lock screen with a dark green-grey clock, warm-white
+controls, and a fading footer backdrop for keyboard and battery labels. Panel
+and popup borders are clearer. See [release readiness](docs/RELEASE-READINESS.md).
+
 ![Dolphin in a separate Plasma session, 3120×2080 at 175%](previews/actual/dolphin.png)
 
-This is a real application capture from **dev.2 in an isolated local Plasma
+This is a real application capture from **rc.1 in an isolated local Plasma
 session**, not a design mockup or a daily-desktop acceptance screenshot. See the
 [preview notes](previews/README.md) for
 desktop, launcher, terminal, notification, and lock-screen test captures. Physical
@@ -128,6 +132,13 @@ cursor artwork are excluded from that license; the existing permission wording
 in [CREDITS.md](CREDITS.md) and the cursor notices governs those assets.
 SDDM, Plymouth, boot interfaces, and browser-specific skins are outside scope.
 
+## Visual refinement in rc.1
+
+The native clock uses dark green-grey text over the light wallpaper. The native
+unlock controls use warm white, with clearer panel and popup borders and softer
+separation from the wallpaper. The original artwork, layout, and authentication
+components are retained. See [release readiness](docs/RELEASE-READINESS.md).
+
 ## Validation
 
 ```sh
@@ -135,13 +146,13 @@ nix develop --command python3 -m unittest discover -s tests -v
 nix flake check --no-write-lock-file path:.
 ```
 
-All 67 unit tests pass. The palette check covers every foreground role against both normal and alternate
+All 68 unit tests pass. The palette check covers every foreground role against both normal and alternate
 backgrounds in each KDE color group: 128 pairs, with a minimum of approximately 4.56:1.
 Normal terminal ANSI colors have a minimum contrast of 5.58:1, and faint colors
-4.51:1. Dev.2 has isolated native KDE checks for apply, repeat apply, restore,
-failure rollback, and migration from v1.0. All six native preview images were
-recaptured for dev.2. See [validation notes](docs/VALIDATION.md) for the complete
+4.51:1. RC.1 has isolated native KDE checks for apply, repeat apply, restore,
+failure rollback, and migration from v1.0. All seven native preview images were
+recaptured for rc.1, including the native unlock prompt. See [validation notes](docs/VALIDATION.md) for the complete
 results, component boundaries, and pending physical-screen acceptance.
 
 The CI workflow is included with third-party Actions pinned to full commits.
-Checks in this iteration ran locally; no GitHub-hosted workflow run is claimed.
+The public dev.2 run passed. See the validation notes for rc.1 local results and repository Actions for current hosted checks.

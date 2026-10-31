@@ -20,6 +20,8 @@
       packages.${system} = {
         default = theme;
         kaltsit-theme = theme;
+        # Optional input for native greeter previews in a private compositor.
+        preview-wakeup = pkgs.callPackage ./tests/preview-wakeup.nix { };
       };
 
       apps.${system} = {

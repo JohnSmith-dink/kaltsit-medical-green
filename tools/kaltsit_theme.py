@@ -23,8 +23,9 @@ import time
 
 
 THEME = "org.xinyan.kaltsit.medicalgreen"
-VERSION = "1.1.0-dev.2"
+VERSION = "1.1.0-rc.1"
 SCHEME = "KaltsitMedicalGreen"
+LOCK_WALLPAPER = "org.xinyan.kaltsit.medicalgreen.lock"
 CURSOR = "Kaltsit-Sihengtu"
 BEGIN = "# BEGIN KALTSIT MEDICAL GREEN (managed by kaltsit-theme)"
 END = "# END KALTSIT MEDICAL GREEN"
@@ -600,6 +601,10 @@ class Controller:
         wallpaper = Path(options["wallpaper"]) if options["wallpaper"] else self.share / f"wallpapers/{SCHEME}/contents/images/3840x2160.jpg"
         if {"wallpaper", "lockscreen"} & set(enabled) and not wallpaper.is_file():
             raise ThemeError(f"缺少壁纸：{wallpaper}")
+        if "lockscreen" in enabled:
+            lock_plugin = self.share / "plasma/wallpapers" / LOCK_WALLPAPER
+            if not all((lock_plugin / name).is_file() for name in ("metadata.json", "contents/ui/main.qml", "contents/config/main.xml")):
+                raise ThemeError(f"缺少锁屏阅读衬底资源，未修改配置：{lock_plugin}")
         before = self.snapshot(enabled)
         blocks = self.terminal_blocks(before, enabled)
         missing = self.backend.missing_commands(self.required_commands(enabled))
@@ -647,9 +652,9 @@ class Controller:
                 cursor = {"theme": name, "size": size}
             add("cursor", "kcminputrc", "[Mouse]", "cursorTheme", CURSOR)
         if "lockscreen" in enabled:
-            add("lockscreen", "kscreenlockerrc", "[Greeter]", "WallpaperPlugin", "org.kde.image")
-            add("lockscreen", "kscreenlockerrc", "[Greeter][Wallpaper][org.kde.image][General]", "Image", wallpaper.as_uri())
-            add("lockscreen", "kscreenlockerrc", "[Greeter][Wallpaper][org.kde.image][General]", "FillMode", "2")
+            add("lockscreen", "kscreenlockerrc", "[Greeter]", "WallpaperPlugin", LOCK_WALLPAPER)
+            add("lockscreen", "kscreenlockerrc", f"[Greeter][Wallpaper][{LOCK_WALLPAPER}][General]", "Image", wallpaper.as_uri())
+            add("lockscreen", "kscreenlockerrc", f"[Greeter][Wallpaper][{LOCK_WALLPAPER}][General]", "FillMode", "2")
         if "gtk" in enabled:
             for version in (3, 4):
                 for key, value in (("gtk-theme-name", "Breeze"), ("gtk-application-prefer-dark-theme", "false"), ("gtk-icon-theme-name", SCHEME)):

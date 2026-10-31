@@ -299,10 +299,25 @@ class ComponentTests(unittest.TestCase):
         for desktop in self.process.desktops:
             self.assertEqual(desktop["image"], path.as_uri())
             self.assertEqual(desktop["fill_mode"], 2)
-        self.assertEqual(self.entries("kscreenlockerrc")[("[Greeter][Wallpaper][org.kde.image][General]", "Image")], path.as_uri())
+        lock = self.entries("kscreenlockerrc")
+        self.assertEqual(lock[("[Greeter]", "WallpaperPlugin")], theme.LOCK_WALLPAPER)
+        self.assertEqual(lock[(f"[Greeter][Wallpaper][{theme.LOCK_WALLPAPER}][General]", "Image")], path.as_uri())
+        self.assertEqual(lock[("[Greeter][Wallpaper][org.kde.image][General]", "Image")], "file:///old-lock.png")
         self.assertEqual(self.controller.restore()["result"], "restored")
         self.assertEqual(self.process.desktops, desktops)
         self.assertEqual(self.entries("kscreenlockerrc"), old)
+
+    def test_missing_lock_wallpaper_resources_fail_before_changes_and_allow_skip(self):
+        (self.share / "plasma/wallpapers" / theme.LOCK_WALLPAPER / "contents/ui/main.qml").unlink()
+        before = self.tree()
+        with self.assertRaisesRegex(theme.ThemeError, "锁屏"):
+            self.controller.apply()
+        self.assertEqual(self.tree(), before)
+        self.assertEqual(self.process.calls, [])
+        self.assertFalse(self.controller.state_dir.exists())
+        self.controller.apply(skip=("lockscreen",))
+        self.assertEqual(self.controller.status()["components"]["lockscreen"]["status"], "skipped")
+        self.assertEqual(self.controller.restore()["result"], "restored")
 
     def test_custom_wallpaper_option_idempotence_and_change_guard(self):
         from PIL import Image

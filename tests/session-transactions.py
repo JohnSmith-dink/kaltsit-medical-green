@@ -100,4 +100,36 @@ if legacy_path:
     results["v1_0_to_v1_1"] = "legacy apply; backup protected; restore; apply; repeat; restore"
     results["legacy_backup_unchanged"] = True
 
+previous_path = os.environ.get("KALTSIT_PREVIOUS_CONTROLLER")
+if previous_path:
+    previous = module("previous", previous_path)
+    old = previous.Controller(Path(os.environ["KALTSIT_PREVIOUS_SHARE"]))
+    lock_before = theme.ini_entries(theme.read_text(controller.config / "kscreenlockerrc"))
+    assert old.apply()["result"] == "applied"
+    record = controller.state_file.read_bytes()
+    status = controller.status()
+    assert status["applied_version"] == previous.VERSION and status["upgrade_available"], status
+    try:
+        controller.apply()
+    except theme.ThemeError as error:
+        assert "restore" in str(error)
+    else:
+        raise AssertionError("previous-version backup was not protected")
+    assert controller.state_file.read_bytes() == record
+    assert controller.restore()["result"] == "restored"
+    assert owned() == original
+    assert theme.ini_entries(theme.read_text(controller.config / "kscreenlockerrc")) == lock_before
+    assert controller.apply()["result"] == "applied"
+    lock_applied = theme.ini_entries(theme.read_text(controller.config / "kscreenlockerrc"))
+    assert lock_applied[("[Greeter]", "WallpaperPlugin")] == theme.LOCK_WALLPAPER
+    assert controller.apply()["result"] == "already-applied"
+    assert controller.restore()["result"] == "restored"
+    assert owned() == original
+    assert theme.ini_entries(theme.read_text(controller.config / "kscreenlockerrc")) == lock_before
+    assert os.readlink(local_cursor) == original_target
+    results["previous_version"] = previous.VERSION
+    results["previous_to_candidate"] = "previous apply; backup protected; restore; candidate apply; repeat; restore"
+    results["previous_backup_unchanged"] = True
+    results["previous_lock_configuration_restored"] = True
+
 (root / "transaction-probes.json").write_text(json.dumps(results, indent=2) + "\n")

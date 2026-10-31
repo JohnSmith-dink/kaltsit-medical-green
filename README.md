@@ -1,8 +1,11 @@
 # 凯尔希 · 医疗白绿
 
-**Kal'tsit Medical Green 1.1.0-dev.2 · 克制日常**
+**Kal'tsit Medical Green 1.1.0-rc.1 · 克制日常**
 
 [English](README.en.md)
+
+rc.1 优先精修锁屏与桌面：深灰绿待机时钟、暖白解锁控件、锁屏底部渐淡衬底，以及更清楚的面板与弹窗边界。
+保留第 707 帧原图、原生 KDE 锁屏组件及既有布局。[正式版准备记录](docs/RELEASE-READINESS.md)。
 
 适用于 NixOS / KDE Plasma 6 的浅色主题：暖白 `#F4F7F2`、白色面板、
 深灰绿正文 `#25352D`、青绿强调色 `#2E6B57`。轻边框与柔和阴影覆盖面板和弹窗，
@@ -11,17 +14,17 @@
 
 ![Dolphin 实际渲染：独立 Plasma 测试会话，3120×2080，175%](previews/actual/dolphin.png)
 
-上图来自 dev.2 在本机独立 KWin/Plasma 会话中的真实应用，并非概念样图。
+上图来自 rc.1 在本机独立 KWin/Plasma 会话中的真实应用，并非概念样图。
 完整的桌面、菜单、Dolphin、终端、通知与锁屏画面见 [预览说明](previews/README.md)
 或本地打开 [预览画廊](previews/index.html)。物理屏幕上的最终观感仍需用户确认。
 
 ## 安装与切换
 
-这是独立的 **v1.1 开发版本**，不替换已发布的 v1.0.0。已验证环境为
+这是独立的 **v1.1 发布候选版本**，不替换已发布的 v1.0.0。已验证环境为
 x86_64-linux、NixOS 26.05、Plasma 6.6.6 / Wayland；复用现有 `flake.lock`。
 主题素材含单独权利范围，完整包标记为 `unfree`，见 [CREDITS.md](CREDITS.md)。
 
-在本开发源码目录中：
+在本候选版源码目录中：
 
 ```sh
 # 构建与安装均不切换外观
@@ -150,11 +153,11 @@ nix develop --command python3 -m unittest discover -s tests -v
 nix flake check --no-write-lock-file path:.
 ```
 
-67 项测试通过，覆盖原有检查以及组件跳过、只读预演、恢复格式兼容、自选壁纸、样式恢复、文件夹尺寸与指针完整性。
-dev.2 在真实独立 KDE 会话中验证了应用、重复应用、恢复、失败回滚和从 v1.0 恢复后升级；
-完整检查结果及组件边界见 [验收记录](docs/VALIDATION.md)。六张实际预览已在 dev.2 重拍。
+68 项测试通过，覆盖原有检查以及组件跳过、只读预演、恢复格式兼容、自选壁纸、样式恢复、文件夹尺寸与指针完整性。
+rc.1 在真实独立 KDE 会话中验证了应用、重复应用、恢复、失败回滚和从 v1.0 恢复后升级；
+完整检查结果及组件边界见 [验收记录](docs/VALIDATION.md)。七张实际预览已在 rc.1 重拍，新增原生解锁提示页。
 既有 libXcursor 检查成功加载 85 组指针/尺寸；本轮资源未变，重新核对哈希、动画与热点。
 正文对比度约 11.95:1；KDE 全部前景色在本组常规及交替背景上最低 4.56:1。
 ANSI 普通/Intense 最低 5.58:1，Faint 最低 4.51:1。
 检查范围、运行方式和待确认事项见 [验收记录](docs/VALIDATION.md)。
-CI 工作流已加入；本轮运行的是本地检查，尚未触发 GitHub 托管任务。
+dev.2 的 [GitHub CI](https://github.com/JohnSmith-dink/kaltsit-medical-green/actions/runs/41236559497) 已通过。rc.1 的本地构建与复测见验收记录，最新托管检查见仓库 Actions。

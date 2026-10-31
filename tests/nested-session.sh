@@ -12,7 +12,7 @@ cleanup() {
 trap cleanup EXIT
 export WAYLAND_DISPLAY=kaltsit-test
 dbus-update-activation-environment WAYLAND_DISPLAY XDG_RUNTIME_DIR QT_QPA_PLATFORM
-kwin_wayland --virtual --width 3120 --height 2080 --scale 1 \
+kwin_wayland --virtual --width "$KALTSIT_TEST_WIDTH" --height "$KALTSIT_TEST_HEIGHT" --scale 1 \
   --socket kaltsit-test --no-lockscreen --no-global-shortcuts --no-kactivities \
   >"$KALTSIT_TEST_ROOT/kwin.log" 2>&1 &
 kwin_pid=$!
@@ -32,12 +32,12 @@ for attempt in $(seq 1 60); do
   kill -0 "$plasma_pid"
   sleep 0.5
 done
-kscreen-doctor output.Virtual-0.scale.1.75 >"$KALTSIT_TEST_ROOT/scale-change.log"
+kscreen-doctor "output.Virtual-0.scale.$KALTSIT_TEST_SCALE" >"$KALTSIT_TEST_ROOT/scale-change.log"
 kscreen-doctor --json >"$KALTSIT_TEST_ROOT/outputs-before.json"
 layout_script='var a=[]; var all=desktops().concat(panels()); for(var i=0;i<all.length;++i){var d=all[i]; a.push({id:d.id,type:d.type,widgets:d.widgetIds});} print(JSON.stringify(a));'
 qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "$layout_script" >"$KALTSIT_TEST_ROOT/layout-before.json"
 kwriteconfig6 --file kcminputrc --group Mouse --key cursorSize 36
-kwriteconfig6 --file kdeglobals --group General --key font 'Noto Sans,10,-1,5,50,0,0,0,0,0'
+kwriteconfig6 --file kdeglobals --group General --key font 'Noto Sans CJK SC,10,-1,5,50,0,0,0,0,0'
 kwriteconfig6 --file kdeglobals --group General --key fixed 'Monospace,11,-1,5,50,0,0,0,0,0'
 kwriteconfig6 --file kdeglobals --group General --key AccentColor '180,40,60'
 # A fixed accent is deterministic. With wallpaper accents enabled Plasma may
@@ -62,7 +62,7 @@ python3 "$KALTSIT_CONTROLLER" --data-dir "$KALTSIT_SHARE" status >"$KALTSIT_TEST
 qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "$layout_script" >"$KALTSIT_TEST_ROOT/layout-after.json"
 kscreen-doctor --json >"$KALTSIT_TEST_ROOT/outputs-after.json"
 test "$(kreadconfig6 --file kcminputrc --group Mouse --key cursorSize)" = 36
-test "$(kreadconfig6 --file kdeglobals --group General --key font)" = 'Noto Sans,10,-1,5,50,0,0,0,0,0'
+test "$(kreadconfig6 --file kdeglobals --group General --key font)" = 'Noto Sans CJK SC,10,-1,5,50,0,0,0,0,0'
 test "$(kreadconfig6 --file kdeglobals --group General --key fixed)" = 'Monospace,11,-1,5,50,0,0,0,0,0'
 test "$(kreadconfig6 --file kdeglobals --group General --key AccentColor)" = '180,40,60'
 test "$(kreadconfig6 --file kdeglobals --group General --key accentColorFromWallpaper)" = false
@@ -81,7 +81,8 @@ assert records['status-applied']['current_icons']=='KaltsitMedicalGreen', record
 assert records['status-before']['current_color_scheme']==records['status-restored']['current_color_scheme'], records
 assert records['status-restored']['restore_available'] is False, records
 assert records['layout-before']==records['layout-after'], records
-assert records['outputs-before']['outputs'][0]['scale']==1.75, records['outputs-before']
-assert records['outputs-after']['outputs'][0]['scale']==1.75, records['outputs-after']
+scale = float(os.environ['KALTSIT_TEST_SCALE'])
+assert records['outputs-before']['outputs'][0]['scale']==scale, records['outputs-before']
+assert records['outputs-after']['outputs'][0]['scale']==scale, records['outputs-after']
 print(json.dumps(records,indent=2,ensure_ascii=False))
 PY

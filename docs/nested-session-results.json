@@ -10,7 +10,14 @@
     "flake_check": "passed",
     "flake_lock_changed": false
   },
-  "hosted_ci": "pending",
+  "hosted_ci": {
+    "commit": "d5dfb241525b4f1c94fd7cef6816b3c32848f663",
+    "result": "passed",
+    "runs": [
+      "https://github.com/JohnSmith-dink/kaltsit-medical-green/actions/runs/41244357844",
+      "https://github.com/JohnSmith-dink/kaltsit-medical-green/actions/runs/41244353975"
+    ]
+  },
   "screenshot_manifest": "../previews/manifest.json",
   "runs": [
     {
@@ -1495,6 +1502,19 @@
   },
   "physical_desktop_acceptance": false,
   "lockscreen_authentication_performed": false,
-  "rc3_daily_deployment": "pending",
-  "restore_record_schema": 3
+  "rc3_daily_deployment": {
+    "version": "1.1.0-rc.3",
+    "system_generation": 54,
+    "real_lock_unlock_verified": true,
+    "brightness_acceptance": true,
+    "user_feedback": "亮度正常，解锁正常",
+    "display": "eDP-1 3120x2080, 175%",
+    "source_commit": "d5dfb241525b4f1c94fd7cef6816b3c32848f663",
+    "layout_fonts_cursor_size_outputs_preserved": true,
+    "failed_system_units": 0,
+    "external_display_tested": false,
+    "all_cursor_sizes_manually_tested": false
+  },
+  "restore_record_schema": 3,
+  "used_by_release": "1.1.0"
 }

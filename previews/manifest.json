@@ -150,5 +150,7 @@
       "sha256": "02aa1f4b4ff4995284e102cb6f8d12e387d35de3d08c38a9c1a55c07e6c7ead8",
       "kind": "native KDE screenshot in isolated session"
     }
-  ]
+  ],
+  "used_by_release": "1.1.0",
+  "release_note": "Screenshots remain original rc.3 captures; 1.1.0 changes version identifiers and documentation only."
 }

@@ -1,5 +1,5 @@
 {
-  "version": "1.1.0-rc.2",
+  "version": "1.1.0-rc.3",
   "date": "2026-11-01",
   "date_timezone": "Asia/Shanghai",
   "environment": "NixOS 26.05, Plasma 6.6.6, isolated virtual Wayland output",
@@ -13,141 +13,141 @@
     {
       "file": "actual/desktop.png",
       "title": "桌面",
-      "version": "1.1.0-rc.2",
+      "version": "1.1.0-rc.3",
       "pixels": [
         3120,
         2080
       ],
       "scale": 1.75,
       "renderer": "Qt Quick RHI / Mesa software OpenGL",
-      "run": "rc2-rhi",
-      "sha256": "2d5040f30a8a08e6db14ec44d243bed3bdacd27b144085c860bc9b4a5671d791",
+      "run": "rc3-rhi",
+      "sha256": "50c13126f71cba02a7f60017727b610f21085f28970db6a6487e497dd11eacd9",
       "kind": "native KDE screenshot in isolated session"
     },
     {
       "file": "actual/launcher.png",
       "title": "原生启动菜单",
-      "version": "1.1.0-rc.2",
+      "version": "1.1.0-rc.3",
       "pixels": [
         3120,
         2080
       ],
       "scale": 1.75,
       "renderer": "Qt Quick RHI / Mesa software OpenGL",
-      "run": "rc2-rhi",
-      "sha256": "bac0b2589e2c712c5ae32bbafeb3ef95f9d5ec4141bb0d72b35ca2d27f201dc9",
+      "run": "rc3-rhi",
+      "sha256": "1f441319b882b25b982c0f0d802b72abf8a54ababf0b1f6f5f539fe95bce68bf",
       "kind": "native KDE screenshot in isolated session"
     },
     {
       "file": "actual/dolphin.png",
       "title": "Dolphin 文件管理器",
-      "version": "1.1.0-rc.2",
+      "version": "1.1.0-rc.3",
       "pixels": [
         3120,
         2080
       ],
       "scale": 1.75,
       "renderer": "Qt Quick RHI / Mesa software OpenGL",
-      "run": "rc2-rhi",
-      "sha256": "f51e1e5d0449a60c074b25d5e4fa316208945d6fe968fd108b4cda6921b29575",
+      "run": "rc3-rhi",
+      "sha256": "56070e9bce1e78aabd8e42f38f760260d95d729072b9a3db482125e2b86f8643",
       "kind": "native KDE screenshot in isolated session"
     },
     {
       "file": "actual/terminal.png",
       "title": "Konsole 浅色终端",
-      "version": "1.1.0-rc.2",
+      "version": "1.1.0-rc.3",
       "pixels": [
         3120,
         2080
       ],
       "scale": 1.75,
       "renderer": "Qt Quick RHI / Mesa software OpenGL",
-      "run": "rc2-rhi",
-      "sha256": "98c62d1b837cdcf4b91822ca096dada4fd6f20b9e0250ca0fee40097cb58724b",
+      "run": "rc3-rhi",
+      "sha256": "5c51689c51a0fd372dca45c27d57376022cd36e88f7f0d251647c87101f6527e",
       "kind": "native KDE screenshot in isolated session"
     },
     {
       "file": "actual/notification.png",
       "title": "原生通知",
-      "version": "1.1.0-rc.2",
+      "version": "1.1.0-rc.3",
       "pixels": [
         3120,
         2080
       ],
       "scale": 1.75,
       "renderer": "Qt Quick RHI / Mesa software OpenGL",
-      "run": "rc2-rhi",
-      "sha256": "f8dea806a56fa1cfb62d9e58d22fa25887253df268ceeb7c02a1893e2e7ef0a3",
+      "run": "rc3-rhi",
+      "sha256": "ca9bd4d2ff4fc57fe3677333a88228248a5aec232a1633feb90bcdfc7b934668",
       "kind": "native KDE screenshot in isolated session"
     },
     {
       "file": "actual/lockscreen.png",
       "title": "原生锁屏 · 待机",
-      "version": "1.1.0-rc.2",
+      "version": "1.1.0-rc.3",
       "pixels": [
         3120,
         2080
       ],
       "scale": 1.75,
       "renderer": "Qt Quick RHI / Mesa software OpenGL",
-      "run": "rc2-rhi",
-      "sha256": "39ccfa08beeae5669fd019be2267a2d982dc506a503235cb9bb6dff26a52857d",
+      "run": "rc3-rhi",
+      "sha256": "4eff04b7709d0fffe6c7e5244901489f77faf761c13deeb09c4ad6a23e255c2c",
       "kind": "native KDE screenshot in isolated session"
     },
     {
       "file": "actual/lockscreen-unlock.png",
       "title": "原生锁屏 · 密码输入",
-      "version": "1.1.0-rc.2",
+      "version": "1.1.0-rc.3",
       "pixels": [
         3120,
         2080
       ],
       "scale": 1.75,
       "renderer": "Qt Quick RHI / Mesa software OpenGL",
-      "run": "rc2-rhi",
-      "sha256": "dd93bff4cbaa41078de1656cdb928ddb84d44026d0a3ba19f4f565adef5f82b8",
+      "run": "rc3-rhi",
+      "sha256": "fa5ccba425485f14755efbcd056d0c51454970bbb2451357576d82baccac72ce",
       "kind": "native KDE screenshot in isolated session"
     },
     {
       "file": "actual/wide/desktop.png",
       "title": "桌面",
-      "version": "1.1.0-rc.2",
+      "version": "1.1.0-rc.3",
       "pixels": [
         1920,
         1080
       ],
       "scale": 1.0,
       "renderer": "Qt Quick software",
-      "run": "rc2-wide",
-      "sha256": "94748595e58549f76005b16620d969b6e2369fabc55955961e2f2cd3c8f6eac1",
+      "run": "rc3-wide",
+      "sha256": "acecc59b7aa258105ab6c615ed80b9aff5167a181b43108c99f1fab750e94120",
       "kind": "native KDE screenshot in isolated session"
     },
     {
       "file": "actual/wide/lockscreen.png",
       "title": "原生锁屏 · 待机",
-      "version": "1.1.0-rc.2",
+      "version": "1.1.0-rc.3",
       "pixels": [
         1920,
         1080
       ],
       "scale": 1.0,
       "renderer": "Qt Quick software",
-      "run": "rc2-wide",
-      "sha256": "4718dd16651e4167f53a1ddc8d3cf30c333a1f8ee6dee5b30bf6ca3313f3d254",
+      "run": "rc3-wide",
+      "sha256": "cce93048ead77598d608c1a3ac5e8929470c54226f451c8e6f6a66ea616dc54f",
       "kind": "native KDE screenshot in isolated session"
     },
     {
       "file": "actual/wide/lockscreen-unlock.png",
       "title": "原生锁屏 · 密码输入",
-      "version": "1.1.0-rc.2",
+      "version": "1.1.0-rc.3",
       "pixels": [
         1920,
         1080
       ],
       "scale": 1.0,
       "renderer": "Qt Quick software",
-      "run": "rc2-wide",
-      "sha256": "a8d940ec659ffcab1217d90ede2164ce0dece86d10c2c041ceb35f20151b954d",
+      "run": "rc3-wide",
+      "sha256": "02aa1f4b4ff4995284e102cb6f8d12e387d35de3d08c38a9c1a55c07e6c7ead8",
       "kind": "native KDE screenshot in isolated session"
     }
   ]

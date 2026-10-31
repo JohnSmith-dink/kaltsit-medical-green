@@ -319,6 +319,17 @@ class ComponentTests(unittest.TestCase):
         self.assertEqual(self.controller.status()["components"]["lockscreen"]["status"], "skipped")
         self.assertEqual(self.controller.restore()["result"], "restored")
 
+    def test_missing_generated_lockscreen_fails_without_changes(self):
+        (self.share / "plasma/shells/org.kde.plasma.desktop/contents/lockscreen/KaltsitWallpaperFader.qml").unlink()
+        before = self.tree()
+        with self.assertRaisesRegex(theme.ThemeError, "完整 Nix"):
+            self.controller.apply()
+        self.assertEqual(self.tree(), before)
+        self.assertEqual(self.process.calls, [])
+        self.assertFalse(self.controller.state_dir.exists())
+        self.controller.apply(skip=("lockscreen",))
+        self.assertEqual(self.controller.restore()["result"], "restored")
+
     def test_custom_wallpaper_option_idempotence_and_change_guard(self):
         from PIL import Image
         first = self.home / "first.png"

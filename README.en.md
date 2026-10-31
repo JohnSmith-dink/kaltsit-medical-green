@@ -1,6 +1,6 @@
 # Kal'tsit · Medical Green
 
-**1.1.0-rc.2 — a restrained light desktop theme for NixOS and KDE Plasma 6 / Wayland.**
+**1.1.0-rc.3 — a restrained light desktop theme for NixOS and KDE Plasma 6 / Wayland.**
 
 [中文说明](README.md)
 
@@ -9,17 +9,19 @@ Warm white `#F4F7F2`, white panels, dark green-grey text `#25352D`, and teal acc
 elements use Breeze. Native application controls and the light terminal palette
 remain intact. Installation does not activate the theme.
 
-rc.2 addresses the excessively bright password-entry background. The lock screen
-uses white text, deep-green shading, and a thin green backdrop with top and
-bottom gradients. The desktop keeps its light palette. RC.2 has passed its
-isolated RHI session; the remaining checks and physical-screen acceptance are
-pending. See [release readiness](docs/RELEASE-READINESS.md).
+rc.3 removes lock-screen brightness adjustments at the user's request. All
+wallpaper overlays are removed, and this theme's password view disables the
+brightness, contrast, and saturation transforms. The original JPEG bytes and
+native blur, authentication, input, and focus behavior are retained. Lock-screen
+controls use dark text on light backgrounds. RC.3 builds and isolated regression
+checks passed; deployment and user confirmation on the physical screen are pending.
+See [release readiness](docs/RELEASE-READINESS.md).
 
 ![Dolphin in a separate Plasma session, 3120×2080 at 175%](previews/actual/dolphin.png)
 
 This is a real application capture from an isolated local Plasma session.
-The preview manifest identifies each capture's version and renderer; rc.2's
-seven main RHI captures have been refreshed, with supplementary checks ongoing.
+All ten rc.3 preview images have been recaptured. The preview manifest identifies
+each capture's version and renderer.
 See the [preview notes](previews/README.md) for
 desktop, launcher, terminal, notification, and lock-screen test captures.
 
@@ -36,6 +38,11 @@ the artwork has separate rights; see [CREDITS.md](CREDITS.md). If Home Manager
 already installs the package, update that source instead of installing a second
 copy. Install the assets before applying: a running Plasma process must be able
 to discover them through its user or system data directories.
+
+RC.3 installs a complete Plasma shell resource layer that participates in shell
+package discovery. Build it with the same `pkgs` as the system and rebuild it
+when upgrading Plasma: a package pinned to an old flake may shadow the new
+system shell. The Home Manager module uses the caller's `pkgs` by default.
 
 ```sh
 kaltsit-theme apply --dry-run
@@ -108,7 +115,7 @@ Ghostty configuration. Use `--skip ghostty` when managing that choice yourself.
 ## Preservation and recovery
 
 The controller preserves panel placement, pinned applications, desktop icons,
-fonts, scaling, cursor size, shell, and shortcuts. It uses KDE configuration tools
+fonts, scaling, cursor size, command-line shell, and shortcuts. It uses KDE configuration tools
 and restores only affected settings for applied components. Later unrelated edits
 remain intact; conflicting edits to the same keys are reported and kept with the
 backup for resolution. Failed application attempts roll back their changes.
@@ -129,20 +136,29 @@ high-resolution artwork. Cursor source: pinned
 original artist: [一球咸鱼](https://space.bilibili.com/3585839);
 [artist's video](https://b23.tv/zHvHCpF).
 
-Original code, Plasma SVGs, and folder icons use MIT. Character artwork and
-cursor artwork are excluded from that license; the existing permission wording
-in [CREDITS.md](CREDITS.md) and the cursor notices governs those assets.
+Original code, Plasma SVGs, and folder icons use MIT. Generated QML derived from
+KDE keeps its upstream GPL-2.0-or-later license and is outside the MIT scope.
+Character and cursor artwork also have separate rights; see
+[CREDITS.md](CREDITS.md) and the cursor notices.
 SDDM, Plymouth, boot interfaces, and browser-specific skins are outside scope.
 
-## Lock-screen brightness correction in rc.2
+## Lock-screen rendering and compatibility in rc.3
 
-Plasma 6.6 brightens the password-entry background with a light Complementary
-palette. That made this wallpaper appear almost white on the physical screen.
-RC.2 selects the native dark Complementary palette so the password view dims
-instead. White text and deep-green backdrops support readability; the other
-desktop color groups, original JPEG, layout, and native authentication components
-remain intact. The 3120×2080 / 175% RHI session, including restore and rollback,
-has passed. Wide-screen software rendering passed; physical-screen acceptance is recorded separately.
+RC.1 was too bright, and the user found rc.2's dimming and overlays too dark.
+RC.3 removes all wallpaper overlays. When the Fader's `source.pluginName`
+identifies this theme's lock-screen plugin, its contrast, saturation, and
+intensity factors stay at 1. Native blur remains enabled; other wallpaper
+plugins retain KDE's original color transforms. The Complementary palette returns
+to dark text on light backgrounds to keep the clock and controls readable against
+the original image; wallpaper brightening remains disabled for this theme.
+
+This version adapts Plasma shell QML at build time. Nix generates local QML
+changes from matching KDE dependencies and copies unchanged upstream files
+byte-for-byte into the build output. The repository does not maintain an
+authentication source fork. Exact source matches guard the generated changes; an unexpected
+upstream structure stops the build for compatibility review. See the
+[validation notes](docs/VALIDATION.md) for details. The generated upstream-derived
+QML retains GPL-2.0-or-later notices.
 
 ## Validation
 
@@ -151,19 +167,29 @@ nix develop --command python3 -m unittest discover -s tests -v
 nix flake check --no-write-lock-file path:.
 ```
 
+RC.3's 69 tests, offline Nix build, and `flake check` passed. Resource preflight
+checks confirm that missing resources cause no configuration writes, and applying
+and restoring with the lock-screen component explicitly skipped also passed.
+Both full isolated regression suites passed: RHI at 3120×2080 / 175%, and the
+software backend at 1920×1080 / 100%. Ten preview images were recaptured.
+Deployment and user confirmation on the physical screen remain pending.
 All 68 unit tests passed for rc.2. The palette check
 covers every foreground role against normal and alternate backgrounds in each
-KDE color group. RC.1's 128 pairs had a minimum contrast of approximately 4.56:1;
-the updated lock-screen palette awaits the same check. The unchanged normal
+KDE color group. RC.2's 128 pairs had a minimum contrast of approximately 4.56:1.
+The unchanged normal
 terminal ANSI colors have a minimum contrast of 5.58:1, and faint colors 4.51:1.
 
 RC.1 passed isolated native KDE checks for apply, repeat apply, restore, failure
 rollback, and migration from v1.0 / dev.2. It was then installed as NixOS
 generation 52. Real locking, unlocking, and everyday cursor clicks worked, but
 the user reported an almost-white password background, so visual acceptance
-failed. RC.2 has not yet been deployed or accepted on the physical screen.
+failed. RC.2 passed isolated RHI and software-rendering checks, restore and
+rollback, and the local Nix build; the user then found the result too dark and
+requested removal of brightness adjustments. These historical results do not
+replace rc.3's remaining physical-screen confirmation.
 See [validation notes](docs/VALIDATION.md) for results and component boundaries.
 
 The CI workflow is included with third-party Actions pinned to full commits.
-The dev.2 and rc.1 runs passed. The rc.2 local build passed; hosted checks are tracked on the candidate branch; see the
+The dev.2 and rc.1 runs passed. The rc.2 and rc.3 local builds passed; rc.3 hosted
+checks will run after the branch is pushed. See the
 validation notes and repository Actions for version-specific results.

@@ -23,7 +23,7 @@ import time
 
 
 THEME = "org.xinyan.kaltsit.medicalgreen"
-VERSION = "1.1.0-rc.2"
+VERSION = "1.1.0-rc.3"
 SCHEME = "KaltsitMedicalGreen"
 LOCK_WALLPAPER = "org.xinyan.kaltsit.medicalgreen.lock"
 CURSOR = "Kaltsit-Sihengtu"
@@ -604,7 +604,13 @@ class Controller:
         if "lockscreen" in enabled:
             lock_plugin = self.share / "plasma/wallpapers" / LOCK_WALLPAPER
             if not all((lock_plugin / name).is_file() for name in ("metadata.json", "contents/ui/main.qml", "contents/config/main.xml")):
-                raise ThemeError(f"缺少锁屏阅读衬底资源，未修改配置：{lock_plugin}")
+                raise ThemeError(f"缺少锁屏壁纸资源，未修改配置：{lock_plugin}")
+            lock_shell = self.share / "plasma/shells/org.kde.plasma.desktop"
+            if not all((lock_shell / name).is_file() for name in (
+                "metadata.json", "contents/lockscreen/LockScreen.qml",
+                "contents/lockscreen/LockScreenUi.qml", "contents/lockscreen/KaltsitWallpaperFader.qml",
+            )):
+                raise ThemeError("缺少锁屏原色适配资源，请使用完整 Nix 构建包；未修改配置")
         before = self.snapshot(enabled)
         blocks = self.terminal_blocks(before, enabled)
         missing = self.backend.missing_commands(self.required_commands(enabled))

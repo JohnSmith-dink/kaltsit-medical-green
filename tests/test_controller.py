@@ -103,6 +103,11 @@ class ControllerTests(unittest.TestCase):
         shutil.copyfile(Path(__file__).resolve().parents[1] / "share/color-schemes/KaltsitMedicalGreen.colors", scheme)
         shutil.copytree(Path(__file__).resolve().parents[1] / "share/plasma/wallpapers" / theme.LOCK_WALLPAPER,
                         self.share / "plasma/wallpapers" / theme.LOCK_WALLPAPER)
+        for name in ("metadata.json", "contents/lockscreen/LockScreen.qml",
+                     "contents/lockscreen/LockScreenUi.qml", "contents/lockscreen/KaltsitWallpaperFader.qml"):
+            resource = self.share / "plasma/shells/org.kde.plasma.desktop" / name
+            resource.parent.mkdir(parents=True, exist_ok=True)
+            resource.write_text("test-only resource; no QML execution")
         self.env = {"HOME": str(self.home), "PATH": "/not-used"}
         self.process = FakeProcess(self.config)
         self.backend = theme.Backend(self.env, runner=self.process)

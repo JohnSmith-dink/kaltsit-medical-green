@@ -4,11 +4,11 @@
         "Id": "org.xinyan.kaltsit.medicalgreen.lock",
         "Name": "Medical Green · Lock Screen",
         "Name[zh_CN]": "医疗白绿 · 锁屏",
-        "Description": "A light footer keeps the native lock-screen controls readable.",
-        "Description[zh_CN]": "暖白渐淡衬底，让原生锁屏底部控件保持清楚。",
+        "Description": "Soft green shading keeps the native clock and controls readable without brightening the password view.",
+        "Description[zh_CN]": "柔和深绿衬底，保持原生时钟与控件清晰，避免密码页过亮。",
         "Icon": "preferences-desktop-wallpaper",
         "Authors": [{ "Name": "Xinyan" }],
         "License": "MIT",
-        "Version": "1.1.0-rc.1"
+        "Version": "1.1.0-rc.2"
     }
 }

@@ -6,7 +6,7 @@
         "Description": "Quiet white surfaces, fine green-grey borders and soft shadows. Breeze fallback.",
         "Authors": [{"Name": "Xinyan"}],
         "License": "MIT",
-        "Version": "1.1.0-rc.1",
+        "Version": "1.1.0-rc.2",
         "EnabledByDefault": false
     },
     "X-Plasma-API": "5.0"

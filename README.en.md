@@ -1,6 +1,6 @@
 # Kal'tsit · Medical Green
 
-**1.1.0-rc.1 — a restrained light theme for NixOS and KDE Plasma 6 / Wayland.**
+**1.1.0-rc.2 — a restrained light desktop theme for NixOS and KDE Plasma 6 / Wayland.**
 
 [中文说明](README.md)
 
@@ -9,17 +9,19 @@ Warm white `#F4F7F2`, white panels, dark green-grey text `#25352D`, and teal acc
 elements use Breeze. Native application controls and the light terminal palette
 remain intact. Installation does not activate the theme.
 
-rc.1 refines the native lock screen with a dark green-grey clock, warm-white
-controls, and a fading footer backdrop for keyboard and battery labels. Panel
-and popup borders are clearer. See [release readiness](docs/RELEASE-READINESS.md).
+rc.2 addresses the excessively bright password-entry background. The lock screen
+uses white text, deep-green shading, and a thin green backdrop with top and
+bottom gradients. The desktop keeps its light palette. RC.2 has passed its
+isolated RHI session; the remaining checks and physical-screen acceptance are
+pending. See [release readiness](docs/RELEASE-READINESS.md).
 
 ![Dolphin in a separate Plasma session, 3120×2080 at 175%](previews/actual/dolphin.png)
 
-This is a real application capture from **rc.1 in an isolated local Plasma
-session**, not a design mockup or a daily-desktop acceptance screenshot. See the
-[preview notes](previews/README.md) for
-desktop, launcher, terminal, notification, and lock-screen test captures. Physical
-screen appearance and cursor click locations still need user confirmation.
+This is a real application capture from an isolated local Plasma session.
+The preview manifest identifies each capture's version and renderer; rc.2's
+seven main RHI captures have been refreshed, with supplementary checks ongoing.
+See the [preview notes](previews/README.md) for
+desktop, launcher, terminal, notification, and lock-screen test captures.
 
 ## Build and install
 
@@ -132,12 +134,15 @@ cursor artwork are excluded from that license; the existing permission wording
 in [CREDITS.md](CREDITS.md) and the cursor notices governs those assets.
 SDDM, Plymouth, boot interfaces, and browser-specific skins are outside scope.
 
-## Visual refinement in rc.1
+## Lock-screen brightness correction in rc.2
 
-The native clock uses dark green-grey text over the light wallpaper. The native
-unlock controls use warm white, with clearer panel and popup borders and softer
-separation from the wallpaper. The original artwork, layout, and authentication
-components are retained. See [release readiness](docs/RELEASE-READINESS.md).
+Plasma 6.6 brightens the password-entry background with a light Complementary
+palette. That made this wallpaper appear almost white on the physical screen.
+RC.2 selects the native dark Complementary palette so the password view dims
+instead. White text and deep-green backdrops support readability; the other
+desktop color groups, original JPEG, layout, and native authentication components
+remain intact. The 3120×2080 / 175% RHI session, including restore and rollback,
+has passed. Wide-screen software rendering passed; physical-screen acceptance is recorded separately.
 
 ## Validation
 
@@ -146,13 +151,19 @@ nix develop --command python3 -m unittest discover -s tests -v
 nix flake check --no-write-lock-file path:.
 ```
 
-All 68 unit tests pass. The palette check covers every foreground role against both normal and alternate
-backgrounds in each KDE color group: 128 pairs, with a minimum of approximately 4.56:1.
-Normal terminal ANSI colors have a minimum contrast of 5.58:1, and faint colors
-4.51:1. RC.1 has isolated native KDE checks for apply, repeat apply, restore,
-failure rollback, and migration from v1.0. All seven native preview images were
-recaptured for rc.1, including the native unlock prompt. See [validation notes](docs/VALIDATION.md) for the complete
-results, component boundaries, and pending physical-screen acceptance.
+All 68 unit tests passed for rc.2. The palette check
+covers every foreground role against normal and alternate backgrounds in each
+KDE color group. RC.1's 128 pairs had a minimum contrast of approximately 4.56:1;
+the updated lock-screen palette awaits the same check. The unchanged normal
+terminal ANSI colors have a minimum contrast of 5.58:1, and faint colors 4.51:1.
+
+RC.1 passed isolated native KDE checks for apply, repeat apply, restore, failure
+rollback, and migration from v1.0 / dev.2. It was then installed as NixOS
+generation 52. Real locking, unlocking, and everyday cursor clicks worked, but
+the user reported an almost-white password background, so visual acceptance
+failed. RC.2 has not yet been deployed or accepted on the physical screen.
+See [validation notes](docs/VALIDATION.md) for results and component boundaries.
 
 The CI workflow is included with third-party Actions pinned to full commits.
-The public dev.2 run passed. See the validation notes for rc.1 local results and repository Actions for current hosted checks.
+The dev.2 and rc.1 runs passed. The rc.2 local build passed; hosted checks are tracked on the candidate branch; see the
+validation notes and repository Actions for version-specific results.

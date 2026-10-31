@@ -1,11 +1,12 @@
 # 凯尔希 · 医疗白绿
 
-**Kal'tsit Medical Green 1.1.0-rc.1 · 克制日常**
+**Kal'tsit Medical Green 1.1.0-rc.2 · 克制日常**
 
 [English](README.en.md)
 
-rc.1 优先精修锁屏与桌面：深灰绿待机时钟、暖白解锁控件、锁屏底部渐淡衬底，以及更清楚的面板与弹窗边界。
-保留第 707 帧原图、原生 KDE 锁屏组件及既有布局。[正式版准备记录](docs/RELEASE-READINESS.md)。
+rc.2 修复密码输入页过亮的问题：锁屏改用白字与深绿背景，并以薄衬底和顶部、底部渐变保护文字可读性。
+桌面继续使用浅色白绿配色；保留第 707 帧原图、原生 KDE 认证组件及既有布局。
+rc.2 已通过原生 RHI 与软件后端隔离会话、68 项测试及 Nix 构建；实屏验收另行记录。[正式版准备记录](docs/RELEASE-READINESS.md)。
 
 适用于 NixOS / KDE Plasma 6 的浅色主题：暖白 `#F4F7F2`、白色面板、
 深灰绿正文 `#25352D`、青绿强调色 `#2E6B57`。轻边框与柔和阴影覆盖面板和弹窗，
@@ -14,7 +15,7 @@ rc.1 优先精修锁屏与桌面：深灰绿待机时钟、暖白解锁控件、
 
 ![Dolphin 实际渲染：独立 Plasma 测试会话，3120×2080，175%](previews/actual/dolphin.png)
 
-上图来自 rc.1 在本机独立 KWin/Plasma 会话中的真实应用，并非概念样图。
+上图来自本机独立 KWin/Plasma 会话中的真实应用。截图版本与渲染后端以预览清单为准；rc.2 已重拍七张 RHI 主组截图与三张宽屏补充图。
 完整的桌面、菜单、Dolphin、终端、通知与锁屏画面见 [预览说明](previews/README.md)
 或本地打开 [预览画廊](previews/index.html)。物理屏幕上的最终观感仍需用户确认。
 
@@ -153,11 +154,12 @@ nix develop --command python3 -m unittest discover -s tests -v
 nix flake check --no-write-lock-file path:.
 ```
 
-68 项测试通过，覆盖原有检查以及组件跳过、只读预演、恢复格式兼容、自选壁纸、样式恢复、文件夹尺寸与指针完整性。
-rc.1 在真实独立 KDE 会话中验证了应用、重复应用、恢复、失败回滚和从 v1.0 恢复后升级；
-完整检查结果及组件边界见 [验收记录](docs/VALIDATION.md)。七张实际预览已在 rc.1 重拍，新增原生解锁提示页。
+rc.2 的 68 项测试已通过，覆盖组件跳过、只读预演、恢复格式兼容、自选壁纸、样式恢复、文件夹尺寸与指针完整性。
+rc.1 已完成独立 KDE 会话的应用、重复应用、恢复、失败回滚和从 v1.0 / dev.2 恢复后升级检查，
+并实装至 NixOS generation 52。真实锁定/解锁与日常鼠标点击正常，但用户反馈密码页几乎全白，观感验收未通过。
+rc.2 已通过 3120×2080 / 175% 的原生 RHI 会话及恢复、回滚检查，1920×1080 软件后端、完整测试集与 Nix 构建也已通过，实屏验收另行记录；完整结果及组件边界见 [验收记录](docs/VALIDATION.md)。
 既有 libXcursor 检查成功加载 85 组指针/尺寸；本轮资源未变，重新核对哈希、动画与热点。
-正文对比度约 11.95:1；KDE 全部前景色在本组常规及交替背景上最低 4.56:1。
+现有桌面正文对比度约 11.95:1；rc.2 的 KDE 全部前景色在本组常规及交替背景上最低 4.56:1。
 ANSI 普通/Intense 最低 5.58:1，Faint 最低 4.51:1。
 检查范围、运行方式和待确认事项见 [验收记录](docs/VALIDATION.md)。
-dev.2 的 [GitHub CI](https://github.com/JohnSmith-dink/kaltsit-medical-green/actions/runs/41236559497) 已通过。rc.1 的本地构建与复测见验收记录，最新托管检查见仓库 Actions。
+dev.2 与 rc.1 的 GitHub CI 已通过；rc.2 本地构建通过，托管检查见候选分支 Actions。版本对应的结果见验收记录与仓库 Actions。

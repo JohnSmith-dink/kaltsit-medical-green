@@ -23,7 +23,7 @@ import time
 
 
 THEME = "org.xinyan.kaltsit.medicalgreen"
-VERSION = "1.1.0-rc.1"
+VERSION = "1.1.0-rc.2"
 SCHEME = "KaltsitMedicalGreen"
 LOCK_WALLPAPER = "org.xinyan.kaltsit.medicalgreen.lock"
 CURSOR = "Kaltsit-Sihengtu"

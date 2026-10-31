@@ -11,7 +11,7 @@ ColorScheme=KaltsitMedicalGreen
 Theme=KaltsitMedicalGreen
 
 [plasmarc][Theme]
-name=default
+name=KaltsitMedicalGreen
 
 [kcminputrc][Mouse]
 cursorTheme=Kaltsit-Sihengtu

@@ -1,9 +1,11 @@
 [Icon Theme]
 Name=凯尔希·思衡托
-Comment=KDE cursor theme converted from ANI animations
+Comment=Animated pixel-art cursors, 24/32/48/64/96px; original artwork by 一球咸鱼
 Inherits=breeze_cursors
 Directories=cursors
 
 [cursors]
 Size=32
-Type=Fixed
+MinSize=24
+MaxSize=96
+Type=Scalable

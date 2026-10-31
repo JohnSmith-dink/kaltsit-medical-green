@@ -1,0 +1,8 @@
+<!-- SPDX-FileCopyrightText: 2026 Xinyan; SPDX-License-Identifier: MIT -->
+
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+<path fill="#487D66" d="M1 4Q1 3 2 3H7L9 5H15V13H1Z"/>
+<path fill="#2E6B57" d="M1 6Q1 5 2 5H14Q15 5 15 6V13Q15 14 14 14H2Q1 14 1 13Z"/>
+<path stroke="#215342" stroke-width="1" d="M2 13.5H14"/>
+<g transform="translate(5.0,6.5) scale(1.0)" fill="none" stroke="#F4F7F2" stroke-width="1.000000" stroke-linecap="round" stroke-linejoin="round"><path d="m1.5 .5 4 2.5-4 2.5z"/></g>
+</svg>

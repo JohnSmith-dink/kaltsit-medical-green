@@ -1,0 +1,71 @@
+{
+  "version": "1.1.0-dev.1",
+  "environment": "NixOS 26.05, Plasma 6.6.6, virtual Wayland output, software rendering",
+  "scale": 1.75,
+  "physical_desktop_acceptance": false,
+  "concept_images": [
+    "kaltsit-medical-green.html"
+  ],
+  "screenshots": [
+    {
+      "file": "actual/desktop.png",
+      "title": "桌面",
+      "pixels": [
+        3120,
+        2080
+      ],
+      "sha256": "3e41090aa03a76a32fcb38dc98ab05206108f8a2484a64ada91b52960917315f",
+      "kind": "native KDE screenshot in isolated session"
+    },
+    {
+      "file": "actual/launcher.png",
+      "title": "启动菜单",
+      "pixels": [
+        3120,
+        2080
+      ],
+      "sha256": "ee0a826d8d29a4ad9b95e7986aabb37de8d493b516ab865820907fa77c17237d",
+      "kind": "native KDE screenshot in isolated session"
+    },
+    {
+      "file": "actual/dolphin.png",
+      "title": "Dolphin 文件管理器",
+      "pixels": [
+        3120,
+        2080
+      ],
+      "sha256": "274c8a2c0711905486ec79dda36d7fceaf9da67554cd4dbfa6d5c759cc8d8290",
+      "kind": "native KDE screenshot in isolated session"
+    },
+    {
+      "file": "actual/terminal.png",
+      "title": "Konsole 浅色终端",
+      "pixels": [
+        3120,
+        2080
+      ],
+      "sha256": "924dfa885677620c7d9f3b7272bd0846e6d95e8eb61c691b1d3e55bee6691daf",
+      "kind": "native KDE screenshot in isolated session"
+    },
+    {
+      "file": "actual/notification.png",
+      "title": "原生通知",
+      "pixels": [
+        3120,
+        2080
+      ],
+      "sha256": "f9feb0a8b668eac2c10ba4cd928d0fc4dbb19af1b129c021e7a745361b9c38f5",
+      "kind": "native KDE screenshot in isolated session"
+    },
+    {
+      "file": "actual/lockscreen.png",
+      "title": "原生锁屏（测试模式，待机画面）",
+      "pixels": [
+        3120,
+        2080
+      ],
+      "sha256": "beaf33e9169529259a2da0f108db156fc9cf2f63ccfb472b88c94924888411fe",
+      "kind": "native KDE screenshot in isolated session"
+    }
+  ]
+}

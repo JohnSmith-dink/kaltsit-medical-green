@@ -2,8 +2,16 @@
 
 stdenvNoCC.mkDerivation {
   pname = "kaltsit-theme";
-  version = "1.0.0";
-  src = lib.cleanSource ./.;
+  version = "1.1.0-dev.1";
+  src = lib.cleanSourceWith {
+    src = ./.;
+    filter = path: type:
+      let name = baseNameOf path;
+      in lib.cleanSourceFilter path type
+        && !(builtins.elem name [ "__pycache__" "dist" "build" "result" ])
+        && !(lib.hasPrefix "result-" name)
+        && !(lib.hasSuffix ".pyc" name);
+  };
   nativeBuildInputs = [ makeWrapper ];
   dontBuild = true;
   doCheck = true;
@@ -18,7 +26,7 @@ stdenvNoCC.mkDerivation {
     runHook preInstall
     mkdir -p "$out/share" "$out/libexec" "$out/bin" "$out/share/doc/kaltsit-theme"
     cp -a share/. "$out/share/"
-    cp -a docs/. "$out/share/doc/kaltsit-theme/"
+    cp -a docs previews "$out/share/doc/kaltsit-theme/"
     cp -a LICENSES "$out/share/doc/kaltsit-theme/"
     cp README.md LICENSE CREDITS.md CHANGELOG.md "$out/share/doc/kaltsit-theme/"
     cp tools/kaltsit_theme.py "$out/libexec/kaltsit_theme.py"

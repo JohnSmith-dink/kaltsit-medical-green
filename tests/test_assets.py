@@ -9,6 +9,7 @@ import configparser
 import hashlib
 import json
 import os
+import struct
 from pathlib import Path
 import unittest
 import xml.etree.ElementTree as ET
@@ -97,7 +98,7 @@ class ThemeAssetTests(unittest.TestCase):
             ("kdeglobals][KDE", "widgetStyle"): "Breeze",
             ("kdeglobals][General", "ColorScheme"): THEME_NAME,
             ("kdeglobals][Icons", "Theme"): THEME_NAME,
-            ("plasmarc][Theme", "name"): "default",
+            ("plasmarc][Theme", "name"): THEME_NAME,
             ("kcminputrc][Mouse", "cursorTheme"): "Kaltsit-Sihengtu",
             ("kwinrc][org.kde.kdecoration2", "library"): "org.kde.breeze",
             ("kwinrc][org.kde.kdecoration2", "theme"): "Breeze",
@@ -139,7 +140,7 @@ class ThemeAssetTests(unittest.TestCase):
         for directory in directories:
             self.assertTrue((theme_root / directory).is_dir())
             self.assertEqual(index[directory]["Context"], "Places")
-            self.assertEqual(index[directory]["Type"], "Scalable")
+            self.assertEqual(index[directory]["Type"], "Scalable" if directory.endswith("scalable") else "Fixed")
         svg_files = list(theme_root.rglob("*.svg"))
         self.assertGreaterEqual(len(svg_files), 15)
         for path in svg_files:
@@ -153,6 +154,80 @@ class ThemeAssetTests(unittest.TestCase):
                     self.assertTrue(path.exists(), "Broken icon/cursor symlink")
                     self.assertFalse(Path(os.readlink(path)).is_absolute())
                     self.assertTrue(path.resolve().is_relative_to(icon_root.resolve()))
+
+    def test_small_folder_sizes_have_complete_distinct_geometry(self):
+        root = SHARE / "icons" / THEME_NAME / "places"
+        expected = {p.name for p in (root / "scalable").glob("*.svg")}
+        for size in (16, 22, 32):
+            actual = {p.name for p in (root / str(size)).glob("*.svg")}
+            self.assertEqual(actual, expected)
+            for name in actual:
+                svg = ET.parse(root / str(size) / name).getroot()
+                self.assertEqual(svg.get("viewBox"), f"0 0 {size} {size}")
+                self.assertEqual(svg.get("width"), str(size))
+                self.assertNotEqual((root / str(size) / name).read_bytes(), (root / "scalable" / name).read_bytes())
+
+    def test_plasma_style_frames_and_fallback(self):
+        root = SHARE / "plasma/desktoptheme" / THEME_NAME
+        metadata = json.loads((root / "metadata.json").read_text())
+        self.assertEqual(metadata["KPlugin"]["Id"], THEME_NAME)
+        self.assertEqual(read_ini(root / "plasmarc")["Settings"]["FallbackTheme"], "default")
+        pieces = {"center", "top", "bottom", "left", "right", "topleft", "topright", "bottomleft", "bottomright"}
+        for name in ("widgets/panel-background", "dialogs/background", "widgets/background", "widgets/tooltip"):
+            svg = ET.parse(root / (name + ".svg")).getroot()
+            identifiers = [node.get("id") for node in svg.iter() if node.get("id")]
+            self.assertEqual(len(identifiers), len(set(identifiers)))
+            self.assertTrue(pieces <= set(identifiers))
+            self.assertTrue({"mask-"+p for p in pieces} <= set(identifiers))
+            self.assertTrue({"shadow-"+p for p in pieces - {"center"}} <= set(identifiers))
+            self.assertFalse(any(node.tag.endswith("filter") for node in svg.iter()))
+        # Native interaction controls deliberately continue to come from Breeze.
+        self.assertFalse((root / "widgets/button.svg").exists())
+
+    def test_pinned_cursor_files_and_aliases(self):
+        manifest = json.loads((ROOT / "docs/cursor-source.json").read_text())
+        self.assertEqual(manifest["revision"], "7ef139a6210fd8eb03d0296b624d71eaa3120589")
+        self.assertEqual(manifest["installed_id"], "Kaltsit-Sihengtu")
+        root = SHARE / "icons/Kaltsit-Sihengtu/cursors"
+        self.assertEqual({p.name for p in root.iterdir()}, set(manifest["files"]))
+        for name, record in manifest["files"].items():
+            with self.subTest(cursor=name):
+                path = root / name
+                if "symlink" in record:
+                    self.assertTrue(path.is_symlink())
+                    self.assertEqual(os.readlink(path), record["symlink"])
+                    self.assertTrue(path.resolve().is_relative_to(root.resolve()))
+                else:
+                    self.assertFalse(path.is_symlink())
+                    self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), record["sha256"])
+
+    def test_xcursor_sizes_frames_hotspots_and_delays_match_upstream(self):
+        root = SHARE / "icons/Kaltsit-Sihengtu"
+        report = json.loads((root / "build-report.json").read_text())
+        self.assertEqual(report["sizes"], [24, 32, 48, 64, 96])
+        for name, cursor in report["cursors"].items():
+            with self.subTest(cursor=name):
+                data = (root / "cursors" / name).read_bytes()
+                magic, header, version, count = struct.unpack_from("<4I", data)
+                self.assertEqual((magic, header, version), (0x72756358, 16, 0x10000))
+                self.assertEqual(count, len(cursor["images"]))
+                images = []
+                last_end = header + count*12
+                for i in range(count):
+                    kind, size, offset = struct.unpack_from("<3I", data, header+i*12)
+                    self.assertGreaterEqual(offset, last_end)
+                    chunk, image_kind, image_size, image_version, w, h, x, y, delay = struct.unpack_from("<9I", data, offset)
+                    self.assertEqual((chunk, kind, image_kind, image_size, image_version), (36, 0xFFFD0002, kind, size, 1))
+                    self.assertTrue(0 <= x < w and 0 <= y < h)
+                    last_end = offset + chunk + w*h*4
+                    self.assertLessEqual(last_end, len(data))
+                    images.append(dict(size=size, width=w, height=h, xhot=x, yhot=y, delay_ms=delay))
+                self.assertEqual(images, cursor["images"])
+                self.assertEqual({image["size"] for image in images}, {24, 32, 48, 64, 96})
+                for size in report["sizes"]:
+                    frames = [image for image in images if image["size"] == size]
+                    self.assertEqual(len(frames), cursor["frames_per_size"])
+                    self.assertEqual(sum(image["delay_ms"] for image in frames), cursor["duration_ms"])
 
     def test_wallpaper_frame_hash_and_dimensions(self):
         metadata_path = SHARE / "wallpapers/KaltsitMedicalGreen/metadata.json"

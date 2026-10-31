@@ -1,0 +1,297 @@
+{
+  "repository": "https://github.com/JohnSmith-dink/kaltsit-cursors",
+  "revision": "7ef139a6210fd8eb03d0296b624d71eaa3120589",
+  "source_directory": "theme/Kaltsit",
+  "installed_id": "Kaltsit-Sihengtu",
+  "files": {
+    "00008160000006810000408080010102": {
+      "symlink": "ns-resize"
+    },
+    "028006030e0e7ebffc7f7070c0600140": {
+      "symlink": "ew-resize"
+    },
+    "03b6e0fcb3499374a867c041f52298f0": {
+      "symlink": "not-allowed"
+    },
+    "08e8e1c95fe2fc01f976f1e063a24ccd": {
+      "symlink": "left_ptr_watch"
+    },
+    "14fef782d02440884392942c11205230": {
+      "symlink": "ew-resize"
+    },
+    "2870a09082c103050810ffdffffe0204": {
+      "symlink": "ns-resize"
+    },
+    "3ecb610c1bf2410f44200f48c40d3599": {
+      "symlink": "left_ptr_watch"
+    },
+    "4498f0e0c1937ffe01fd06f973665830": {
+      "symlink": "move"
+    },
+    "9081237383d90e509aa00f00170e968f": {
+      "symlink": "move"
+    },
+    "9d800788f1b08800ae810202380a0822": {
+      "symlink": "pointer"
+    },
+    "all-scroll": {
+      "symlink": "move"
+    },
+    "arrow": {
+      "symlink": "left_ptr"
+    },
+    "bottom_left_corner": {
+      "symlink": "nesw-resize"
+    },
+    "bottom_right_corner": {
+      "symlink": "nwse-resize"
+    },
+    "bottom_side": {
+      "symlink": "ns-resize"
+    },
+    "c7088f0f3e6c8088236ef8e1e3e70000": {
+      "symlink": "nwse-resize"
+    },
+    "center_ptr": {
+      "symlink": "up_arrow"
+    },
+    "col-resize": {
+      "symlink": "ew-resize"
+    },
+    "cross": {
+      "symlink": "crosshair"
+    },
+    "cross_reverse": {
+      "symlink": "crosshair"
+    },
+    "crossed_circle": {
+      "symlink": "not-allowed"
+    },
+    "crosshair": {
+      "sha256": "f40932891e2d8488e66eaab961f9aed88ea2e20cb88a1656f211867befdf4478"
+    },
+    "d9ce0ab605698f320427677b458ad60b": {
+      "symlink": "help"
+    },
+    "default": {
+      "symlink": "left_ptr"
+    },
+    "dnd-no-drop": {
+      "symlink": "not-allowed"
+    },
+    "e-resize": {
+      "symlink": "ew-resize"
+    },
+    "e29285e634086352946a0e7090d73106": {
+      "symlink": "pointer"
+    },
+    "ew-resize": {
+      "sha256": "d9268b2b0faa60e985ec1cfcfa7cea7d48cabaaf15968290e4b1766f05a6a015"
+    },
+    "fcf1c3c7cd4491d801f1e1c78f100000": {
+      "symlink": "nesw-resize"
+    },
+    "fleur": {
+      "symlink": "move"
+    },
+    "forbidden": {
+      "symlink": "not-allowed"
+    },
+    "h_double_arrow": {
+      "symlink": "ew-resize"
+    },
+    "half-busy": {
+      "symlink": "left_ptr_watch"
+    },
+    "hand": {
+      "symlink": "pointer"
+    },
+    "hand1": {
+      "symlink": "pointer"
+    },
+    "hand2": {
+      "symlink": "pointer"
+    },
+    "help": {
+      "sha256": "e414159f9904844bce33fbb41a7268f52675b6d944c819e914f1cebf896c0bb1"
+    },
+    "ibeam": {
+      "symlink": "xterm"
+    },
+    "left_ptr": {
+      "sha256": "80c3381a2cd781f71430591ebec9cae7fa2e40098ed118879c499ce3d2e87399"
+    },
+    "left_ptr_help": {
+      "symlink": "help"
+    },
+    "left_ptr_watch": {
+      "sha256": "8b6771cf7e84d09bca34c4d254388059d056732c162765848768c2d3e713b07d"
+    },
+    "left_side": {
+      "symlink": "ew-resize"
+    },
+    "move": {
+      "sha256": "72f506d02d61c70e653c2d548c2d982288631b526e7558d2793f8a0a946b23b0"
+    },
+    "n-resize": {
+      "symlink": "ns-resize"
+    },
+    "ne-resize": {
+      "symlink": "nesw-resize"
+    },
+    "nesw-resize": {
+      "sha256": "6202ebcc951730bf0b3e09f4bf1bef8935b1658819c95200f613c7f60a8c981b"
+    },
+    "no-drop": {
+      "symlink": "not-allowed"
+    },
+    "not-allowed": {
+      "sha256": "3cf145639779c3a73ce000c71f6fa463e5ec0e9b2cb50f32a956c540ff192b43"
+    },
+    "ns-resize": {
+      "sha256": "0bb4e65ed014d30bedbe6daca1d005a9c5c2ba2237a08216e9a8f619bd71fe2c"
+    },
+    "nw-resize": {
+      "symlink": "nwse-resize"
+    },
+    "nwse-resize": {
+      "sha256": "2136761c072bbad4de3333d2955de0d4ed282c7e1c8118dbeed0024138ecb959"
+    },
+    "pencil": {
+      "sha256": "c150d2122227fb427775e5ed005ee5d582ec61618e7c18fe0faa1c566a41b8ad"
+    },
+    "person": {
+      "sha256": "ba2a3fe79062dd244b476dd3cec085c55b9e0f8e6c8b0251fa125b244cf6a3e7"
+    },
+    "pin": {
+      "sha256": "b32b52127d78201f2a18aba90205616327131f1ec0f9d5a3b31a804101b5c5a2"
+    },
+    "pointer": {
+      "sha256": "5adbdda60c3e50005e9b2a3fecc2021a12b4186b7db8bc7037ad0dab9eb70d63"
+    },
+    "pointing_hand": {
+      "symlink": "pointer"
+    },
+    "progress": {
+      "symlink": "left_ptr_watch"
+    },
+    "question_arrow": {
+      "symlink": "help"
+    },
+    "right_side": {
+      "symlink": "ew-resize"
+    },
+    "row-resize": {
+      "symlink": "ns-resize"
+    },
+    "s-resize": {
+      "symlink": "ns-resize"
+    },
+    "sb_h_double_arrow": {
+      "symlink": "ew-resize"
+    },
+    "sb_v_double_arrow": {
+      "symlink": "ns-resize"
+    },
+    "se-resize": {
+      "symlink": "nwse-resize"
+    },
+    "size_all": {
+      "symlink": "move"
+    },
+    "size_bdiag": {
+      "symlink": "nesw-resize"
+    },
+    "size_fdiag": {
+      "symlink": "nwse-resize"
+    },
+    "size_hor": {
+      "symlink": "ew-resize"
+    },
+    "size_ver": {
+      "symlink": "ns-resize"
+    },
+    "split_h": {
+      "symlink": "ew-resize"
+    },
+    "split_v": {
+      "symlink": "ns-resize"
+    },
+    "sw-resize": {
+      "symlink": "nesw-resize"
+    },
+    "tcross": {
+      "symlink": "crosshair"
+    },
+    "text": {
+      "symlink": "xterm"
+    },
+    "top_left_arrow": {
+      "symlink": "left_ptr"
+    },
+    "top_left_corner": {
+      "symlink": "nwse-resize"
+    },
+    "top_right_corner": {
+      "symlink": "nesw-resize"
+    },
+    "top_side": {
+      "symlink": "ns-resize"
+    },
+    "up_arrow": {
+      "sha256": "fb27bb4ef209f35fc1fda3ce2ed0e4962874b6f31a878546578a5011acd2c72b"
+    },
+    "v_double_arrow": {
+      "symlink": "ns-resize"
+    },
+    "w-resize": {
+      "symlink": "ew-resize"
+    },
+    "wait": {
+      "symlink": "watch"
+    },
+    "watch": {
+      "sha256": "672dcd1343428412dbf9f4bb8814744e489918fe935ae2aefb4996259fc79ec2"
+    },
+    "whats_this": {
+      "symlink": "help"
+    },
+    "xterm": {
+      "sha256": "65e2827912b2885ccbcd5c2c7906a5b2ddc2961b594e8314b62c4058eb8817c0"
+    },
+    "dnd-move": {
+      "symlink": "move"
+    },
+    "h-resize": {
+      "symlink": "ew-resize"
+    },
+    "link": {
+      "symlink": "pointer"
+    },
+    "right_ptr": {
+      "symlink": "left_ptr"
+    },
+    "size_h_double_arrow": {
+      "symlink": "ew-resize"
+    },
+    "size_v_double_arrow": {
+      "symlink": "ns-resize"
+    },
+    "up-arrow": {
+      "symlink": "up_arrow"
+    },
+    "v-resize": {
+      "symlink": "ns-resize"
+    }
+  },
+  "compatibility_aliases": {
+    "dnd-move": "move",
+    "h-resize": "ew-resize",
+    "link": "pointer",
+    "right_ptr": "left_ptr",
+    "size_h_double_arrow": "ew-resize",
+    "size_v_double_arrow": "ns-resize",
+    "up-arrow": "up_arrow",
+    "v-resize": "ns-resize"
+  }
+}

@@ -2,7 +2,7 @@
 
 ## 原创主题代码
 
-医疗白绿配色、原创文件夹 SVG、KDE / Ghostty / Konsole 配置、Nix 包装、
+医疗白绿配色、原创 Plasma 背景与文件夹 SVG、KDE / Ghostty / Konsole 配置、Nix 包装、
 切换与恢复工具、测试和新写文档使用 MIT，见 [LICENSE](LICENSE)。
 KDE Breeze 控件、装饰与图标由系统依赖提供；本项目通过主题继承使用，
 没有把 Breeze 应用图标复制进自己的图标包。
@@ -17,8 +17,11 @@ KDE Breeze 控件、装饰与图标由系统依赖提供；本项目通过主题
   与 [许可范围](https://github.com/JohnSmith-dink/kaltsit-cursors/blob/main/LICENSE)：
   原作者于 2026-10-24 同意 Linux 适配及 nixpkgs 提交；维护者承诺署名、原作链接与非商业用途。
 
-本版包含已经在桌面验证的旧有本地 `Kaltsit-Sihengtu` 转换结果，保留原始动态帧与别名；
-独立项目的主题名为 `Kaltsit`，提供多尺寸构建。指针绘图与转换后图像保留原作者权利。
+本版固定使用提交 `7ef139a6210fd8eb03d0296b624d71eaa3120589` 的 `theme/Kaltsit/cursors`，
+17 个文件与 68 个别名保持原样；另保留 8 个旧版本兼容别名。
+保留原始动态帧、延时与热点，支持 24 / 32 / 48 / 64 / 96px；这些是上游对 32px 像素画的最近邻缩放。
+安装标识仍为 `Kaltsit-Sihengtu`，不改变既有恢复记录。上游许可、署名和构建报告随指针打包，
+固定来源及文件清单见 [cursor-source.json](docs/cursor-source.json)。指针绘图与转换后图像保留原作者权利。
 已有专项授权不等于通用 MIT / GPL / CC 许可，也不推定商业使用或再授权权利。
 新增作者视频链接用于署名与来源说明，不改变上述已有授权范围。
 

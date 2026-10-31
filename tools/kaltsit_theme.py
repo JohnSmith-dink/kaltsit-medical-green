@@ -21,6 +21,7 @@ import tempfile
 
 
 THEME = "org.xinyan.kaltsit.medicalgreen"
+VERSION = "1.1.0-dev.1"
 SCHEME = "KaltsitMedicalGreen"
 CURSOR = "Kaltsit-Sihengtu"
 BEGIN = "# BEGIN KALTSIT MEDICAL GREEN (managed by kaltsit-theme)"
@@ -317,7 +318,7 @@ class Controller:
         if text is None:
             return None
         state = json.loads(text)
-        if state.get("version") != 1 or state.get("theme") != THEME:
+        if state.get("version") not in (1, 2) or state.get("theme") != THEME:
             raise ThemeError(f"无法识别恢复记录：{self.state_file}")
         return state
 
@@ -371,11 +372,69 @@ class Controller:
                 atomic_text(self.config / name, edit_ini(after.get(name), updates))
         return self.backend.notify_configs(after, self.snapshot())
 
+    def cursor_overrides(self) -> list[dict]:
+        """Old per-user copies shadow Nix's identically named cursor theme.
+
+        Move only existing copies to the private transaction directory. This
+        does not link configuration files or replace unrelated icon themes.
+        """
+        result = []
+        target = self.share / "icons" / CURSOR
+        paths = dict.fromkeys((Path(self.env["HOME"]) / ".icons" / CURSOR,
+                               self.data / "icons" / CURSOR))
+        seen = set()
+        for path in paths:
+            identity = path.parent.resolve() / path.name
+            if identity in seen:
+                continue
+            seen.add(identity)
+            if not path.exists() and not path.is_symlink():
+                continue
+            if path.resolve() == target.resolve():
+                continue
+            if not target.is_dir():
+                raise ThemeError(f"缺少新指针资源：{target}")
+            if not path.is_dir() and not path.is_symlink():
+                raise ThemeError(f"指针主题路径不是目录：{path}")
+            backup = self.state_dir / f"cursor-backup-{len(result)}"
+            if backup.exists() or backup.is_symlink():
+                raise ThemeError(f"发现尚未恢复的指针目录：{backup}")
+            if path.lstat().st_dev != self.state_dir.stat().st_dev:
+                raise ThemeError("指针目录与恢复目录不在同一文件系统，无法安全原子备份，未切换主题。")
+            result.append({"path": str(path), "backup": str(backup), "target": str(target)})
+        return result
+
+    def install_cursor_overrides(self, state: dict) -> None:
+        for item in state["cursor_overrides"]:
+            path = Path(item["path"])
+            path.rename(item["backup"])
+            path.symlink_to(item["target"], target_is_directory=True)
+
+    def restore_cursor_overrides(self, state: dict) -> list[str]:
+        warnings = []
+        for item in state.get("cursor_overrides", []):
+            path, backup = Path(item["path"]), Path(item["backup"])
+            ours = path.is_symlink() and os.readlink(path) == item["target"]
+            has_backup = backup.exists() or backup.is_symlink()
+            if not has_backup:
+                if ours:
+                    warnings.append(f"指针备份缺失，保留当前资源链接：{path}")
+                continue
+            if path.exists() or path.is_symlink():
+                if not ours:
+                    warnings.append(f"保留切换后修改的指针目录，原目录仍在 {backup}：{path}")
+                    continue
+                path.unlink()
+            backup.rename(path)
+        return warnings
+
     def apply(self) -> dict:
         with self.lock():
             existing = self.load()
             if existing:
                 if existing.get("phase") == "active":
+                    if existing.get("theme_version", "1.0.0") != VERSION:
+                        raise ThemeError("发现旧版本的已应用记录，备份保持不变。请先执行 kaltsit-theme restore，再执行 kaltsit-theme apply 升级。")
                     return {"result": "already-applied", "state": str(self.state_file)}
                 raise ThemeError("发现未完成的切换记录，请先执行 kaltsit-theme restore。")
             wallpaper = self.share / f"wallpapers/{SCHEME}/contents/images/3840x2160.jpg"
@@ -393,11 +452,17 @@ class Controller:
             for name in before:
                 if (self.config / name).is_symlink():
                     raise ThemeError(f"主题配置由符号链接管理，未覆盖：{self.config / name}")
-            state = {"version": 1, "theme": THEME, "phase": "applying", "before": before,
+            cursor_overrides = self.cursor_overrides()
+            # v1.0 readers reject schema 2 instead of discarding cursor-directory
+            # backups that they do not know how to restore. We still read v1.
+            state = {"version": 2, "theme": THEME, "theme_version": VERSION,
+                     "phase": "applying", "before": before,
                      "wallpapers_before": wallpapers, "blocks": blocks,
-                     "cursor_before": {"theme": cursor_name, "size": cursor_size}}
+                     "cursor_before": {"theme": cursor_name, "size": cursor_size},
+                     "cursor_overrides": cursor_overrides}
             self.save(state)
             try:
+                self.install_cursor_overrides(state)
                 # Remove an inherited custom accent before any tool computes a
                 # palette. Transparent explicitly masks accents from lower
                 # priority config sources and keeps the authored link colours.
@@ -408,6 +473,11 @@ class Controller:
                 self.backend.write_key(self.config / "kdeglobals", "[General]", "AccentColor", "0,0,0,0")
                 self.backend.write_key(self.config / "kdeglobals", "[General]", "accentColorFromWallpaper", "false")
                 self.backend.run("plasma-apply-colorscheme", SCHEME)
+                self.backend.write_key(self.config / "plasmarc", "[Theme]", "name", SCHEME)
+                if cursor_name == CURSOR:
+                    # The KDE tool otherwise skips an unchanged theme ID,
+                    # leaving cached old-resolution frames in the compositor.
+                    self.backend.run("plasma-apply-cursortheme", "--size", cursor_size, "breeze_cursors")
                 self.backend.run("plasma-apply-cursortheme", "--size", cursor_size, CURSOR)
                 self.backend.write_key(self.config / "kdeglobals", "[Icons]", "Theme", SCHEME)
                 self.backend.write_key(self.config / "kcminputrc", "[Mouse]", "cursorTheme", CURSOR)
@@ -493,6 +563,9 @@ class Controller:
     def _restore(self, state: dict, force: bool = False) -> dict:
         warnings = []
         notification_before = self.snapshot()
+        # Restore assets before reloading the original live cursor, including
+        # the case where both versions deliberately use the same cursor ID.
+        warnings.extend(self.restore_cursor_overrides(state))
         try:
             current = {item["id"]: item for item in self.backend.wallpapers()}
             after = {item["id"]: item for item in state.get("wallpapers_after", [])}
@@ -520,6 +593,8 @@ class Controller:
                 current_size = self.backend.run("kreadconfig6", "--file", "kcminputrc", "--group", "Mouse",
                                                 "--key", "cursorSize", "--default", cursor["size"])
                 if force or current_theme in {CURSOR, cursor["theme"]}:
+                    if current_theme == cursor["theme"] == CURSOR:
+                        self.backend.run("plasma-apply-cursortheme", "--size", current_size, "breeze_cursors")
                     self.backend.run("plasma-apply-cursortheme", "--size", current_size, cursor["theme"])
             except ThemeError as error:
                 warnings.append(str(error))
@@ -567,8 +642,14 @@ class Controller:
         actual = ini_entries(read_text(self.config / "kdeglobals"))
         defaults = ini_entries(read_text(self.config / "kdedefaults/kdeglobals"))
         get = lambda group, key: actual.get((group, key), defaults.get((group, key)))
+        style = ini_entries(read_text(self.config / "plasmarc"))
+        style_defaults = ini_entries(read_text(self.config / "kdedefaults/plasmarc"))
+        applied_version = state.get("theme_version", "1.0.0") if state else None
         return {"theme": THEME, "phase": state["phase"] if state else "not-applied",
+                "installed_version": VERSION, "applied_version": applied_version,
+                "upgrade_available": state is not None and applied_version != VERSION,
                 "restore_available": state is not None, "state": str(self.state_file),
+                "current_plasma_style": style.get(("[Theme]", "name"), style_defaults.get(("[Theme]", "name"))),
                 "current_color_scheme": get("[General]", "ColorScheme"),
                 "current_icons": get("[Icons]", "Theme"),
                 "current_look_and_feel": get("[KDE]", "LookAndFeelPackage")}

@@ -1,0 +1,13 @@
+{
+    "KPlugin": {
+        "Id": "KaltsitMedicalGreen",
+        "Name": "Kaltsit Medical Green",
+        "Name[zh_CN]": "凯尔希 · 医疗白绿",
+        "Description": "Quiet white surfaces, fine green-grey borders and soft shadows. Breeze fallback.",
+        "Authors": [{"Name": "Xinyan"}],
+        "License": "MIT",
+        "Version": "1.1.0-dev.1",
+        "EnabledByDefault": false
+    },
+    "X-Plasma-API": "5.0"
+}

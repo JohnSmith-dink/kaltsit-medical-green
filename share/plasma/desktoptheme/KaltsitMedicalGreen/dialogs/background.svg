@@ -1,0 +1,39 @@
+<!-- SPDX-FileCopyrightText: 2026 Xinyan; SPDX-License-Identifier: MIT -->
+
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240">
+<defs><linearGradient id="fade" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#25352D" stop-opacity="0"/><stop offset="1" stop-color="#25352D" stop-opacity=".13"/></linearGradient><radialGradient id="corner" cx="1" cy="1" r="1"><stop stop-color="#25352D" stop-opacity=".13"/><stop offset="1" stop-color="#25352D" stop-opacity="0"/></radialGradient></defs>
+<rect id="center" x="8" y="8" width="8" height="8" fill="#FFFFFF"/>
+<g id="topleft" transform="translate(0,0) rotate(0,4.0,4.0)"><path fill="#D3DDD5" d="M0 8A8 8 0 0 1 8 0V8Z"/><path fill="#FFFFFF" d="M1 8A7 7 0 0 1 8 1V8Z"/></g>
+<g id="topright" transform="translate(16,0) rotate(90,4.0,4.0)"><path fill="#D3DDD5" d="M0 8A8 8 0 0 1 8 0V8Z"/><path fill="#FFFFFF" d="M1 8A7 7 0 0 1 8 1V8Z"/></g>
+<g id="bottomright" transform="translate(16,16) rotate(180,4.0,4.0)"><path fill="#D3DDD5" d="M0 8A8 8 0 0 1 8 0V8Z"/><path fill="#FFFFFF" d="M1 8A7 7 0 0 1 8 1V8Z"/></g>
+<g id="bottomleft" transform="translate(0,16) rotate(270,4.0,4.0)"><path fill="#D3DDD5" d="M0 8A8 8 0 0 1 8 0V8Z"/><path fill="#FFFFFF" d="M1 8A7 7 0 0 1 8 1V8Z"/></g>
+<g id="top"><rect x="8" y="0" width="8" height="8" fill="#FFFFFF"/><rect x="8" y="0" width="8" height="1" fill="#D3DDD5"/></g>
+<g id="bottom"><rect x="8" y="16" width="8" height="8" fill="#FFFFFF"/><rect x="8" y="23" width="8" height="1" fill="#D3DDD5"/></g>
+<g id="left"><rect x="0" y="8" width="8" height="8" fill="#FFFFFF"/><rect x="0" y="8" width="1" height="8" fill="#D3DDD5"/></g>
+<g id="right"><rect x="16" y="8" width="8" height="8" fill="#FFFFFF"/><rect x="23" y="8" width="1" height="8" fill="#D3DDD5"/></g>
+<rect id="mask-center" x="8" y="48" width="8" height="8" fill="#000000"/>
+<g id="mask-topleft" transform="translate(0,40) rotate(0,4.0,4.0)"><path fill="#000000" d="M0 8A8 8 0 0 1 8 0V8Z"/><path fill="#000000" d="M1 8A7 7 0 0 1 8 1V8Z"/></g>
+<g id="mask-topright" transform="translate(16,40) rotate(90,4.0,4.0)"><path fill="#000000" d="M0 8A8 8 0 0 1 8 0V8Z"/><path fill="#000000" d="M1 8A7 7 0 0 1 8 1V8Z"/></g>
+<g id="mask-bottomright" transform="translate(16,56) rotate(180,4.0,4.0)"><path fill="#000000" d="M0 8A8 8 0 0 1 8 0V8Z"/><path fill="#000000" d="M1 8A7 7 0 0 1 8 1V8Z"/></g>
+<g id="mask-bottomleft" transform="translate(0,56) rotate(270,4.0,4.0)"><path fill="#000000" d="M0 8A8 8 0 0 1 8 0V8Z"/><path fill="#000000" d="M1 8A7 7 0 0 1 8 1V8Z"/></g>
+<g id="mask-top"><rect x="8" y="40" width="8" height="8" fill="#000000"/><rect x="8" y="40" width="8" height="1" fill="#000000"/></g>
+<g id="mask-bottom"><rect x="8" y="56" width="8" height="8" fill="#000000"/><rect x="8" y="63" width="8" height="1" fill="#000000"/></g>
+<g id="mask-left"><rect x="0" y="48" width="8" height="8" fill="#000000"/><rect x="0" y="48" width="1" height="8" fill="#000000"/></g>
+<g id="mask-right"><rect x="16" y="48" width="8" height="8" fill="#000000"/><rect x="23" y="48" width="1" height="8" fill="#000000"/></g>
+<rect id="shadow-topleft" x="0" y="0" width="16" height="16" fill="url(#corner)" transform="translate(0,90) rotate(0,8.0,8.0)"/>
+<rect id="shadow-topright" x="0" y="0" width="16" height="16" fill="url(#corner)" transform="translate(24,90) rotate(90,8.0,8.0)"/>
+<rect id="shadow-bottomright" x="0" y="0" width="16" height="16" fill="url(#corner)" transform="translate(24,114) rotate(180,8.0,8.0)"/>
+<rect id="shadow-bottomleft" x="0" y="0" width="16" height="16" fill="url(#corner)" transform="translate(0,114) rotate(270,8.0,8.0)"/>
+<rect id="shadow-top" width="8" height="16" fill="url(#fade)" transform="translate(16,90)"/>
+<rect id="shadow-bottom" width="8" height="16" fill="url(#fade)" transform="translate(24,130) rotate(180)"/>
+<rect id="shadow-left" width="8" height="16" fill="url(#fade)" transform="translate(0,114) rotate(-90)"/>
+<rect id="shadow-right" width="8" height="16" fill="url(#fade)" transform="translate(40,106) rotate(90)"/>
+<rect id="hint-top-margin" x="100" y="180" width="8" height="8" fill="#FF00FF"/>
+<rect id="hint-bottom-margin" x="120" y="180" width="8" height="8" fill="#FF00FF"/>
+<rect id="hint-left-margin" x="140" y="180" width="8" height="8" fill="#FF00FF"/>
+<rect id="hint-right-margin" x="160" y="180" width="8" height="8" fill="#FF00FF"/>
+<rect id="shadow-hint-top-margin" x="100" y="180" width="16" height="16" fill="#FF00FF"/>
+<rect id="shadow-hint-bottom-margin" x="120" y="180" width="16" height="16" fill="#FF00FF"/>
+<rect id="shadow-hint-left-margin" x="140" y="180" width="16" height="16" fill="#FF00FF"/>
+<rect id="shadow-hint-right-margin" x="160" y="180" width="16" height="16" fill="#FF00FF"/>
+</svg>

@@ -1,5 +1,8 @@
 {
-  "environment": "private D-Bus + virtual KWin/Plasma 6.6.6; temporary HOME; software rendering",
+  "version": "1.1.0-dev.1",
+  "date": "2026-10-31",
+  "environment": "NixOS 26.05, Plasma 6.6.6, virtual Wayland output, software rendering",
+  "unit_tests": 43,
   "output_before": {
     "clones": [],
     "connected": true,
@@ -82,20 +85,66 @@
     },
     "type": 0
   },
-  "layout_preserved": true,
-  "apply": "applied",
-  "apply_warnings": [],
-  "second_apply": "already-applied",
-  "restore": "restored",
-  "restore_warnings": [],
-  "restore_record_removed": true,
-  "assertions": [
-    "original custom accent restored",
-    "wallpaper accent switch restored",
-    "authored selection and link colors applied",
-    "cursorSize=36 preserved",
-    "font and fixed-font preserved",
-    "scale=1.75 before and after",
-    "desktop and panel widget IDs preserved"
-  ]
+  "layout_before": [
+    {
+      "id": 1,
+      "type": "org.kde.plasma.folder",
+      "widgets": []
+    },
+    {
+      "id": 2,
+      "type": "org.kde.panel",
+      "widgets": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        21,
+        22
+      ]
+    }
+  ],
+  "layout_after": [
+    {
+      "id": 1,
+      "type": "org.kde.plasma.folder",
+      "widgets": []
+    },
+    {
+      "id": 2,
+      "type": "org.kde.panel",
+      "widgets": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        21,
+        22
+      ]
+    }
+  ],
+  "transitions": [
+    "applied",
+    "already-applied",
+    "restored"
+  ],
+  "warnings": {
+    "apply": [],
+    "restore": []
+  },
+  "current_plasma_style_when_applied": "KaltsitMedicalGreen",
+  "transaction_probes": {
+    "real_failure_after_wallpaper": "rolled-back",
+    "owned_keys_restored": true,
+    "wallpapers_restored": true,
+    "local_cursor_shadow_restored": true,
+    "legacy_reader_rejects_resource_backup_schema": true,
+    "v1_0_to_v1_1": "legacy apply; backup protected; restore; apply; repeat; restore",
+    "legacy_backup_unchanged": true
+  },
+  "libXcursor_combinations_verified": 85,
+  "physical_desktop_acceptance": false,
+  "restore_record_schema": 2
 }

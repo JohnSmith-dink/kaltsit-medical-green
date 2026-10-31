@@ -2,6 +2,8 @@
 # Run ONLY inside a private dbus-run-session with a temporary HOME/runtime.
 set -euo pipefail
 : "${KALTSIT_TEST_ROOT:?}" "${KALTSIT_SHARE:?}" "${KALTSIT_CONTROLLER:?}"
+test "$HOME" = "$KALTSIT_TEST_ROOT/home"
+test "$XDG_RUNTIME_DIR" = "$KALTSIT_TEST_ROOT/runtime"
 mkdir -p "$XDG_CONFIG_HOME" "$XDG_DATA_HOME" "$XDG_CACHE_HOME" "$XDG_STATE_HOME"
 cleanup() {
   kill "${plasma_pid:-}" "${kwin_pid:-}" 2>/dev/null || true
@@ -38,14 +40,21 @@ kwriteconfig6 --file kcminputrc --group Mouse --key cursorSize 36
 kwriteconfig6 --file kdeglobals --group General --key font 'Noto Sans,10,-1,5,50,0,0,0,0,0'
 kwriteconfig6 --file kdeglobals --group General --key fixed 'Monospace,11,-1,5,50,0,0,0,0,0'
 kwriteconfig6 --file kdeglobals --group General --key AccentColor '180,40,60'
-kwriteconfig6 --file kdeglobals --group General --key accentColorFromWallpaper true
+# A fixed accent is deterministic. With wallpaper accents enabled Plasma may
+# recompute AccentColor asynchronously after restore; the policy is restored,
+# but that derived value is intentionally not frozen by the theme controller.
+kwriteconfig6 --file kdeglobals --group General --key accentColorFromWallpaper false
 python3 "$KALTSIT_CONTROLLER" --data-dir "$KALTSIT_SHARE" status >"$KALTSIT_TEST_ROOT/status-before.json"
 python3 "$KALTSIT_CONTROLLER" --data-dir "$KALTSIT_SHARE" apply >"$KALTSIT_TEST_ROOT/apply.json"
 python3 "$KALTSIT_CONTROLLER" --data-dir "$KALTSIT_SHARE" apply >"$KALTSIT_TEST_ROOT/apply-again.json"
 python3 "$KALTSIT_CONTROLLER" --data-dir "$KALTSIT_SHARE" status >"$KALTSIT_TEST_ROOT/status-applied.json"
+test "$(kreadconfig6 --file plasmarc --group Theme --key name)" = KaltsitMedicalGreen
 test "$(kreadconfig6 --file kdeglobals --group 'Colors:Selection' --key BackgroundNormal)" = '46,107,87'
 test "$(kreadconfig6 --file kdeglobals --group 'Colors:View' --key ForegroundLink)" = '40,93,131'
 test "$(kreadconfig6 --file kdeglobals --group General --key accentColorFromWallpaper)" = false
+if [[ "${KALTSIT_CAPTURE:-0}" = 1 ]]; then
+  bash "$(dirname "$0")/capture-session.sh"
+fi
 python3 "$KALTSIT_CONTROLLER" --data-dir "$KALTSIT_SHARE" restore >"$KALTSIT_TEST_ROOT/restore.json"
 python3 "$KALTSIT_CONTROLLER" --data-dir "$KALTSIT_SHARE" status >"$KALTSIT_TEST_ROOT/status-restored.json"
 qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "$layout_script" >"$KALTSIT_TEST_ROOT/layout-after.json"
@@ -54,7 +63,8 @@ test "$(kreadconfig6 --file kcminputrc --group Mouse --key cursorSize)" = 36
 test "$(kreadconfig6 --file kdeglobals --group General --key font)" = 'Noto Sans,10,-1,5,50,0,0,0,0,0'
 test "$(kreadconfig6 --file kdeglobals --group General --key fixed)" = 'Monospace,11,-1,5,50,0,0,0,0,0'
 test "$(kreadconfig6 --file kdeglobals --group General --key AccentColor)" = '180,40,60'
-test "$(kreadconfig6 --file kdeglobals --group General --key accentColorFromWallpaper)" = true
+test "$(kreadconfig6 --file kdeglobals --group General --key accentColorFromWallpaper)" = false
+python3 "$(dirname "$0")/session-transactions.py"
 python3 - <<'PY'
 import json, os
 from pathlib import Path

@@ -6,7 +6,11 @@ Creator profile: https://space.bilibili.com/3585839
 
 The maintainer confirmed that the cursor artwork included in this theme is
 the artwork represented by the kaltsit-cursors project. This release keeps
-the previously tested legacy Kaltsit-Sihengtu Xcursor conversion.
+the Kaltsit-Sihengtu installation identifier and uses the upstream multi-size
+Xcursor files pinned at 7ef139a6210fd8eb03d0296b624d71eaa3120589.
+All 17 binaries and 68 upstream aliases are unchanged; 8 legacy compatibility
+aliases are retained separately. Sizes: 24, 32, 48, 64, 96 pixels.
+See docs/cursor-source.json and the bundled upstream build-report.json.
 
 The original creator's 2026-10-24 permission covers the non-commercial Linux
 adaptation and its nixpkgs submission, with attribution and a link to the

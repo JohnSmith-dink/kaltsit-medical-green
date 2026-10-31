@@ -1,0 +1,7 @@
+<!-- SPDX-FileCopyrightText: 2026 Xinyan; SPDX-License-Identifier: MIT -->
+
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+<path fill="#487D66" d="M1 4Q1 3 2 3H7L9 5H15V13H1Z"/>
+<path fill="#2E6B57" d="M4 7H15L13 14H1Z"/>
+<path stroke="#215342" stroke-width="1" d="M2 13.5H14"/>
+</svg>

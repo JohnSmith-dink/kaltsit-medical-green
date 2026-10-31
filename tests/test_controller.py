@@ -5,10 +5,12 @@ import json
 import os
 from pathlib import Path
 import re
+import shutil
 import subprocess
 import tempfile
 import types
 import unittest
+from unittest import mock
 
 
 SPEC = importlib.util.spec_from_file_location(
@@ -96,6 +98,16 @@ class ControllerTests(unittest.TestCase):
         wallpaper = self.share / f"wallpapers/{theme.SCHEME}/contents/images/3840x2160.jpg"
         wallpaper.parent.mkdir(parents=True)
         wallpaper.write_bytes(b"fake image; no image decoder needed for the controller")
+        scheme = self.share / "color-schemes/KaltsitMedicalGreen.colors"
+        scheme.parent.mkdir(parents=True)
+        shutil.copyfile(Path(__file__).resolve().parents[1] / "share/color-schemes/KaltsitMedicalGreen.colors", scheme)
+        shutil.copytree(Path(__file__).resolve().parents[1] / "share/plasma/wallpapers" / theme.LOCK_WALLPAPER,
+                        self.share / "plasma/wallpapers" / theme.LOCK_WALLPAPER)
+        for name in ("metadata.json", "contents/lockscreen/LockScreen.qml",
+                     "contents/lockscreen/LockScreenUi.qml", "contents/lockscreen/KaltsitWallpaperFader.qml"):
+            resource = self.share / "plasma/shells/org.kde.plasma.desktop" / name
+            resource.parent.mkdir(parents=True, exist_ok=True)
+            resource.write_text("test-only resource; no QML execution")
         self.env = {"HOME": str(self.home), "PATH": "/not-used"}
         self.process = FakeProcess(self.config)
         self.backend = theme.Backend(self.env, runner=self.process)
@@ -120,7 +132,7 @@ class ControllerTests(unittest.TestCase):
         original_wallpapers = list(self.process.desktops)
         self.controller.apply()
         self.assertTrue(all(item["fill_mode"] == 2 for item in self.process.desktops))
-        self.assertEqual(self.entries("kscreenlockerrc")[("[Greeter][Wallpaper][org.kde.image][General]", "FillMode")], "2")
+        self.assertEqual(self.entries("kscreenlockerrc")[(f"[Greeter][Wallpaper][{theme.LOCK_WALLPAPER}][General]", "FillMode")], "2")
         self.process.set_key("kdeglobals", "[General]", "BrowserApplication", "new-browser.desktop")
         self.process.set_key("kdeglobals", "[UserSettings]", "NewValue", "retained")
         result = self.controller.restore()
@@ -153,6 +165,138 @@ class ControllerTests(unittest.TestCase):
         self.assertEqual(self.controller.apply()["result"], "already-applied")
         self.assertEqual(self.controller.state_file.read_bytes(), state)
         self.assertEqual(len(self.process.calls), count)
+
+    def test_plasma_style_restore_keeps_unrelated_settings(self):
+        self.put("plasmarc", "[Theme]\nname=custom-old\n[Other]\nKeep=before\n")
+        self.controller.apply()
+        self.assertEqual(self.entries("plasmarc")[("[Theme]", "name")], theme.SCHEME)
+        self.assertEqual(self.controller.status()["current_plasma_style"], theme.SCHEME)
+        self.process.set_key("plasmarc", "[Other]", "Keep", "later")
+        self.assertEqual(self.controller.restore()["result"], "restored")
+        self.assertEqual(self.entries("plasmarc"), {("[Theme]", "name"): "custom-old", ("[Other]", "Keep"): "later"})
+
+    def test_style_conflict_is_not_overwritten_on_restore(self):
+        self.put("plasmarc", "[Theme]\nname=custom-old\n")
+        self.controller.apply()
+        self.process.set_key("plasmarc", "[Theme]", "name", "user-later")
+        self.assertEqual(self.controller.restore()["result"], "restore-incomplete")
+        self.assertEqual(self.entries("plasmarc")[("[Theme]", "name")], "user-later")
+
+    def test_failure_after_new_style_write_restores_style(self):
+        self.put("plasmarc", "[Theme]\nname=custom-old\n")
+        self.process.fail = "plasma-apply-cursortheme"
+        with self.assertRaisesRegex(theme.ThemeError, "已自动恢复"):
+            self.controller.apply()
+        self.assertEqual(self.entries("plasmarc"), {("[Theme]", "name"): "custom-old"})
+        self.assertFalse(self.controller.state_file.exists())
+
+    def test_legacy_record_restores_before_upgrade_without_losing_backup(self):
+        self.put("kdeglobals", "[General]\nColorScheme=BeforeV1\n")
+        self.put("plasmarc", "[Theme]\nname=custom-old\n")
+        self.controller.apply()
+        legacy = self.controller.load()
+        del legacy["theme_version"]
+        legacy["version"] = 1
+        # v1.0 used Breeze; its state schema has no application version.
+        self.process.set_key("plasmarc", "[Theme]", "name", "default")
+        legacy["after"]["plasmarc"] = theme.read_text(self.config / "plasmarc")
+        self.controller.save(legacy)
+        backup = self.controller.state_file.read_bytes()
+        count = len(self.process.calls)
+        self.assertEqual(self.controller.status()["applied_version"], "1.0.0")
+        self.assertTrue(self.controller.status()["upgrade_available"])
+        with self.assertRaisesRegex(theme.ThemeError, "先执行 kaltsit-theme restore"):
+            self.controller.apply()
+        self.assertEqual(self.controller.state_file.read_bytes(), backup)
+        self.assertEqual(len(self.process.calls), count)
+        self.assertEqual(self.controller.restore()["result"], "restored")
+        self.assertEqual(self.entries("kdeglobals")[("[General]", "ColorScheme")], "BeforeV1")
+        self.assertEqual(self.entries("plasmarc")[("[Theme]", "name")], "custom-old")
+        self.assertEqual(self.controller.apply()["result"], "applied")
+        self.assertEqual(self.controller.status()["applied_version"], theme.VERSION)
+        self.assertEqual(self.controller.restore()["result"], "restored")
+        self.assertEqual(self.entries("kdeglobals")[("[General]", "ColorScheme")], "BeforeV1")
+
+    def local_cursor(self):
+        target = self.share / "icons" / theme.CURSOR / "cursors"
+        target.mkdir(parents=True, exist_ok=True)
+        (target / "left_ptr").write_bytes(b"new multi-size cursor fixture")
+        path = self.home / ".local/share/icons" / theme.CURSOR
+        path.mkdir(parents=True)
+        (path / "original").write_bytes(b"untouched original cursor directory")
+        return path
+
+    def test_local_cursor_shadow_roundtrips_original_directory(self):
+        path = self.local_cursor()
+        self.controller.apply()
+        self.assertTrue(path.is_symlink())
+        self.assertEqual(path.resolve(), self.share / "icons" / theme.CURSOR)
+        state = self.controller.load()
+        self.assertEqual(state["version"], 3, "Old controllers must reject component-aware resource backups")
+        backup = Path(state["cursor_overrides"][0]["backup"])
+        self.assertEqual((backup / "original").read_bytes(), b"untouched original cursor directory")
+        self.assertEqual(self.controller.restore()["result"], "restored")
+        self.assertFalse(path.is_symlink())
+        self.assertEqual((path / "original").read_bytes(), b"untouched original cursor directory")
+        self.assertFalse(backup.exists())
+
+    def test_local_cursor_conflict_keeps_backup_and_user_directory(self):
+        path = self.local_cursor()
+        self.controller.apply()
+        backup = Path(self.controller.load()["cursor_overrides"][0]["backup"])
+        path.unlink()
+        path.mkdir()
+        (path / "later").write_text("user edit")
+        self.assertEqual(self.controller.restore()["result"], "restore-incomplete")
+        self.assertEqual((path / "later").read_text(), "user edit")
+        self.assertTrue((backup / "original").exists())
+        (path / "later").unlink()
+        path.rmdir()
+        self.assertEqual(self.controller.restore()["result"], "restored")
+        self.assertTrue((path / "original").exists())
+
+    def test_user_link_already_pointing_to_current_assets_is_untouched(self):
+        target = self.share / "icons" / theme.CURSOR
+        target.mkdir(parents=True)
+        path = self.home / ".local/share/icons" / theme.CURSOR
+        path.parent.mkdir(parents=True)
+        path.symlink_to(target)
+        self.controller.apply()
+        self.assertEqual(self.controller.load()["cursor_overrides"], [])
+        self.controller.restore()
+        self.assertTrue(path.is_symlink())
+        self.assertEqual(path.resolve(), target)
+
+    def test_failure_between_cursor_backup_and_link_creation_rolls_back(self):
+        path = self.local_cursor()
+        with mock.patch.object(Path, "symlink_to", side_effect=OSError("injected link failure")):
+            with self.assertRaisesRegex(theme.ThemeError, "已自动恢复"):
+                self.controller.apply()
+        self.assertFalse(path.is_symlink())
+        self.assertTrue((path / "original").exists())
+        self.assertFalse(self.controller.state_file.exists())
+
+    def test_aliased_icon_directories_are_only_moved_once(self):
+        path = self.local_cursor()
+        (self.home / ".icons").symlink_to(path.parent)
+        self.controller.apply()
+        self.assertEqual(len(self.controller.load()["cursor_overrides"]), 1)
+        self.assertEqual(self.controller.restore()["result"], "restored")
+        self.assertTrue((path / "original").exists())
+        self.assertTrue((self.home / ".icons").is_symlink())
+
+    def test_same_cursor_id_reloads_frames_and_keeps_size(self):
+        path = self.local_cursor()
+        self.put("kcminputrc", f"[Mouse]\ncursorTheme={theme.CURSOR}\ncursorSize=36\n")
+        self.controller.apply()
+        cursor_calls = [args for args in self.process.calls if args[0] == "plasma-apply-cursortheme"]
+        self.assertEqual([args[-1] for args in cursor_calls], ["breeze_cursors", theme.CURSOR])
+        self.assertTrue(all(args[2] == "36" for args in cursor_calls))
+        self.controller.restore()
+        self.assertTrue((path / "original").exists())
+        self.assertEqual(self.entries("kcminputrc")[("[Mouse]", "cursorSize")], "36")
+        cursor_calls = [args for args in self.process.calls if args[0] == "plasma-apply-cursortheme"]
+        self.assertEqual([args[-1] for args in cursor_calls[-2:]], ["breeze_cursors", theme.CURSOR])
 
     def test_kded_async_gtk_modules_and_fonts_do_not_block_restore(self):
         self.controller.apply()
@@ -214,7 +358,7 @@ class ControllerTests(unittest.TestCase):
         self.assertEqual(self.entries("kdeglobals"), old)
         self.assertEqual(self.entries("kdedefaults/kdeglobals"), defaults)
 
-    def test_kwriteconfig_uses_relative_name_and_explicit_xdg_root(self):
+    def test_kwriteconfig_uses_relative_names_and_final_batched_notifications(self):
         self.controller.apply()
         writes = [(call, env) for call, env in zip(self.process.calls, self.process.environments)
                   if call[0] == "kwriteconfig6"]
@@ -222,7 +366,13 @@ class ControllerTests(unittest.TestCase):
         for call, env in writes:
             self.assertFalse(Path(call[call.index("--file") + 1]).is_absolute())
             self.assertEqual(env["XDG_CONFIG_HOME"], str(self.config))
-            self.assertIn("--notify", call)
+        # Palette keys are written silently before a single final notification,
+        # preventing kded from exporting an intermediate, incomplete palette.
+        palette_writes = [call for call, _ in writes if call[call.index("--file") + 1] == "kdeglobals"]
+        self.assertTrue(all("--notify" not in call for call in palette_writes))
+        notified = {call[3] for call in self.process.calls if call[0] == "busctl"}
+        self.assertIn("/kdeglobals", notified)
+        self.assertIn("/plasmarc", notified)
 
     def test_exact_kconfig_notification_signature_paths_and_removed_keys(self):
         before = {"gtk-3.0/settings.ini": "[Top][Nested]\nRemoved=old\nSame=keep\n"}
@@ -247,8 +397,12 @@ class ControllerTests(unittest.TestCase):
         self.assertEqual(self.process.cursor_inputs[-1][("[Mouse]", "cursorTheme")], theme.CURSOR)
         self.assertEqual(self.entries("kcminputrc"), original)
         emitted_paths = {args[3] for args in restore_calls if args[0] == "busctl"}
-        self.assertIn("/kcminputrc", emitted_paths)
-        self.assertIn("/kdeglobals", emitted_paths)
+        # Restore refreshes Qt/KWin through native global signals, without
+        # triggering a new GTK export over precisely restored CSS files.
+        self.assertNotIn("/kcminputrc", emitted_paths)
+        self.assertNotIn("/kdeglobals", emitted_paths)
+        self.assertTrue(any(args[0] == "dbus-send" and args[4] == "org.kde.KGlobalSettings.notifyChange"
+                            for args in restore_calls))
 
     def test_terminal_blocks_restore_only_their_own_content(self):
         self.put("ghostty/config", "font-size = 14\ncommand = zsh\n")
@@ -308,17 +462,20 @@ class ControllerTests(unittest.TestCase):
         self.process.set_key("kdeglobals", "[General]", "ColorScheme", "Original")
         self.assertEqual(self.controller.restore()["result"], "restored")
 
-    def test_symlink_managed_configuration_refused_without_breaking_link(self):
+    def test_symlink_managed_ghostty_skipped_without_breaking_link(self):
         target = self.home / "managed-ghostty"
         target.write_text("font-size = 16\n")
         path = self.config / "ghostty/config"
         path.parent.mkdir(parents=True)
         path.symlink_to(target)
-        with self.assertRaisesRegex(theme.ThemeError, "符号链接"):
-            self.controller.apply()
+        result = self.controller.apply()
+        self.assertEqual(result["result"], "partially-applied")
+        self.assertEqual(self.controller.status()["components"]["ghostty"]["status"], "skipped")
         self.assertTrue(path.is_symlink())
         self.assertEqual(target.read_text(), "font-size = 16\n")
-        self.assertEqual(self.process.calls, [])
+        self.assertEqual(self.controller.restore()["result"], "restored")
+        self.assertTrue(path.is_symlink())
+        self.assertEqual(target.read_text(), "font-size = 16\n")
 
     def test_xdg_overrides_honored(self):
         env = dict(self.env, XDG_CONFIG_HOME=str(self.home / "custom-config"),

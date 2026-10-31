@@ -1,0 +1,18 @@
+{
+  "KPackageStructure": "Plasma/Wallpaper",
+  "KPlugin": {
+    "Id": "org.xinyan.kaltsit.medicalgreen.lock",
+    "Name": "Medical Green · Lock Screen",
+    "Name[zh_CN]": "医疗白绿 · 锁屏",
+    "Description": "Original wallpaper colors with native KDE lock-screen controls",
+    "Description[zh_CN]": "保留壁纸原色，使用 KDE 原生锁屏控件",
+    "Icon": "preferences-desktop-wallpaper",
+    "Authors": [
+      {
+        "Name": "Xinyan"
+      }
+    ],
+    "License": "MIT",
+    "Version": "1.1.0"
+  }
+}

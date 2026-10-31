@@ -7,6 +7,16 @@ in
   options.programs.kaltsit-theme = {
     enable = lib.mkEnableOption "the Kal'tsit Medical Green Plasma theme and switching commands";
 
+    ghosttyThemeFile = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = ''
+        Install the Ghostty theme in its user theme directory. This does not
+        modify Ghostty's configuration; declarative users can set
+        programs.ghostty.settings.theme = "Kaltsit Medical Green" separately.
+      '';
+    };
+
     package = lib.mkOption {
       type = lib.types.package;
       default = pkgs.callPackage ./package.nix { };
@@ -22,5 +32,8 @@ in
   # No activation hook or session service: switching is an explicit action.
   config = lib.mkIf cfg.enable {
     home.packages = [ cfg.package pkgs.kdePackages.breeze-gtk ];
+    xdg.configFile."ghostty/themes/Kaltsit Medical Green" = lib.mkIf cfg.ghosttyThemeFile {
+      source = "${cfg.package}/share/ghostty/themes/Kaltsit Medical Green";
+    };
   };
 }

@@ -1,101 +1,1520 @@
 {
-  "environment": "private D-Bus + virtual KWin/Plasma 6.6.6; temporary HOME; software rendering",
-  "output_before": {
-    "clones": [],
-    "connected": true,
-    "currentModeId": "1",
-    "enabled": true,
-    "followPreferredMode": false,
-    "icon": "",
-    "id": 1,
-    "modes": [
-      {
-        "id": "1",
-        "name": "3120x2080@60",
-        "refreshRate": 60,
+  "version": "1.1.0-rc.3",
+  "date": "2026-11-01",
+  "date_timezone": "Asia/Shanghai",
+  "environment": "NixOS 26.05, Plasma 6.6.6, isolated virtual Wayland output",
+  "unit_tests": 69,
+  "unit_tests_result": "passed",
+  "nix_validation": {
+    "offline_build": "passed",
+    "flake_check": "passed",
+    "flake_lock_changed": false
+  },
+  "hosted_ci": {
+    "commit": "d5dfb241525b4f1c94fd7cef6816b3c32848f663",
+    "result": "passed",
+    "runs": [
+      "https://github.com/JohnSmith-dink/kaltsit-medical-green/actions/runs/41244357844",
+      "https://github.com/JohnSmith-dink/kaltsit-medical-green/actions/runs/41244353975"
+    ]
+  },
+  "screenshot_manifest": "../previews/manifest.json",
+  "runs": [
+    {
+      "id": "rc3-rhi",
+      "version": "1.1.0-rc.3",
+      "result": "passed",
+      "renderer": "Qt Quick RHI / Mesa software OpenGL",
+      "evidence_run_root": "/tmp/kt-rc3-rhi-final",
+      "resource_source": "Built Nix package share directory",
+      "pixels": [
+        3120,
+        2080
+      ],
+      "scale": 1.75,
+      "transitions": [
+        "applied",
+        "already-applied",
+        "restored"
+      ],
+      "warnings": {
+        "apply": [],
+        "apply_again": [],
+        "restore": []
+      },
+      "layout_before": [
+        {
+          "id": 1,
+          "type": "org.kde.plasma.folder",
+          "widgets": []
+        },
+        {
+          "id": 2,
+          "type": "org.kde.panel",
+          "widgets": [
+            3,
+            4,
+            5,
+            6,
+            7,
+            21,
+            22
+          ]
+        }
+      ],
+      "layout_after": [
+        {
+          "id": 1,
+          "type": "org.kde.plasma.folder",
+          "widgets": []
+        },
+        {
+          "id": 2,
+          "type": "org.kde.panel",
+          "widgets": [
+            3,
+            4,
+            5,
+            6,
+            7,
+            21,
+            22
+          ]
+        }
+      ],
+      "output_before": {
+        "clones": [],
+        "connected": true,
+        "currentModeId": "1",
+        "enabled": true,
+        "followPreferredMode": false,
+        "icon": "",
+        "id": 1,
+        "modes": [
+          {
+            "id": "1",
+            "name": "3120x2080@60",
+            "refreshRate": 60,
+            "size": {
+              "height": 2080,
+              "width": 3120
+            }
+          }
+        ],
+        "name": "Virtual-0",
+        "pos": {
+          "x": 0,
+          "y": 0
+        },
+        "preferredModes": [
+          "1"
+        ],
+        "priority": 1,
+        "replicationSource": 0,
+        "rotation": 1,
+        "scale": 1.75,
         "size": {
           "height": 2080,
           "width": 3120
-        }
-      }
-    ],
-    "name": "Virtual-0",
-    "pos": {
-      "x": 0,
-      "y": 0
-    },
-    "preferredModes": [
-      "1"
-    ],
-    "priority": 1,
-    "replicationSource": 0,
-    "rotation": 1,
-    "scale": 1.75,
-    "size": {
-      "height": 2080,
-      "width": 3120
-    },
-    "sizeMM": {
-      "height": -1,
-      "width": -1
-    },
-    "type": 0
-  },
-  "output_after": {
-    "clones": [],
-    "connected": true,
-    "currentModeId": "1",
-    "enabled": true,
-    "followPreferredMode": false,
-    "icon": "",
-    "id": 1,
-    "modes": [
-      {
-        "id": "1",
-        "name": "3120x2080@60",
-        "refreshRate": 60,
+        },
+        "sizeMM": {
+          "height": -1,
+          "width": -1
+        },
+        "type": 0
+      },
+      "output_after": {
+        "clones": [],
+        "connected": true,
+        "currentModeId": "1",
+        "enabled": true,
+        "followPreferredMode": false,
+        "icon": "",
+        "id": 1,
+        "modes": [
+          {
+            "id": "1",
+            "name": "3120x2080@60",
+            "refreshRate": 60,
+            "size": {
+              "height": 2080,
+              "width": 3120
+            }
+          }
+        ],
+        "name": "Virtual-0",
+        "pos": {
+          "x": 0,
+          "y": 0
+        },
+        "preferredModes": [
+          "1"
+        ],
+        "priority": 1,
+        "replicationSource": 0,
+        "rotation": 1,
+        "scale": 1.75,
         "size": {
           "height": 2080,
           "width": 3120
+        },
+        "sizeMM": {
+          "height": -1,
+          "width": -1
+        },
+        "type": 0
+      },
+      "transaction_probes": {
+        "real_failure_after_wallpaper": "rolled-back",
+        "owned_keys_restored": true,
+        "wallpapers_restored": true,
+        "local_cursor_shadow_restored": true,
+        "legacy_reader_rejects_resource_backup_schema": true,
+        "v1_0_to_v1_1": "legacy apply; backup protected; restore; apply; repeat; restore",
+        "legacy_backup_unchanged": true
+      },
+      "component_probes": {
+        "gtkconfig_module_loaded": true,
+        "managed_components": [
+          "cursor",
+          "wallpaper",
+          "lockscreen",
+          "gtk",
+          "ghostty",
+          "konsole"
+        ],
+        "managed_links_and_targets_unchanged_after_apply_repeat_restore": true,
+        "dry_run_configuration_and_state_unchanged": true,
+        "custom_wallpaper_desktop_and_lockscreen_fill_mode_2": true,
+        "custom_wallpaper_restored": true,
+        "gtk_only_skip_preserves_targets_with_live_cursor_apply_restore": true,
+        "same_id_cursor_reload_events": [
+          "breeze_cursors",
+          "Kaltsit-Sihengtu",
+          "breeze_cursors",
+          "Kaltsit-Sihengtu"
+        ],
+        "existing_custom_gtk_fonts_preserved": true,
+        "independent_gtk_cursor_restored_after_daemon_settles": true
+      },
+      "lockscreen_mode": "native greeter --testing; no password authentication"
+    },
+    {
+      "id": "rc3-wide",
+      "version": "1.1.0-rc.3",
+      "result": "passed",
+      "renderer": "Qt Quick software",
+      "evidence_run_root": "/tmp/kt-rc3-wide-final",
+      "resource_source": "Built Nix package share directory",
+      "pixels": [
+        1920,
+        1080
+      ],
+      "scale": 1.0,
+      "transitions": [
+        "applied",
+        "already-applied",
+        "restored"
+      ],
+      "warnings": {
+        "apply": [],
+        "apply_again": [],
+        "restore": []
+      },
+      "layout_before": [
+        {
+          "id": 1,
+          "type": "org.kde.plasma.folder",
+          "widgets": []
+        },
+        {
+          "id": 2,
+          "type": "org.kde.panel",
+          "widgets": [
+            3,
+            4,
+            5,
+            6,
+            7,
+            21,
+            22
+          ]
         }
+      ],
+      "layout_after": [
+        {
+          "id": 1,
+          "type": "org.kde.plasma.folder",
+          "widgets": []
+        },
+        {
+          "id": 2,
+          "type": "org.kde.panel",
+          "widgets": [
+            3,
+            4,
+            5,
+            6,
+            7,
+            21,
+            22
+          ]
+        }
+      ],
+      "output_before": {
+        "clones": [],
+        "connected": true,
+        "currentModeId": "1",
+        "enabled": true,
+        "followPreferredMode": false,
+        "icon": "",
+        "id": 1,
+        "modes": [
+          {
+            "id": "1",
+            "name": "1920x1080@60",
+            "refreshRate": 60,
+            "size": {
+              "height": 1080,
+              "width": 1920
+            }
+          }
+        ],
+        "name": "Virtual-0",
+        "pos": {
+          "x": 0,
+          "y": 0
+        },
+        "preferredModes": [
+          "1"
+        ],
+        "priority": 1,
+        "replicationSource": 0,
+        "rotation": 1,
+        "scale": 1,
+        "size": {
+          "height": 1080,
+          "width": 1920
+        },
+        "sizeMM": {
+          "height": -1,
+          "width": -1
+        },
+        "type": 0
+      },
+      "output_after": {
+        "clones": [],
+        "connected": true,
+        "currentModeId": "1",
+        "enabled": true,
+        "followPreferredMode": false,
+        "icon": "",
+        "id": 1,
+        "modes": [
+          {
+            "id": "1",
+            "name": "1920x1080@60",
+            "refreshRate": 60,
+            "size": {
+              "height": 1080,
+              "width": 1920
+            }
+          }
+        ],
+        "name": "Virtual-0",
+        "pos": {
+          "x": 0,
+          "y": 0
+        },
+        "preferredModes": [
+          "1"
+        ],
+        "priority": 1,
+        "replicationSource": 0,
+        "rotation": 1,
+        "scale": 1,
+        "size": {
+          "height": 1080,
+          "width": 1920
+        },
+        "sizeMM": {
+          "height": -1,
+          "width": -1
+        },
+        "type": 0
+      },
+      "transaction_probes": {
+        "real_failure_after_wallpaper": "rolled-back",
+        "owned_keys_restored": true,
+        "wallpapers_restored": true,
+        "local_cursor_shadow_restored": true,
+        "legacy_reader_rejects_resource_backup_schema": true,
+        "v1_0_to_v1_1": "legacy apply; backup protected; restore; apply; repeat; restore",
+        "legacy_backup_unchanged": true
+      },
+      "component_probes": {
+        "gtkconfig_module_loaded": true,
+        "managed_components": [
+          "cursor",
+          "wallpaper",
+          "lockscreen",
+          "gtk",
+          "ghostty",
+          "konsole"
+        ],
+        "managed_links_and_targets_unchanged_after_apply_repeat_restore": true,
+        "dry_run_configuration_and_state_unchanged": true,
+        "custom_wallpaper_desktop_and_lockscreen_fill_mode_2": true,
+        "custom_wallpaper_restored": true,
+        "gtk_only_skip_preserves_targets_with_live_cursor_apply_restore": true,
+        "same_id_cursor_reload_events": [
+          "breeze_cursors",
+          "Kaltsit-Sihengtu",
+          "breeze_cursors",
+          "Kaltsit-Sihengtu"
+        ],
+        "existing_custom_gtk_fonts_preserved": true,
+        "independent_gtk_cursor_restored_after_daemon_settles": true
+      },
+      "lockscreen_mode": "native greeter --testing; no password authentication"
+    }
+  ],
+  "historical_validation": [
+    {
+      "version": "1.1.0-rc.1",
+      "date": "2026-11-01",
+      "unit_tests": 68,
+      "unit_tests_result": "passed",
+      "nix_validation": {
+        "offline_build": "passed",
+        "flake_check": "passed",
+        "flake_lock_changed": false
+      },
+      "runs": [
+        {
+          "id": "rhi",
+          "result": "passed",
+          "renderer": "Qt Quick RHI / Mesa software OpenGL",
+          "pixels": [
+            3120,
+            2080
+          ],
+          "scale": 1.75,
+          "transitions": [
+            "applied",
+            "already-applied",
+            "restored"
+          ],
+          "warnings": {
+            "apply": [],
+            "restore": []
+          },
+          "layout_before": [
+            {
+              "id": 1,
+              "type": "org.kde.plasma.folder",
+              "widgets": []
+            },
+            {
+              "id": 2,
+              "type": "org.kde.panel",
+              "widgets": [
+                3,
+                4,
+                5,
+                6,
+                7,
+                21,
+                22
+              ]
+            }
+          ],
+          "layout_after": [
+            {
+              "id": 1,
+              "type": "org.kde.plasma.folder",
+              "widgets": []
+            },
+            {
+              "id": 2,
+              "type": "org.kde.panel",
+              "widgets": [
+                3,
+                4,
+                5,
+                6,
+                7,
+                21,
+                22
+              ]
+            }
+          ],
+          "output_before": {
+            "clones": [],
+            "connected": true,
+            "currentModeId": "1",
+            "enabled": true,
+            "followPreferredMode": false,
+            "icon": "",
+            "id": 1,
+            "modes": [
+              {
+                "id": "1",
+                "name": "3120x2080@60",
+                "refreshRate": 60,
+                "size": {
+                  "height": 2080,
+                  "width": 3120
+                }
+              }
+            ],
+            "name": "Virtual-0",
+            "pos": {
+              "x": 0,
+              "y": 0
+            },
+            "preferredModes": [
+              "1"
+            ],
+            "priority": 1,
+            "replicationSource": 0,
+            "rotation": 1,
+            "scale": 1.75,
+            "size": {
+              "height": 2080,
+              "width": 3120
+            },
+            "sizeMM": {
+              "height": -1,
+              "width": -1
+            },
+            "type": 0
+          },
+          "output_after": {
+            "clones": [],
+            "connected": true,
+            "currentModeId": "1",
+            "enabled": true,
+            "followPreferredMode": false,
+            "icon": "",
+            "id": 1,
+            "modes": [
+              {
+                "id": "1",
+                "name": "3120x2080@60",
+                "refreshRate": 60,
+                "size": {
+                  "height": 2080,
+                  "width": 3120
+                }
+              }
+            ],
+            "name": "Virtual-0",
+            "pos": {
+              "x": 0,
+              "y": 0
+            },
+            "preferredModes": [
+              "1"
+            ],
+            "priority": 1,
+            "replicationSource": 0,
+            "rotation": 1,
+            "scale": 1.75,
+            "size": {
+              "height": 2080,
+              "width": 3120
+            },
+            "sizeMM": {
+              "height": -1,
+              "width": -1
+            },
+            "type": 0
+          },
+          "font_and_cursor_size_preserved": true,
+          "transaction_probes": {
+            "real_failure_after_wallpaper": "rolled-back",
+            "owned_keys_restored": true,
+            "wallpapers_restored": true,
+            "local_cursor_shadow_restored": true,
+            "legacy_reader_rejects_resource_backup_schema": true,
+            "v1_0_to_v1_1": "legacy apply; backup protected; restore; apply; repeat; restore",
+            "legacy_backup_unchanged": true
+          },
+          "component_probes": {
+            "gtkconfig_module_loaded": true,
+            "managed_components": [
+              "cursor",
+              "wallpaper",
+              "lockscreen",
+              "gtk",
+              "ghostty",
+              "konsole"
+            ],
+            "managed_links_and_targets_unchanged_after_apply_repeat_restore": true,
+            "dry_run_configuration_and_state_unchanged": true,
+            "custom_wallpaper_desktop_and_lockscreen_fill_mode_2": true,
+            "custom_wallpaper_restored": true,
+            "gtk_only_skip_preserves_targets_with_live_cursor_apply_restore": true,
+            "same_id_cursor_reload_events": [
+              "breeze_cursors",
+              "Kaltsit-Sihengtu",
+              "breeze_cursors",
+              "Kaltsit-Sihengtu"
+            ],
+            "existing_custom_gtk_fonts_preserved": true,
+            "independent_gtk_cursor_restored_after_daemon_settles": true
+          }
+        },
+        {
+          "id": "software",
+          "result": "passed",
+          "renderer": "Qt Quick software",
+          "pixels": [
+            3120,
+            2080
+          ],
+          "scale": 1.75,
+          "transitions": [
+            "applied",
+            "already-applied",
+            "restored"
+          ],
+          "warnings": {
+            "apply": [],
+            "restore": []
+          },
+          "layout_before": [
+            {
+              "id": 1,
+              "type": "org.kde.plasma.folder",
+              "widgets": []
+            },
+            {
+              "id": 2,
+              "type": "org.kde.panel",
+              "widgets": [
+                3,
+                4,
+                5,
+                6,
+                7,
+                21,
+                22
+              ]
+            }
+          ],
+          "layout_after": [
+            {
+              "id": 1,
+              "type": "org.kde.plasma.folder",
+              "widgets": []
+            },
+            {
+              "id": 2,
+              "type": "org.kde.panel",
+              "widgets": [
+                3,
+                4,
+                5,
+                6,
+                7,
+                21,
+                22
+              ]
+            }
+          ],
+          "output_before": {
+            "clones": [],
+            "connected": true,
+            "currentModeId": "1",
+            "enabled": true,
+            "followPreferredMode": false,
+            "icon": "",
+            "id": 1,
+            "modes": [
+              {
+                "id": "1",
+                "name": "3120x2080@60",
+                "refreshRate": 60,
+                "size": {
+                  "height": 2080,
+                  "width": 3120
+                }
+              }
+            ],
+            "name": "Virtual-0",
+            "pos": {
+              "x": 0,
+              "y": 0
+            },
+            "preferredModes": [
+              "1"
+            ],
+            "priority": 1,
+            "replicationSource": 0,
+            "rotation": 1,
+            "scale": 1.75,
+            "size": {
+              "height": 2080,
+              "width": 3120
+            },
+            "sizeMM": {
+              "height": -1,
+              "width": -1
+            },
+            "type": 0
+          },
+          "output_after": {
+            "clones": [],
+            "connected": true,
+            "currentModeId": "1",
+            "enabled": true,
+            "followPreferredMode": false,
+            "icon": "",
+            "id": 1,
+            "modes": [
+              {
+                "id": "1",
+                "name": "3120x2080@60",
+                "refreshRate": 60,
+                "size": {
+                  "height": 2080,
+                  "width": 3120
+                }
+              }
+            ],
+            "name": "Virtual-0",
+            "pos": {
+              "x": 0,
+              "y": 0
+            },
+            "preferredModes": [
+              "1"
+            ],
+            "priority": 1,
+            "replicationSource": 0,
+            "rotation": 1,
+            "scale": 1.75,
+            "size": {
+              "height": 2080,
+              "width": 3120
+            },
+            "sizeMM": {
+              "height": -1,
+              "width": -1
+            },
+            "type": 0
+          },
+          "font_and_cursor_size_preserved": true,
+          "transaction_probes": {
+            "real_failure_after_wallpaper": "rolled-back",
+            "owned_keys_restored": true,
+            "wallpapers_restored": true,
+            "local_cursor_shadow_restored": true,
+            "legacy_reader_rejects_resource_backup_schema": true,
+            "v1_0_to_v1_1": "legacy apply; backup protected; restore; apply; repeat; restore",
+            "legacy_backup_unchanged": true
+          },
+          "component_probes": {
+            "gtkconfig_module_loaded": true,
+            "managed_components": [
+              "cursor",
+              "wallpaper",
+              "lockscreen",
+              "gtk",
+              "ghostty",
+              "konsole"
+            ],
+            "managed_links_and_targets_unchanged_after_apply_repeat_restore": true,
+            "dry_run_configuration_and_state_unchanged": true,
+            "custom_wallpaper_desktop_and_lockscreen_fill_mode_2": true,
+            "custom_wallpaper_restored": true,
+            "gtk_only_skip_preserves_targets_with_live_cursor_apply_restore": true,
+            "same_id_cursor_reload_events": [
+              "breeze_cursors",
+              "Kaltsit-Sihengtu",
+              "breeze_cursors",
+              "Kaltsit-Sihengtu"
+            ],
+            "existing_custom_gtk_fonts_preserved": true,
+            "independent_gtk_cursor_restored_after_daemon_settles": true
+          }
+        },
+        {
+          "id": "wide",
+          "result": "passed",
+          "renderer": "Qt Quick software",
+          "pixels": [
+            1920,
+            1080
+          ],
+          "scale": 1,
+          "transitions": [
+            "applied",
+            "already-applied",
+            "restored"
+          ],
+          "warnings": {
+            "apply": [],
+            "restore": []
+          },
+          "layout_before": [
+            {
+              "id": 1,
+              "type": "org.kde.plasma.folder",
+              "widgets": []
+            },
+            {
+              "id": 2,
+              "type": "org.kde.panel",
+              "widgets": [
+                3,
+                4,
+                5,
+                6,
+                7,
+                21,
+                22
+              ]
+            }
+          ],
+          "layout_after": [
+            {
+              "id": 1,
+              "type": "org.kde.plasma.folder",
+              "widgets": []
+            },
+            {
+              "id": 2,
+              "type": "org.kde.panel",
+              "widgets": [
+                3,
+                4,
+                5,
+                6,
+                7,
+                21,
+                22
+              ]
+            }
+          ],
+          "output_before": {
+            "clones": [],
+            "connected": true,
+            "currentModeId": "1",
+            "enabled": true,
+            "followPreferredMode": false,
+            "icon": "",
+            "id": 1,
+            "modes": [
+              {
+                "id": "1",
+                "name": "1920x1080@60",
+                "refreshRate": 60,
+                "size": {
+                  "height": 1080,
+                  "width": 1920
+                }
+              }
+            ],
+            "name": "Virtual-0",
+            "pos": {
+              "x": 0,
+              "y": 0
+            },
+            "preferredModes": [
+              "1"
+            ],
+            "priority": 1,
+            "replicationSource": 0,
+            "rotation": 1,
+            "scale": 1,
+            "size": {
+              "height": 1080,
+              "width": 1920
+            },
+            "sizeMM": {
+              "height": -1,
+              "width": -1
+            },
+            "type": 0
+          },
+          "output_after": {
+            "clones": [],
+            "connected": true,
+            "currentModeId": "1",
+            "enabled": true,
+            "followPreferredMode": false,
+            "icon": "",
+            "id": 1,
+            "modes": [
+              {
+                "id": "1",
+                "name": "1920x1080@60",
+                "refreshRate": 60,
+                "size": {
+                  "height": 1080,
+                  "width": 1920
+                }
+              }
+            ],
+            "name": "Virtual-0",
+            "pos": {
+              "x": 0,
+              "y": 0
+            },
+            "preferredModes": [
+              "1"
+            ],
+            "priority": 1,
+            "replicationSource": 0,
+            "rotation": 1,
+            "scale": 1,
+            "size": {
+              "height": 1080,
+              "width": 1920
+            },
+            "sizeMM": {
+              "height": -1,
+              "width": -1
+            },
+            "type": 0
+          },
+          "font_and_cursor_size_preserved": true,
+          "transaction_probes": {
+            "real_failure_after_wallpaper": "rolled-back",
+            "owned_keys_restored": true,
+            "wallpapers_restored": true,
+            "local_cursor_shadow_restored": true,
+            "legacy_reader_rejects_resource_backup_schema": true,
+            "v1_0_to_v1_1": "legacy apply; backup protected; restore; apply; repeat; restore",
+            "legacy_backup_unchanged": true
+          },
+          "component_probes": {
+            "gtkconfig_module_loaded": true,
+            "managed_components": [
+              "cursor",
+              "wallpaper",
+              "lockscreen",
+              "gtk",
+              "ghostty",
+              "konsole"
+            ],
+            "managed_links_and_targets_unchanged_after_apply_repeat_restore": true,
+            "dry_run_configuration_and_state_unchanged": true,
+            "custom_wallpaper_desktop_and_lockscreen_fill_mode_2": true,
+            "custom_wallpaper_restored": true,
+            "gtk_only_skip_preserves_targets_with_live_cursor_apply_restore": true,
+            "same_id_cursor_reload_events": [
+              "breeze_cursors",
+              "Kaltsit-Sihengtu",
+              "breeze_cursors",
+              "Kaltsit-Sihengtu"
+            ],
+            "existing_custom_gtk_fonts_preserved": true,
+            "independent_gtk_cursor_restored_after_daemon_settles": true
+          }
+        },
+        {
+          "id": "upgrade",
+          "result": "passed",
+          "renderer": "Qt Quick software",
+          "pixels": [
+            3120,
+            2080
+          ],
+          "scale": 1.75,
+          "transitions": [
+            "applied",
+            "already-applied",
+            "restored"
+          ],
+          "warnings": {
+            "apply": [],
+            "restore": []
+          },
+          "layout_before": [
+            {
+              "id": 1,
+              "type": "org.kde.plasma.folder",
+              "widgets": []
+            },
+            {
+              "id": 2,
+              "type": "org.kde.panel",
+              "widgets": [
+                3,
+                4,
+                5,
+                6,
+                7,
+                21,
+                22
+              ]
+            }
+          ],
+          "layout_after": [
+            {
+              "id": 1,
+              "type": "org.kde.plasma.folder",
+              "widgets": []
+            },
+            {
+              "id": 2,
+              "type": "org.kde.panel",
+              "widgets": [
+                3,
+                4,
+                5,
+                6,
+                7,
+                21,
+                22
+              ]
+            }
+          ],
+          "output_before": {
+            "clones": [],
+            "connected": true,
+            "currentModeId": "1",
+            "enabled": true,
+            "followPreferredMode": false,
+            "icon": "",
+            "id": 1,
+            "modes": [
+              {
+                "id": "1",
+                "name": "3120x2080@60",
+                "refreshRate": 60,
+                "size": {
+                  "height": 2080,
+                  "width": 3120
+                }
+              }
+            ],
+            "name": "Virtual-0",
+            "pos": {
+              "x": 0,
+              "y": 0
+            },
+            "preferredModes": [
+              "1"
+            ],
+            "priority": 1,
+            "replicationSource": 0,
+            "rotation": 1,
+            "scale": 1.75,
+            "size": {
+              "height": 2080,
+              "width": 3120
+            },
+            "sizeMM": {
+              "height": -1,
+              "width": -1
+            },
+            "type": 0
+          },
+          "output_after": {
+            "clones": [],
+            "connected": true,
+            "currentModeId": "1",
+            "enabled": true,
+            "followPreferredMode": false,
+            "icon": "",
+            "id": 1,
+            "modes": [
+              {
+                "id": "1",
+                "name": "3120x2080@60",
+                "refreshRate": 60,
+                "size": {
+                  "height": 2080,
+                  "width": 3120
+                }
+              }
+            ],
+            "name": "Virtual-0",
+            "pos": {
+              "x": 0,
+              "y": 0
+            },
+            "preferredModes": [
+              "1"
+            ],
+            "priority": 1,
+            "replicationSource": 0,
+            "rotation": 1,
+            "scale": 1.75,
+            "size": {
+              "height": 2080,
+              "width": 3120
+            },
+            "sizeMM": {
+              "height": -1,
+              "width": -1
+            },
+            "type": 0
+          },
+          "font_and_cursor_size_preserved": true,
+          "transaction_probes": {
+            "real_failure_after_wallpaper": "rolled-back",
+            "owned_keys_restored": true,
+            "wallpapers_restored": true,
+            "local_cursor_shadow_restored": true,
+            "previous_version": "1.1.0-dev.2",
+            "previous_to_candidate": "previous apply; backup protected; restore; candidate apply; repeat; restore",
+            "previous_backup_unchanged": true,
+            "previous_lock_configuration_restored": true
+          },
+          "component_probes": {
+            "gtkconfig_module_loaded": true,
+            "managed_components": [
+              "cursor",
+              "wallpaper",
+              "lockscreen",
+              "gtk",
+              "ghostty",
+              "konsole"
+            ],
+            "managed_links_and_targets_unchanged_after_apply_repeat_restore": true,
+            "dry_run_configuration_and_state_unchanged": true,
+            "custom_wallpaper_desktop_and_lockscreen_fill_mode_2": true,
+            "custom_wallpaper_restored": true,
+            "gtk_only_skip_preserves_targets_with_live_cursor_apply_restore": true,
+            "same_id_cursor_reload_events": [
+              "breeze_cursors",
+              "Kaltsit-Sihengtu",
+              "breeze_cursors",
+              "Kaltsit-Sihengtu"
+            ],
+            "existing_custom_gtk_fonts_preserved": true,
+            "independent_gtk_cursor_restored_after_daemon_settles": true
+          }
+        }
+      ],
+      "note": "Historical rc.1 checks; not reclassified as rc.2 validation"
+    },
+    {
+      "version": "1.1.0-rc.2",
+      "date": "2026-11-01",
+      "unit_tests": 68,
+      "unit_tests_result": "passed",
+      "nix_validation": {
+        "offline_build": "passed",
+        "flake_check": "passed",
+        "flake_lock_changed": false
+      },
+      "runs": [
+        {
+          "id": "rc2-rhi",
+          "version": "1.1.0-rc.2",
+          "result": "passed",
+          "renderer": "Qt Quick RHI / Mesa software OpenGL",
+          "pixels": [
+            3120,
+            2080
+          ],
+          "scale": 1.75,
+          "transitions": [
+            "applied",
+            "already-applied",
+            "restored"
+          ],
+          "warnings": {
+            "apply": [],
+            "apply_again": [],
+            "restore": []
+          },
+          "layout_before": [
+            {
+              "id": 1,
+              "type": "org.kde.plasma.folder",
+              "widgets": []
+            },
+            {
+              "id": 2,
+              "type": "org.kde.panel",
+              "widgets": [
+                3,
+                4,
+                5,
+                6,
+                7,
+                21,
+                22
+              ]
+            }
+          ],
+          "layout_after": [
+            {
+              "id": 1,
+              "type": "org.kde.plasma.folder",
+              "widgets": []
+            },
+            {
+              "id": 2,
+              "type": "org.kde.panel",
+              "widgets": [
+                3,
+                4,
+                5,
+                6,
+                7,
+                21,
+                22
+              ]
+            }
+          ],
+          "output_before": {
+            "clones": [],
+            "connected": true,
+            "currentModeId": "1",
+            "enabled": true,
+            "followPreferredMode": false,
+            "icon": "",
+            "id": 1,
+            "modes": [
+              {
+                "id": "1",
+                "name": "3120x2080@60",
+                "refreshRate": 60,
+                "size": {
+                  "height": 2080,
+                  "width": 3120
+                }
+              }
+            ],
+            "name": "Virtual-0",
+            "pos": {
+              "x": 0,
+              "y": 0
+            },
+            "preferredModes": [
+              "1"
+            ],
+            "priority": 1,
+            "replicationSource": 0,
+            "rotation": 1,
+            "scale": 1.75,
+            "size": {
+              "height": 2080,
+              "width": 3120
+            },
+            "sizeMM": {
+              "height": -1,
+              "width": -1
+            },
+            "type": 0
+          },
+          "output_after": {
+            "clones": [],
+            "connected": true,
+            "currentModeId": "1",
+            "enabled": true,
+            "followPreferredMode": false,
+            "icon": "",
+            "id": 1,
+            "modes": [
+              {
+                "id": "1",
+                "name": "3120x2080@60",
+                "refreshRate": 60,
+                "size": {
+                  "height": 2080,
+                  "width": 3120
+                }
+              }
+            ],
+            "name": "Virtual-0",
+            "pos": {
+              "x": 0,
+              "y": 0
+            },
+            "preferredModes": [
+              "1"
+            ],
+            "priority": 1,
+            "replicationSource": 0,
+            "rotation": 1,
+            "scale": 1.75,
+            "size": {
+              "height": 2080,
+              "width": 3120
+            },
+            "sizeMM": {
+              "height": -1,
+              "width": -1
+            },
+            "type": 0
+          },
+          "transaction_probes": {
+            "real_failure_after_wallpaper": "rolled-back",
+            "owned_keys_restored": true,
+            "wallpapers_restored": true,
+            "local_cursor_shadow_restored": true,
+            "legacy_reader_rejects_resource_backup_schema": true,
+            "v1_0_to_v1_1": "legacy apply; backup protected; restore; apply; repeat; restore",
+            "legacy_backup_unchanged": true
+          },
+          "component_probes": {
+            "gtkconfig_module_loaded": true,
+            "managed_components": [
+              "cursor",
+              "wallpaper",
+              "lockscreen",
+              "gtk",
+              "ghostty",
+              "konsole"
+            ],
+            "managed_links_and_targets_unchanged_after_apply_repeat_restore": true,
+            "dry_run_configuration_and_state_unchanged": true,
+            "custom_wallpaper_desktop_and_lockscreen_fill_mode_2": true,
+            "custom_wallpaper_restored": true,
+            "gtk_only_skip_preserves_targets_with_live_cursor_apply_restore": true,
+            "same_id_cursor_reload_events": [
+              "breeze_cursors",
+              "Kaltsit-Sihengtu",
+              "breeze_cursors",
+              "Kaltsit-Sihengtu"
+            ],
+            "existing_custom_gtk_fonts_preserved": true,
+            "independent_gtk_cursor_restored_after_daemon_settles": true
+          },
+          "lockscreen_mode": "native greeter --testing; no password authentication"
+        },
+        {
+          "id": "rc2-wide",
+          "version": "1.1.0-rc.2",
+          "result": "passed",
+          "renderer": "Qt Quick software",
+          "pixels": [
+            1920,
+            1080
+          ],
+          "scale": 1.0,
+          "transitions": [
+            "applied",
+            "already-applied",
+            "restored"
+          ],
+          "warnings": {
+            "apply": [],
+            "apply_again": [],
+            "restore": []
+          },
+          "layout_before": [
+            {
+              "id": 1,
+              "type": "org.kde.plasma.folder",
+              "widgets": []
+            },
+            {
+              "id": 2,
+              "type": "org.kde.panel",
+              "widgets": [
+                3,
+                4,
+                5,
+                6,
+                7,
+                21,
+                22
+              ]
+            }
+          ],
+          "layout_after": [
+            {
+              "id": 1,
+              "type": "org.kde.plasma.folder",
+              "widgets": []
+            },
+            {
+              "id": 2,
+              "type": "org.kde.panel",
+              "widgets": [
+                3,
+                4,
+                5,
+                6,
+                7,
+                21,
+                22
+              ]
+            }
+          ],
+          "output_before": {
+            "clones": [],
+            "connected": true,
+            "currentModeId": "1",
+            "enabled": true,
+            "followPreferredMode": false,
+            "icon": "",
+            "id": 1,
+            "modes": [
+              {
+                "id": "1",
+                "name": "1920x1080@60",
+                "refreshRate": 60,
+                "size": {
+                  "height": 1080,
+                  "width": 1920
+                }
+              }
+            ],
+            "name": "Virtual-0",
+            "pos": {
+              "x": 0,
+              "y": 0
+            },
+            "preferredModes": [
+              "1"
+            ],
+            "priority": 1,
+            "replicationSource": 0,
+            "rotation": 1,
+            "scale": 1,
+            "size": {
+              "height": 1080,
+              "width": 1920
+            },
+            "sizeMM": {
+              "height": -1,
+              "width": -1
+            },
+            "type": 0
+          },
+          "output_after": {
+            "clones": [],
+            "connected": true,
+            "currentModeId": "1",
+            "enabled": true,
+            "followPreferredMode": false,
+            "icon": "",
+            "id": 1,
+            "modes": [
+              {
+                "id": "1",
+                "name": "1920x1080@60",
+                "refreshRate": 60,
+                "size": {
+                  "height": 1080,
+                  "width": 1920
+                }
+              }
+            ],
+            "name": "Virtual-0",
+            "pos": {
+              "x": 0,
+              "y": 0
+            },
+            "preferredModes": [
+              "1"
+            ],
+            "priority": 1,
+            "replicationSource": 0,
+            "rotation": 1,
+            "scale": 1,
+            "size": {
+              "height": 1080,
+              "width": 1920
+            },
+            "sizeMM": {
+              "height": -1,
+              "width": -1
+            },
+            "type": 0
+          },
+          "transaction_probes": {
+            "real_failure_after_wallpaper": "rolled-back",
+            "owned_keys_restored": true,
+            "wallpapers_restored": true,
+            "local_cursor_shadow_restored": true,
+            "legacy_reader_rejects_resource_backup_schema": true,
+            "v1_0_to_v1_1": "legacy apply; backup protected; restore; apply; repeat; restore",
+            "legacy_backup_unchanged": true
+          },
+          "component_probes": {
+            "gtkconfig_module_loaded": true,
+            "managed_components": [
+              "cursor",
+              "wallpaper",
+              "lockscreen",
+              "gtk",
+              "ghostty",
+              "konsole"
+            ],
+            "managed_links_and_targets_unchanged_after_apply_repeat_restore": true,
+            "dry_run_configuration_and_state_unchanged": true,
+            "custom_wallpaper_desktop_and_lockscreen_fill_mode_2": true,
+            "custom_wallpaper_restored": true,
+            "gtk_only_skip_preserves_targets_with_live_cursor_apply_restore": true,
+            "same_id_cursor_reload_events": [
+              "breeze_cursors",
+              "Kaltsit-Sihengtu",
+              "breeze_cursors",
+              "Kaltsit-Sihengtu"
+            ],
+            "existing_custom_gtk_fonts_preserved": true,
+            "independent_gtk_cursor_restored_after_daemon_settles": true
+          },
+          "lockscreen_mode": "native greeter --testing; no password authentication"
+        }
+      ],
+      "note": "Historical candidate checks; not reclassified as rc.3 validation",
+      "exposure_comparison": {
+        "scope": "3120x2080 native RHI password-view screenshots",
+        "near_white_definition": "Every RGB channel greater than 235 in the original 8-bit screenshot",
+        "rc1_near_white_fraction": 0.7044133690828402,
+        "rc2_near_white_fraction": 0.0086962216469428,
+        "rc1_mean_luma_8bit": 234.23158807938856,
+        "rc2_mean_luma_8bit": 80.8391195142998,
+        "note": "Screenshot analysis only; not a measurement of physical display luminance"
       }
-    ],
-    "name": "Virtual-0",
-    "pos": {
-      "x": 0,
-      "y": 0
-    },
-    "preferredModes": [
-      "1"
-    ],
-    "priority": 1,
-    "replicationSource": 0,
-    "rotation": 1,
-    "scale": 1.75,
-    "size": {
-      "height": 2080,
-      "width": 3120
-    },
-    "sizeMM": {
-      "height": -1,
-      "width": -1
-    },
-    "type": 0
+    }
+  ],
+  "inherited_asset_evidence": {
+    "libXcursor_combinations_verified": 85,
+    "evidence_version": "1.1.0-dev.1; identical cursor hashes checked again in rc.1",
+    "note": "Cursor resources are unchanged by the rc.3 lock-screen fix; historical evidence, not a new physical cursor test"
   },
-  "layout_preserved": true,
-  "apply": "applied",
-  "apply_warnings": [],
-  "second_apply": "already-applied",
-  "restore": "restored",
-  "restore_warnings": [],
-  "restore_record_removed": true,
-  "assertions": [
-    "original custom accent restored",
-    "wallpaper accent switch restored",
-    "authored selection and link colors applied",
-    "cursorSize=36 preserved",
-    "font and fixed-font preserved",
-    "scale=1.75 before and after",
-    "desktop and panel widget IDs preserved"
-  ]
+  "rc1_physical_feedback": {
+    "system_generation": 52,
+    "real_lock_unlock_verified": true,
+    "normal_cursor_clicks_user_confirmed": true,
+    "visual_acceptance": "rejected",
+    "issue": "Password view was too bright and almost white"
+  },
+  "rc2_visual_feedback": {
+    "visual_acceptance": "rejected",
+    "issue": "Lock-screen shading was too dark; user requested removal of additional shading and color adjustments"
+  },
+  "lockscreen_rendering": {
+    "wallpaper_overlays": false,
+    "contrast_factor": 1.0,
+    "saturation_factor": 1.0,
+    "intensity_factor": 1.0,
+    "rhi_effect": "Native blur retained without additional color transformations",
+    "software_effect": "Original wallpaper without shader blur or additional color transformations",
+    "text_palette": "Light complementary background with dark text",
+    "package_generation": "Nix build copies the locked KDE shell; only the local WallpaperFader name and its three color factors are adjusted",
+    "authentication": "Native authentication logic retained; screenshots use --testing"
+  },
+  "physical_desktop_acceptance": false,
+  "lockscreen_authentication_performed": false,
+  "rc3_daily_deployment": {
+    "version": "1.1.0-rc.3",
+    "system_generation": 54,
+    "real_lock_unlock_verified": true,
+    "brightness_acceptance": true,
+    "user_feedback": "亮度正常，解锁正常",
+    "display": "eDP-1 3120x2080, 175%",
+    "source_commit": "d5dfb241525b4f1c94fd7cef6816b3c32848f663",
+    "layout_fonts_cursor_size_outputs_preserved": true,
+    "failed_system_units": 0,
+    "external_display_tested": false,
+    "all_cursor_sizes_manually_tested": false
+  },
+  "restore_record_schema": 3,
+  "used_by_release": "1.1.0"
 }

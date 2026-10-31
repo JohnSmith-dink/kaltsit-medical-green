@@ -20,6 +20,8 @@
       packages.${system} = {
         default = theme;
         kaltsit-theme = theme;
+        # Optional input for native greeter previews in a private compositor.
+        preview-wakeup = pkgs.callPackage ./tests/preview-wakeup.nix { };
       };
 
       apps.${system} = {
@@ -29,5 +31,9 @@
 
       homeManagerModules.default = import ./home-manager.nix;
       checks.${system}.theme = theme;
+      devShells.${system}.default = pkgs.mkShell {
+        packages = [ (pkgs.python3.withPackages (packages: [ packages.pillow ])) ];
+        PYTHONDONTWRITEBYTECODE = "1";
+      };
     };
 }

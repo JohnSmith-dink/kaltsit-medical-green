@@ -10,7 +10,7 @@ v1.2 保留原版锁屏，桌面采用 D1：面板圆角 8、弹窗 10、提示�
 新增只读 Plasma 版本诊断，并完善配置恢复、使用文档和每周兼容性检查。
 发布状态见 [GitHub Releases](https://github.com/JohnSmith-dink/kaltsit-medical-green/releases)。
 
-开发分支另提供可选的[动态壁纸与进入桌面过渡](docs/MOTION.md)（`1.3.0-dev.1`）；独立安装，不自动启用。
+开发分支另提供可选的[动态壁纸](docs/MOTION.md)（`1.3.0-dev.2`）；独立安装，不自动启用。
 
 [![桌面](previews/v1.2/thumbs/primary/desktop.png)](previews/v1.2/actual/primary/desktop.png)
 

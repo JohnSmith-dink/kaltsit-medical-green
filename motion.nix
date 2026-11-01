@@ -2,14 +2,13 @@
 
 stdenvNoCC.mkDerivation {
   pname = "kaltsit-motion";
-  version = "1.3.0-dev.1";
+  version = "1.3.0-dev.2";
   src = ./motion;
   dontBuild = true;
   propagatedUserEnvPkgs = [ kdePackages.qtmultimedia ];
   installPhase = ''
-    mkdir -p "$out/share/plasma/wallpapers" "$out/share/plasma/look-and-feel"
+    mkdir -p "$out/share/plasma/wallpapers"
     cp -a wallpaper "$out/share/plasma/wallpapers/org.xinyan.kaltsit.medicalgreen.motion"
-    cp -a splash "$out/share/plasma/look-and-feel/org.xinyan.kaltsit.medicalgreen.motion"
     mkdir -p "$out/share/wallpapers/KaltsitMedicalGreenMotion/contents/images"
     cp ${if posterFile != null then lib.escapeShellArg "${posterFile}" else
       "${baseTheme}/share/wallpapers/KaltsitMedicalGreen/contents/images/3840x2160.jpg"} \
@@ -22,7 +21,7 @@ stdenvNoCC.mkDerivation {
     ln -s ${kdePackages.qtmultimedia}/lib/qt-6/plugins/multimedia "$out/lib/qt-6/plugins/multimedia"
   '';
   meta = {
-    description = "Optional silent video wallpaper and stage-driven Plasma splash for Medical Green";
+    description = "Optional silent local video wallpaper for Medical Green";
     platforms = [ "x86_64-linux" ];
     license = lib.licenses.unfree;
   };

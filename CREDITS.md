@@ -46,7 +46,7 @@ rc.3 的 Nix 构建使用匹配的 `plasma-desktop` 和 `plasma-workspace` 依�
 本次来源记录没有提供可核实的原画作者或通用再分发许可；不将壁纸声明为 MIT。
 来源文件哈希、静帧偏移及图像哈希见 [asset-provenance.json](docs/asset-provenance.json)。
 
-可选动态壁纸与启动过渡的原创 QML 和 Nix 包装使用 MIT。
+可选动态壁纸的原创 QML 和 Nix 包装使用 MIT。
 本轮用户提供的原视频与私人衍生视频不加入仓库，也不因这些代码的许可获得再分发授权；
 来源和 SHA-256 见 [动态扩展说明](docs/MOTION.md)。默认扩展仍使用上述已有壁纸，完整包保留 unfree 标记。
 

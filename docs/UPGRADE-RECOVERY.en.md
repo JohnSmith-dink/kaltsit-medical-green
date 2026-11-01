@@ -10,7 +10,7 @@
 4. Run `kaltsit-theme apply --dry-run`, apply with your chosen `--skip` / `--wallpaper` options, then check `status`.
 
 First use needs no restore. Repeating apply with the same version and options keeps the original backup. Restore before changing options, wallpaper or version.
-The development branch still reports `1.1.0`: `upgrade_available` compares version strings, not source commits. Restore and apply explicitly when testing the D1 development package too.
+The accepted v1.2 development package reported `1.1.0`; release builds report `1.2.0`. `upgrade_available` compares version strings, not source commits. When upgrading from v1.1 or the D1 development build, restore with the currently installed tool before installing and applying the new version.
 
 ## Plasma upgrades and version diagnostics
 

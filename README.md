@@ -1,39 +1,41 @@
 # 凯尔希 · 医疗白绿
 
-**Kal'tsit Medical Green · NixOS / KDE Plasma 6 浅色主题** · [English](README.en.md)
+**Kal'tsit Medical Green 1.2.0 · NixOS / KDE Plasma 6 浅色主题** · [English](README.en.md)
 
 暖白背景、深灰绿正文、青绿强调色，配合凯尔希壁纸、动态指针与浅色终端。
 安装后主动切换，可恢复之前的设置；面板布局、字体、缩放和指针尺寸继续使用你的选择。
 
-公开正式版为 [v1.1.0](https://github.com/JohnSmith-dink/kaltsit-medical-green/releases/tag/v1.1.0)。
-本分支正在准备 v1.2：锁屏沿用原版，桌面采用已选的 D1（圆角 8 / 10 / 6，阴影 0.12）。
-不改写面板高度，现有 46 逻辑像素底栏与组件顺序由用户配置保留。开发包暂沿用 1.1.0 版本号，尚未发布。
+v1.2 保留原版锁屏，桌面采用 D1：面板圆角 8、弹窗 10、提示框 6，阴影不透明度 0.12。
+保留你的面板高度、位置和组件顺序；本轮实机验收使用 46 逻辑像素底栏。
+新增只读 Plasma 版本诊断，并完善配置恢复、使用文档和每周兼容性检查。
+发布状态见 [GitHub Releases](https://github.com/JohnSmith-dink/kaltsit-medical-green/releases)。
 
-[![桌面](previews/thumbs/desktop.png)](previews/actual/desktop.png)
+[![桌面](previews/v1.2/thumbs/primary/desktop.png)](previews/v1.2/actual/primary/desktop.png)
 
 <details>
 <summary>更多原生截图</summary>
 
-[![启动菜单](previews/thumbs/launcher.png)](previews/actual/launcher.png)
+[![启动菜单](previews/v1.2/thumbs/primary/launcher.png)](previews/v1.2/actual/primary/launcher.png)
 
-[![Dolphin](previews/thumbs/dolphin.png)](previews/actual/dolphin.png)
+[![Dolphin](previews/v1.2/thumbs/primary/dolphin.png)](previews/v1.2/actual/primary/dolphin.png)
 
-[![Konsole](previews/thumbs/terminal.png)](previews/actual/terminal.png)
+[![Konsole](previews/v1.2/thumbs/primary/terminal.png)](previews/v1.2/actual/primary/terminal.png)
 
-[![通知](previews/thumbs/notification.png)](previews/actual/notification.png)
+[![通知](previews/v1.2/thumbs/primary/notification.png)](previews/v1.2/actual/primary/notification.png)
 
-[![锁屏待机](previews/thumbs/lockscreen.png)](previews/actual/lockscreen.png)
+[![锁屏待机](previews/v1.2/thumbs/primary/lockscreen.png)](previews/v1.2/actual/primary/lockscreen.png)
 
-[![锁屏密码页](previews/thumbs/lockscreen-unlock.png)](previews/actual/lockscreen-unlock.png)
+[![锁屏密码页](previews/v1.2/thumbs/primary/lockscreen-unlock.png)](previews/v1.2/actual/primary/lockscreen-unlock.png)
 
 </details>
 
-以上为 **v1.1 参照图**：沿用 rc.3 隔离 KDE 会话的真实原图，点击缩略图查看原图；不代表 D1 开发包的新实机验收。
-拍摄版本、后端与哈希见 [原图清单](previews/manifest.json)，缩略图派生记录见 [缩略图清单](previews/thumbs/manifest.json)。
+以上为已验收开发源码 `9438a15` 的原生 KDE 隔离截图；1.2.0 沿用其运行逻辑与外观，仅更新版本标识和发布文档。
+点击缩略图查看原图；[双分辨率画廊](previews/v1.2/index.html)与[来源及哈希](previews/v1.2/manifest.json)分别记录原图和缩略图。
+原版锁屏亮度、密码解锁、D1 观感与鼠标点击已通过本机用户验收；范围见 [v1.2 发布依据](docs/V1.2-RELEASE.md)。
 
 ## 安装
 
-支持 x86_64-linux / NixOS / Plasma 6；v1.1 已验证 NixOS 26.05、Plasma 6.6.6、Wayland。
+支持 x86_64-linux / NixOS / Plasma 6；本轮已验证 NixOS 26.05、Plasma 6.6.6、Wayland。
 下载需要的版本源码后，在其目录运行：
 
 ```sh
@@ -122,4 +124,4 @@ nix develop --no-update-lock-file --command python3 scripts/generate-thumbnails.
 
 每周工作流分别检查锁定依赖与 unstable；失败直接显示，既不更新锁文件也不创建自动 PR。
 隔离预览不能代替真实解锁、多屏或五档指针的实屏验收。
-[本轮开发与验证](docs/V1.2-DEVELOPMENT.md) · [版本记录](CHANGELOG.md) · [开发版历史](docs/HISTORY.md) · [v1.1 验证记录](docs/VALIDATION.md) · [v1.1 发布记录](docs/RELEASE-READINESS.md)
+[v1.2 发布依据](docs/V1.2-RELEASE.md) · [开发与验证过程](docs/V1.2-DEVELOPMENT.md) · [版本记录](CHANGELOG.md) · [开发版历史](docs/HISTORY.md) · [v1.1 验证记录](docs/VALIDATION.md) · [v1.1 发布记录](docs/RELEASE-READINESS.md)

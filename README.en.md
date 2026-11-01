@@ -1,39 +1,41 @@
 # Kal'tsit Medical Green
 
-**A light theme for NixOS / KDE Plasma 6** · [中文](README.md)
+**Version 1.2.0 · A light theme for NixOS / KDE Plasma 6** · [中文](README.md)
 
 Warm white backgrounds, dark green-gray text and teal accents, with Kal'tsit wallpaper, animated cursors and light terminals.
 Switch explicitly after installation and restore your previous settings. Keep your panel layout, fonts, scale and cursor size.
 
-The public stable release is [v1.1.0](https://github.com/JohnSmith-dink/kaltsit-medical-green/releases/tag/v1.1.0).
-This branch prepares v1.2: the original lockscreen and selected D1 desktop (radii 8 / 10 / 6, shadow opacity 0.12).
-It does not set panel height: the existing 46-logical-pixel panel and widget order remain user configuration. Development packages still report 1.1.0 and are not a new release.
+v1.2 keeps the original lockscreen and adopts D1: panel radius 8, dialog radius 10, tooltip radius 6 and shadow opacity 0.12.
+Your panel height, position and widget order remain unchanged; physical acceptance used a 46-logical-pixel panel.
+It adds read-only Plasma version diagnostics, configuration recovery fixes, clearer documentation and weekly compatibility checks.
+See [GitHub Releases](https://github.com/JohnSmith-dink/kaltsit-medical-green/releases) for publication status.
 
-[![Desktop](previews/thumbs/desktop.png)](previews/actual/desktop.png)
+[![Desktop](previews/v1.2/thumbs/primary/desktop.png)](previews/v1.2/actual/primary/desktop.png)
 
 <details>
 <summary>More native screenshots</summary>
 
-[![Launcher](previews/thumbs/launcher.png)](previews/actual/launcher.png)
+[![Launcher](previews/v1.2/thumbs/primary/launcher.png)](previews/v1.2/actual/primary/launcher.png)
 
-[![Dolphin](previews/thumbs/dolphin.png)](previews/actual/dolphin.png)
+[![Dolphin](previews/v1.2/thumbs/primary/dolphin.png)](previews/v1.2/actual/primary/dolphin.png)
 
-[![Konsole](previews/thumbs/terminal.png)](previews/actual/terminal.png)
+[![Konsole](previews/v1.2/thumbs/primary/terminal.png)](previews/v1.2/actual/primary/terminal.png)
 
-[![Notification](previews/thumbs/notification.png)](previews/actual/notification.png)
+[![Notification](previews/v1.2/thumbs/primary/notification.png)](previews/v1.2/actual/primary/notification.png)
 
-[![Lockscreen idle](previews/thumbs/lockscreen.png)](previews/actual/lockscreen.png)
+[![Lockscreen idle](previews/v1.2/thumbs/primary/lockscreen.png)](previews/v1.2/actual/primary/lockscreen.png)
 
-[![Password page](previews/thumbs/lockscreen-unlock.png)](previews/actual/lockscreen-unlock.png)
+[![Password page](previews/v1.2/thumbs/primary/lockscreen-unlock.png)](previews/v1.2/actual/primary/lockscreen-unlock.png)
 
 </details>
 
-These are **v1.1 reference captures** from the rc.3 isolated KDE session, not new D1 hardware acceptance. Click thumbnails for original images.
-See the [capture manifest](previews/manifest.json) for versions, renderers and hashes, and the [thumbnail manifest](previews/thumbs/manifest.json) for derivative provenance.
+These native isolated KDE captures come from accepted development source `9438a15`. Version 1.2.0 retains its runtime logic and appearance, changing only version identifiers and release documentation.
+Click thumbnails for originals. See the [two-resolution gallery](previews/v1.2/index.html) and [image provenance and hashes](previews/v1.2/manifest.json).
+The user has accepted lockscreen brightness, password unlock, D1 appearance and mouse clicks on the physical machine; see [v1.2 release evidence](docs/V1.2-RELEASE.md) for scope.
 
 ## Install
 
-For x86_64-linux / NixOS / Plasma 6. v1.1 was validated on NixOS 26.05, Plasma 6.6.6 and Wayland.
+For x86_64-linux / NixOS / Plasma 6. This round was validated on NixOS 26.05, Plasma 6.6.6 and Wayland.
 Download the desired source version and run from its directory:
 
 ```sh
@@ -121,4 +123,4 @@ nix develop --no-update-lock-file --command python3 scripts/generate-thumbnails.
 
 The weekly workflow checks locked dependencies and probes unstable independently. Failures stay visible; it neither updates the lock file nor opens automatic PRs.
 Isolated previews do not certify real authentication, multiple monitors or all cursor sizes on physical screens.
-[Current development and validation](docs/V1.2-DEVELOPMENT.md) · [Changelog](CHANGELOG.md) · [Prerelease history](docs/HISTORY.md) · [v1.1 validation](docs/VALIDATION.md) · [v1.1 release record](docs/RELEASE-READINESS.md)
+[v1.2 release evidence](docs/V1.2-RELEASE.md) · [Development history](docs/V1.2-DEVELOPMENT.md) · [Changelog](CHANGELOG.md) · [Prerelease history](docs/HISTORY.md) · [v1.1 validation](docs/VALIDATION.md) · [v1.1 release record](docs/RELEASE-READINESS.md)

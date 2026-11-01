@@ -1,0 +1,37 @@
+{
+  "source_commit": "9438a155a5b4b80dc53d9bdd555bf641bedb6e2f",
+  "package_version": "1.1.0",
+  "generation_link": "system-55-link",
+  "all_components_applied": true,
+  "repeat_preserves_backup": true,
+  "layout_fonts_scale_cursor_and_launchers_preserved": true,
+  "new_failed_system_or_user_units": false,
+  "password_unlock_user_confirmation": "亮度和文字正常，密码解锁成功",
+  "desktop_user_acceptance": "桌面和菜单观感合适，鼠标点击正常",
+  "lockscreen_brightness_and_text_accepted": true,
+  "password_unlock_user_confirmed": true,
+  "desktop_appearance_accepted": true,
+  "mouse_clicks_accepted": true,
+  "core_live_acceptance": "passed",
+  "lock_signal_observed": true,
+  "unlock_signal_observed": false,
+  "unlocked_state_after_user_test": true,
+  "lock_monitor_window_seconds": 300,
+  "lock_monitor_result": "unlock-event-not-captured-before-monitor-timeout",
+  "lock_unlock_evidence": "Native lock signal captured; monitor ended before unlock was observed; subsequent GetActive=false and explicit user confirmation establish successful manual unlock",
+  "full_validation_matrix_complete": false,
+  "external_display_acceptance": "not tested",
+  "virtual_keyboard_acceptance": "not tested",
+  "cursor_all_sizes_acceptance": "not tested",
+  "tty_failure_recovery_drill": "not tested",
+  "evidence_type": "accepted development build; release metadata changes verified separately",
+  "display": {
+    "pixels": [
+      3120,
+      2080
+    ],
+    "scale": 1.75,
+    "panel_height": 46
+  },
+  "release_version": "1.2.0"
+}

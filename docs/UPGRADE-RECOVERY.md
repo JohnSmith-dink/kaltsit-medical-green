@@ -10,7 +10,7 @@
 4. 先运行 `kaltsit-theme apply --dry-run`，再用需要的 `--skip` / `--wallpaper` 选项执行 `apply`，最后检查 `status`。
 
 首次使用不需要 restore。相同版本、相同选项重复 apply 会保留最初备份；改变选项、自选壁纸或升级版本前必须先恢复。
-开发分支仍使用 `1.1.0` 版本号：`upgrade_available` 只比较版本字符串，不检测源码提交。测试 D1 开发包时也须先 restore，再 apply。
+v1.2 的验收开发包曾使用 `1.1.0` 版本号，正式构建为 `1.2.0`。`upgrade_available` 只比较版本字符串，不检测源码提交；从 v1.1 或 D1 开发包升级均须先用当前工具 restore，再安装并 apply 新版本。
 
 ## Plasma 升级与版本诊断
 

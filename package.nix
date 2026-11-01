@@ -33,7 +33,9 @@ stdenvNoCC.mkDerivation {
     cp -a LICENSES "$out/share/doc/kaltsit-theme/"
     cp README.md README.en.md LICENSE CREDITS.md CHANGELOG.md "$out/share/doc/kaltsit-theme/"
     ${python}/bin/python3 scripts/neutral-lockscreen.py \
-      ${kdePackages.plasma-desktop} ${kdePackages.plasma-workspace} "$out"
+      ${kdePackages.plasma-desktop} ${kdePackages.plasma-workspace} "$out" \
+      ${lib.escapeShellArg kdePackages.plasma-desktop.version} \
+      ${lib.escapeShellArg kdePackages.plasma-workspace.version}
     cp tools/kaltsit_theme.py "$out/libexec/kaltsit_theme.py"
     makeWrapper ${python}/bin/python3 "$out/bin/kaltsit-theme" \
       --add-flags "$out/libexec/kaltsit_theme.py" \

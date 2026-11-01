@@ -64,7 +64,10 @@ class ThemeError(RuntimeError):
 
 
 def read_text(path: Path) -> str | None:
-    return path.read_text(encoding="utf-8", errors="surrogateescape") if path.exists() else None
+    if not path.exists():
+        return None
+    with path.open(encoding="utf-8", errors="surrogateescape", newline="") as stream:
+        return stream.read()
 
 
 def atomic_text(path: Path, text: str) -> None:
@@ -75,7 +78,7 @@ def atomic_text(path: Path, text: str) -> None:
     mode = path.stat().st_mode & 0o777 if path.exists() else 0o600
     fd, name = tempfile.mkstemp(prefix=".kaltsit-", dir=path.parent)
     try:
-        with os.fdopen(fd, "w", encoding="utf-8", errors="surrogateescape") as stream:
+        with os.fdopen(fd, "w", encoding="utf-8", errors="surrogateescape", newline="") as stream:
             stream.write(text)
             stream.flush()
             os.fsync(stream.fileno())
@@ -103,6 +106,8 @@ def ini_entries(text: str | None) -> dict[tuple[str, str], str]:
 def edit_ini(text: str | None, updates: dict[tuple[str, str], str | None]) -> str:
     """Patch only requested keys, retaining comments and unrelated entries."""
     lines = (text or "").splitlines(keepends=True)
+    newline = next((ending for line in lines for ending in ("\r\n", "\n", "\r")
+                    if line.endswith(ending)), "\n")
     group = ""
     remaining = dict(updates)
     output = []
@@ -112,9 +117,9 @@ def edit_ini(text: str | None, updates: dict[tuple[str, str], str | None]) -> st
             if identity[0] == section:
                 value = remaining.pop(identity)
                 if value is not None:
-                    if output and not output[-1].endswith("\n"):
-                        output[-1] += "\n"
-                    output.append(f"{identity[1]}={value}\n")
+                    if output and not output[-1].endswith(("\n", "\r")):
+                        output[-1] += newline
+                    output.append(f"{identity[1]}={value}{newline}")
 
     for line in lines:
         match = GROUP_RE.match(line.strip())
@@ -130,17 +135,18 @@ def edit_ini(text: str | None, updates: dict[tuple[str, str], str | None]) -> st
             if identity in remaining:
                 value = remaining.pop(identity)
                 if value is not None:
-                    output.append(f"{identity[1]}={value}\n")
+                    ending = next((e for e in ("\r\n", "\n", "\r") if line.endswith(e)), "")
+                    output.append(f"{identity[1]}={value}{ending}")
             continue
         output.append(line)
     flush(group)
     for section in dict.fromkeys(key[0] for key in remaining):
         if not any(key[0] == section and value is not None for key, value in remaining.items()):
             continue
-        if output and not output[-1].endswith("\n"):
-            output[-1] += "\n"
+        if output and not output[-1].endswith(("\n", "\r")):
+            output[-1] += newline
         if section:
-            output.append(f"\n{section}\n")
+            output.append(f"{newline}{section}{newline}")
         flush(section)
     return "".join(output)
 
@@ -163,6 +169,38 @@ class Backend:
         if self.runner is not subprocess.run:
             return []
         return sorted(name for name in set(commands) if shutil.which(name, path=self.env.get("PATH")) is None)
+
+    def running_plasma(self) -> dict:
+        """Inspect the current bus owner's Nix executable; never start a shell.
+
+        PATH may point to a new generation while an older Plasma still runs.
+        Ask only the bus daemon for its existing owner's PID (no activation),
+        then read /proc. Non-Nix or inaccessible processes stay unknown.
+        """
+        result = {"version": None, "source": "unknown"}
+        if not self.env.get("DBUS_SESSION_BUS_ADDRESS"):
+            return dict(result, reason="no-session-bus")
+        try:
+            reply = self.runner([
+                "qdbus", "org.freedesktop.DBus", "/org/freedesktop/DBus",
+                "org.freedesktop.DBus.GetConnectionUnixProcessID", "org.kde.plasmashell",
+            ], env=self.env, check=True, text=True, capture_output=True, timeout=2)
+            pid = reply.stdout.strip()
+            if not re.fullmatch(r"[1-9][0-9]*", pid):
+                return dict(result, reason="invalid-session-pid")
+            process = Path("/proc") / pid
+            if process.stat().st_uid != os.getuid():
+                return dict(result, reason="different-process-owner")
+            executable = os.readlink(process / "exe")
+        except (OSError, subprocess.SubprocessError):
+            return dict(result, reason="session-process-unavailable")
+        match = re.fullmatch(
+            r"(/nix/store/[a-z0-9]{32}-plasma-workspace-(\d+\.\d+(?:\.\d+)?(?:[-+][A-Za-z0-9.]+)*))"
+            r"/bin/(?:plasmashell|\.plasmashell-wrapped)", executable)
+        if not match:
+            return dict(result, reason="unrecognized-executable")
+        return {"version": match[2], "source": "session-pid-nix-executable",
+                "package": match[1], "pid": int(pid)}
 
     def should_notify(self, name: str, group: str, key: str | None = None) -> bool:
         # This identity is descriptive: the controller already applies each
@@ -821,6 +859,12 @@ class Controller:
             if managed:
                 warnings.append(f"保留切换后由符号链接管理的配置：{managed}")
                 continue
+            # With no later edits, restore formatting, comments and duplicate
+            # entries byte for byte. GTK retains its key ownership filter:
+            # asynchronous exporters may have changed unrelated settings.
+            if old is not None and current == applied and name not in GTK_SETTINGS:
+                atomic_text(path, old)
+                continue
             if name in TEXT_FILES:
                 if current != applied and not force:
                     warnings.append(f"保留切换后修改的文件：{path}")
@@ -1029,6 +1073,25 @@ class Controller:
             file_locked = any(line.strip() == "[$i]" for line in (text or "").splitlines())
         return result
 
+    def lockscreen_resources(self) -> dict:
+        manifest_path = self.share / "doc/kaltsit-theme/lockscreen-rendering.json"
+        versions = {"plasma_desktop": None, "plasma_workspace": None}
+        try:
+            manifest = json.loads(read_text(manifest_path) or "{}")
+            for name in versions:
+                value = manifest.get(name + "_version")
+                if isinstance(value, str) and re.fullmatch(r"\d+\.\d+(?:\.\d+)?(?:[-+][A-Za-z0-9.]+)*", value):
+                    versions[name] = value
+        except (OSError, ValueError, AttributeError):
+            pass
+        running = self.backend.running_plasma()
+        comparable = all(versions.values()) and running["version"] is not None
+        match = all(value == running["version"] for value in versions.values()) if comparable else "unknown"
+        result = {"built_for": versions, "running": running, "match": match}
+        if match is False:
+            result["hint"] = "锁屏资源与当前 Plasma 版本不同；请使用系统同一套 pkgs 重建主题，升级会话后注销并重新登录。"
+        return result
+
     def status(self) -> dict:
         state = self.load()
         actual = self.effective_entries("kdeglobals")
@@ -1040,6 +1103,7 @@ class Controller:
                 "upgrade_available": state is not None and applied_version != VERSION,
                 "restore_available": state is not None, "state": str(self.state_file),
                 "components": self.state_components(state),
+                "lockscreen_resources": self.lockscreen_resources(),
                 "missing_commands": self.backend.missing_commands(self.required_commands(
                     [name for name, item in self.state_components(state).items() if item["status"] != "skipped"])),
                 "current_plasma_style": style.get(("[Theme]", "name")),

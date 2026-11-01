@@ -9,7 +9,8 @@ import json
 import shutil
 import sys
 
-desktop, workspace, output = map(Path, sys.argv[1:])
+desktop, workspace, output = map(Path, sys.argv[1:4])
+desktop_version, workspace_version = sys.argv[4:]
 shell = desktop / "share/plasma/shells/org.kde.plasma.desktop"
 target = output / "share/plasma/shells/org.kde.plasma.desktop"
 lock_ui = Path("contents/lockscreen/LockScreenUi.qml")
@@ -53,6 +54,7 @@ for path in shell.rglob("*"):
 (target / lock_ui.parent / "KaltsitWallpaperFader.qml").write_text(fader)
 manifest = {
     "plasma_desktop": str(desktop), "plasma_workspace": str(workspace),
+    "plasma_desktop_version": desktop_version, "plasma_workspace_version": workspace_version,
     "scope": "org.xinyan.kaltsit.medicalgreen.lock",
     "color_factors": {key: 1.0 for key in factors},
     "blur_and_authentication": "unchanged upstream",

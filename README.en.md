@@ -1,14 +1,14 @@
 # Kal'tsit Medical Green
 
-**Version 1.2.0 · A light theme for NixOS / KDE Plasma 6** · [中文](README.md)
+**Version 1.3.0 · A light theme for NixOS / KDE Plasma 6** · [中文](README.md)
 
 Warm white backgrounds, dark green-gray text and teal accents, with Kal'tsit wallpaper, animated cursors and light terminals.
 Switch explicitly after installation and restore your previous settings. Keep your panel layout, fonts, scale and cursor size.
 
-v1.2 keeps the original lockscreen and adopts D1: panel radius 8, dialog radius 10, tooltip radius 6 and shadow opacity 0.12.
-Your panel height, position and widget order remain unchanged; physical acceptance used a 46-logical-pixel panel.
-It adds read-only Plasma version diagnostics, configuration recovery fixes, clearer documentation and weekly compatibility checks.
-See [GitHub Releases](https://github.com/JohnSmith-dink/kaltsit-medical-green/releases) for publication status.
+v1.3 adds an optional [local video wallpaper](docs/MOTION.en.md): silent looping, right-click pause/resume and a still fallback when video is unavailable.
+Install and select `kaltsit-motion` separately. Public source and release archives do not include a video; choose your own local file.
+The original lockscreen and D1 desktop remain unchanged. No startup splash is installed, and panel layout, fonts and scale are preserved.
+See the [v1.3 release evidence](docs/V1.3-RELEASE.md) and [GitHub Releases](https://github.com/JohnSmith-dink/kaltsit-medical-green/releases).
 
 [![Desktop](previews/v1.2/thumbs/primary/desktop.png)](previews/v1.2/actual/primary/desktop.png)
 
@@ -29,7 +29,7 @@ See [GitHub Releases](https://github.com/JohnSmith-dink/kaltsit-medical-green/re
 
 </details>
 
-These native isolated KDE captures come from accepted development source `9438a15`. Version 1.2.0 retains its runtime logic and appearance, changing only version identifiers and release documentation.
+These are the v1.2 original-lockscreen and D1 native isolated captures from source `9438a15`. Version 1.3 retains those visual resources. Static screenshots are not evidence of video playback.
 Click thumbnails for originals. See the [two-resolution gallery](previews/v1.2/index.html) and [image provenance and hashes](previews/v1.2/manifest.json).
 The user has accepted lockscreen brightness, password unlock, D1 appearance and mouse clicks on the physical machine; see [v1.2 release evidence](docs/V1.2-RELEASE.md) for scope.
 

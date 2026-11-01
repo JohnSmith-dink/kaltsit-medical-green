@@ -1,0 +1,39 @@
+{
+  "source_commit": "7c175b88a265487c337e1dcabcb6216531b70f18",
+  "generation": "system-56-link",
+  "physical_desktop_playing": true,
+  "pause_preserves_frame": true,
+  "resume_advances": true,
+  "startup_package_absent": true,
+  "lockscreen_and_startup_settings_unchanged": true,
+  "existing_theme_package_unchanged": true,
+  "recovery_record_unchanged": true,
+  "layout_fonts_scale_cursor_and_launchers_preserved": true,
+  "native_multimedia_loaded": true,
+  "right_click_menu_user_confirmation": "画面流畅，暂停和继续正常",
+  "visual_smoothness_user_confirmed": true,
+  "right_click_pause_resume_user_confirmed": true,
+  "core_live_acceptance": "passed",
+  "full_validation_matrix_complete": false,
+  "hardware_decode": "not conclusively measured",
+  "long_term_power": "not tested",
+  "multi_display": "not tested",
+  "release_version": "1.3.0",
+  "tested_package_version": "1.3.0-dev.2",
+  "display": {
+    "pixels": [
+      3120,
+      2080
+    ],
+    "scale": 1.75
+  },
+  "video": {
+    "pixels": [
+      2560,
+      1440
+    ],
+    "fps": 30,
+    "publicly_distributed": false
+  },
+  "evidence_type": "accepted development build; formal version metadata and packaging checked separately"
+}

@@ -1,0 +1,14 @@
+{
+  "KPackageStructure": "Plasma/Wallpaper",
+  "KPlugin": {
+    "Id": "org.xinyan.kaltsit.medicalgreen.motion",
+    "Name": "Medical Green · Motion",
+    "Name[zh_CN]": "医疗白绿 · 动态壁纸",
+    "Description": "Silent local video with pause and an unchanged-color still fallback",
+    "Description[zh_CN]": "静音本地视频，支持暂停与原色静态回退",
+    "Icon": "preferences-desktop-wallpaper",
+    "Authors": [{ "Name": "Xinyan" }],
+    "License": "MIT",
+    "Version": "1.3.0"
+  }
+}

@@ -16,9 +16,9 @@ def surface(radius, margin, shadow):
     r, c, s = radius, 8, shadow
     parts = [HEADER, '<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240">',
              '<defs><linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">'
-             '<stop stop-color="#25352D" stop-opacity="0"/><stop offset="1" stop-color="#25352D" stop-opacity=".16"/>'
+             '<stop stop-color="#25352D" stop-opacity="0"/><stop offset="1" stop-color="#25352D" stop-opacity=".12"/>'
              '</linearGradient><radialGradient id="corner" cx="1" cy="1" r="1">'
-             '<stop stop-color="#25352D" stop-opacity=".16"/><stop offset="1" stop-color="#25352D" stop-opacity="0"/>'
+             '<stop stop-color="#25352D" stop-opacity=".12"/><stop offset="1" stop-color="#25352D" stop-opacity="0"/>'
              '</radialGradient></defs>']
     positions = {'topleft': (0, 0, 0), 'topright': (r+c, 0, 90),
                  'bottomright': (r+c, r+c, 180), 'bottomleft': (0, r+c, 270)}
@@ -107,8 +107,8 @@ def folder(size, kind):
 
 
 def main():
-    for name, r, margin, shadow in (('widgets/panel-background', 6, 6, 12),
-                                   ('dialogs/background', 8, 8, 16),
+    for name, r, margin, shadow in (('widgets/panel-background', 8, 6, 12),
+                                   ('dialogs/background', 10, 8, 16),
                                    ('widgets/background', 6, 8, 12),
                                    ('widgets/tooltip', 6, 6, 12)):
         path = STYLE / (name + '.svg')

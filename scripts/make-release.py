@@ -13,7 +13,7 @@ args = parser.parse_args()
 root = Path(__file__).resolve().parents[1]
 output = (args.output_dir or root.parent / "dist").resolve()
 output.mkdir(parents=True, exist_ok=True)
-prefix = "kaltsit-medical-green-1.1.0"
+prefix = "kaltsit-medical-green-1.2.0"
 archive = output / (prefix + ".tar.gz")
 excluded = {".git", "__pycache__", ".direnv", "dist", "build", "result"}
 files = []

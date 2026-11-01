@@ -1,0 +1,179 @@
+{
+  "used_by_version": "1.2.0",
+  "source_commit": "9438a155a5b4b80dc53d9bdd555bf641bedb6e2f",
+  "source_package_reported_version": "1.1.0",
+  "capture_kind": "native isolated KDE session",
+  "image_processing": "original captures unchanged; separate LANCZOS fit-1000 RGB PNG thumbnails",
+  "authentication_in_captures": false,
+  "physical_acceptance": "../../docs/v1.2-acceptance.json",
+  "images": [
+    {
+      "file": "actual/primary/desktop.png",
+      "sha256": "2cfccbca67440c8b4f578fec3017110e84888034c6b4fb2bb8d5c0b1dc3d23f2",
+      "dimensions": [
+        3120,
+        2080
+      ],
+      "scale": 1.75,
+      "renderer": "Qt Quick RHI / Mesa software OpenGL",
+      "thumbnail": "thumbs/primary/desktop.png",
+      "thumbnail_sha256": "56210cce97a2a5b13b3a1776d84963bb44651edd2bb2fd852743364329b014ec"
+    },
+    {
+      "file": "actual/primary/dolphin.png",
+      "sha256": "bcfa166e9345b07eb5e6d9d2eb949dca69f48049b305ee9850d322a801f90e65",
+      "dimensions": [
+        3120,
+        2080
+      ],
+      "scale": 1.75,
+      "renderer": "Qt Quick RHI / Mesa software OpenGL",
+      "thumbnail": "thumbs/primary/dolphin.png",
+      "thumbnail_sha256": "c51f1bf0909377ea3670a0504e1f822368587f3aad13573ddc70241a58f9ae39"
+    },
+    {
+      "file": "actual/primary/launcher.png",
+      "sha256": "b29d8ec833508019829f125b0a8f796e570f6aad78bf7285fafd284a3ba36e13",
+      "dimensions": [
+        3120,
+        2080
+      ],
+      "scale": 1.75,
+      "renderer": "Qt Quick RHI / Mesa software OpenGL",
+      "thumbnail": "thumbs/primary/launcher.png",
+      "thumbnail_sha256": "a5c2d305b21c7dd857d75876e6df5940f98bcf77b8335a11121ce254095bf7fb"
+    },
+    {
+      "file": "actual/primary/lockscreen-unlock.png",
+      "sha256": "76a282b8a5fd17eb229a77570fb4254d2977084b77898102099849a3931749b5",
+      "dimensions": [
+        3120,
+        2080
+      ],
+      "scale": 1.75,
+      "renderer": "Qt Quick RHI / Mesa software OpenGL",
+      "thumbnail": "thumbs/primary/lockscreen-unlock.png",
+      "thumbnail_sha256": "5c66559099ebb39ceca3ecd1365866da0e2ff4238b81a08c0b0b6f352563aa76"
+    },
+    {
+      "file": "actual/primary/lockscreen.png",
+      "sha256": "1c44f849686073f5784e2b72cca9fbf88f1e068a41c397094db27e209588118a",
+      "dimensions": [
+        3120,
+        2080
+      ],
+      "scale": 1.75,
+      "renderer": "Qt Quick RHI / Mesa software OpenGL",
+      "thumbnail": "thumbs/primary/lockscreen.png",
+      "thumbnail_sha256": "acc27891b3c3ec7036d75b9887391c974ecaa4021ef2f7fe66d068a01fbc561c"
+    },
+    {
+      "file": "actual/primary/notification.png",
+      "sha256": "9cc2dd9a0d07cabd75876c1ab02bfed3f4d56883d4e46eeaab40c8adc0b4ce91",
+      "dimensions": [
+        3120,
+        2080
+      ],
+      "scale": 1.75,
+      "renderer": "Qt Quick RHI / Mesa software OpenGL",
+      "thumbnail": "thumbs/primary/notification.png",
+      "thumbnail_sha256": "61826c99dfae49dbef9179009c9ea96d11c97a5f8f99d8cf82e25ad6234bf618"
+    },
+    {
+      "file": "actual/primary/terminal.png",
+      "sha256": "d8b02b8bae573c11d66eb313a8eebc50918300ade274db80f1f91898edb736fc",
+      "dimensions": [
+        3120,
+        2080
+      ],
+      "scale": 1.75,
+      "renderer": "Qt Quick RHI / Mesa software OpenGL",
+      "thumbnail": "thumbs/primary/terminal.png",
+      "thumbnail_sha256": "a11b3d6391b00efadc7d5323cb7eb87481bb6f4e175aa19bec4763259a8262f1"
+    },
+    {
+      "file": "actual/wide/desktop.png",
+      "sha256": "bcdda4c1b4e8d14485f4f8d7656abdd0036ab90264a4bae47a946de82f07f25b",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "scale": 1,
+      "renderer": "Qt Quick software",
+      "thumbnail": "thumbs/wide/desktop.png",
+      "thumbnail_sha256": "572f61ea7b6b8c70738a7da6c69f959967b71bf8571747ac02372198a006537a"
+    },
+    {
+      "file": "actual/wide/dolphin.png",
+      "sha256": "38fb374ed6c5b0603f874a05c71639a902a00be3c686f5daa7a1bb94ce148545",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "scale": 1,
+      "renderer": "Qt Quick software",
+      "thumbnail": "thumbs/wide/dolphin.png",
+      "thumbnail_sha256": "bc5195db3c749bfd692bc80097af6758fc6572fdd12ca8516d51f45c2920ed09"
+    },
+    {
+      "file": "actual/wide/launcher.png",
+      "sha256": "dfa8e1a9c4c3200537a6e3d67b871cc64c1cbb562b1d1c7fe7b4c103d2def9ab",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "scale": 1,
+      "renderer": "Qt Quick software",
+      "thumbnail": "thumbs/wide/launcher.png",
+      "thumbnail_sha256": "d844843d93202e0c4d763bbb28e249593a64d7f576edda8f5b85da1b7761dace"
+    },
+    {
+      "file": "actual/wide/lockscreen-unlock.png",
+      "sha256": "2377d3295e9c4ff283968015567d77b1ea4c4456583b9e4e6f1113d94cfaa7ad",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "scale": 1,
+      "renderer": "Qt Quick software",
+      "thumbnail": "thumbs/wide/lockscreen-unlock.png",
+      "thumbnail_sha256": "2e72bd1b2c6df1759971550cc3d88c087eb07a684f6286d9e0fa9580b61647b1"
+    },
+    {
+      "file": "actual/wide/lockscreen.png",
+      "sha256": "466acdfab6d3ce81aa9a75c123c610ac6f3bab7792ca66c4ce19f26a92104ec5",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "scale": 1,
+      "renderer": "Qt Quick software",
+      "thumbnail": "thumbs/wide/lockscreen.png",
+      "thumbnail_sha256": "fd0b927245da781b5d2f78fceb3ee933b5dce33b3b0aa6649b7f7f5526b71a5f"
+    },
+    {
+      "file": "actual/wide/notification.png",
+      "sha256": "ae5918297c8a0625ada30078ba692ffdd3139aa25d6dfc733310c5c0f0ed946c",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "scale": 1,
+      "renderer": "Qt Quick software",
+      "thumbnail": "thumbs/wide/notification.png",
+      "thumbnail_sha256": "044c436be9013068ae332a2909507f29bc66b50e88d8d32c467a9041d4a8053e"
+    },
+    {
+      "file": "actual/wide/terminal.png",
+      "sha256": "453b5d9b62e54b521ea1f2f5eee8b921e2e43a19fa1b4b837d94da870fb53407",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "scale": 1,
+      "renderer": "Qt Quick software",
+      "thumbnail": "thumbs/wide/terminal.png",
+      "thumbnail_sha256": "2699ba5cc2b07f7d06ceb089a4218b25cf283d159f5ebf29e27c72c62f7f2170"
+    }
+  ]
+}

@@ -1,0 +1,150 @@
+{
+  "source_manifest": "manifest.json",
+  "source_manifest_sha256": "c49c1a962bdc031753ffa8bcf81c27b435e2a42fb038c5746e09a6749ee3c501",
+  "purpose": "README thumbnails of the unchanged v1.1 reference captures; not v1.2 acceptance",
+  "generator": "scripts/generate-thumbnails.py",
+  "pillow_version": "12.3.0",
+  "resize": "LANCZOS, fit 1000x1000, no upscale, RGB PNG",
+  "images": [
+    {
+      "source": "actual/desktop.png",
+      "source_sha256": "50c13126f71cba02a7f60017727b610f21085f28970db6a6487e497dd11eacd9",
+      "source_dimensions": [
+        3120,
+        2080
+      ],
+      "thumbnail": "thumbs/desktop.png",
+      "thumbnail_sha256": "18b8efbf67313a3f06c6d6f64e8943e16175758c155d0acd706929d52b823322",
+      "thumbnail_dimensions": [
+        1000,
+        667
+      ]
+    },
+    {
+      "source": "actual/dolphin.png",
+      "source_sha256": "56070e9bce1e78aabd8e42f38f760260d95d729072b9a3db482125e2b86f8643",
+      "source_dimensions": [
+        3120,
+        2080
+      ],
+      "thumbnail": "thumbs/dolphin.png",
+      "thumbnail_sha256": "15399b5f37705db0932b351e2099254c2127b76af976848a7f3ed7b9b764870b",
+      "thumbnail_dimensions": [
+        1000,
+        667
+      ]
+    },
+    {
+      "source": "actual/launcher.png",
+      "source_sha256": "1f441319b882b25b982c0f0d802b72abf8a54ababf0b1f6f5f539fe95bce68bf",
+      "source_dimensions": [
+        3120,
+        2080
+      ],
+      "thumbnail": "thumbs/launcher.png",
+      "thumbnail_sha256": "29e569f84d01fdd0f8f7ac2c41534360be978cbea3704d59b95d00a00e7b217b",
+      "thumbnail_dimensions": [
+        1000,
+        667
+      ]
+    },
+    {
+      "source": "actual/lockscreen-unlock.png",
+      "source_sha256": "fa5ccba425485f14755efbcd056d0c51454970bbb2451357576d82baccac72ce",
+      "source_dimensions": [
+        3120,
+        2080
+      ],
+      "thumbnail": "thumbs/lockscreen-unlock.png",
+      "thumbnail_sha256": "1ca79511cd8ab9ee8bece1bad95383c8782157ebf3c22f200c75a93274f02399",
+      "thumbnail_dimensions": [
+        1000,
+        667
+      ]
+    },
+    {
+      "source": "actual/lockscreen.png",
+      "source_sha256": "4eff04b7709d0fffe6c7e5244901489f77faf761c13deeb09c4ad6a23e255c2c",
+      "source_dimensions": [
+        3120,
+        2080
+      ],
+      "thumbnail": "thumbs/lockscreen.png",
+      "thumbnail_sha256": "dd7d50446ca105c09bb77155797f550a5f81ea9361f263f4cd759f31c7e04bb0",
+      "thumbnail_dimensions": [
+        1000,
+        667
+      ]
+    },
+    {
+      "source": "actual/notification.png",
+      "source_sha256": "ca9bd4d2ff4fc57fe3677333a88228248a5aec232a1633feb90bcdfc7b934668",
+      "source_dimensions": [
+        3120,
+        2080
+      ],
+      "thumbnail": "thumbs/notification.png",
+      "thumbnail_sha256": "3a87c705e84572c7d3519c5e6b1e30c2a3d4c6ce86132cc3dd9a7f1cab9e787a",
+      "thumbnail_dimensions": [
+        1000,
+        667
+      ]
+    },
+    {
+      "source": "actual/terminal.png",
+      "source_sha256": "5c51689c51a0fd372dca45c27d57376022cd36e88f7f0d251647c87101f6527e",
+      "source_dimensions": [
+        3120,
+        2080
+      ],
+      "thumbnail": "thumbs/terminal.png",
+      "thumbnail_sha256": "cd7b8403813a6ed6b68e261b24146d4e44144ded3c1faabfcc7173ed9913828f",
+      "thumbnail_dimensions": [
+        1000,
+        667
+      ]
+    },
+    {
+      "source": "actual/wide/desktop.png",
+      "source_sha256": "acecc59b7aa258105ab6c615ed80b9aff5167a181b43108c99f1fab750e94120",
+      "source_dimensions": [
+        1920,
+        1080
+      ],
+      "thumbnail": "thumbs/wide/desktop.png",
+      "thumbnail_sha256": "746bd611f79e56969f59c7f86d1ce560d4396fc4b875f5e6f4590ec8ef6ea008",
+      "thumbnail_dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "source": "actual/wide/lockscreen-unlock.png",
+      "source_sha256": "02aa1f4b4ff4995284e102cb6f8d12e387d35de3d08c38a9c1a55c07e6c7ead8",
+      "source_dimensions": [
+        1920,
+        1080
+      ],
+      "thumbnail": "thumbs/wide/lockscreen-unlock.png",
+      "thumbnail_sha256": "b3c8ec05a782a05425191beaab505dbc0dcbb7828f1771d6c3607daf872060df",
+      "thumbnail_dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "source": "actual/wide/lockscreen.png",
+      "source_sha256": "cce93048ead77598d608c1a3ac5e8929470c54226f451c8e6f6a66ea616dc54f",
+      "source_dimensions": [
+        1920,
+        1080
+      ],
+      "thumbnail": "thumbs/wide/lockscreen.png",
+      "thumbnail_sha256": "1d1e9318329edaf3422c50d246c22bed189b088e815ed2af73ddf45d2331d391",
+      "thumbnail_dimensions": [
+        1000,
+        563
+      ]
+    }
+  ]
+}

@@ -1,16 +1,14 @@
 # 凯尔希 · 医疗白绿
 
-**Kal'tsit Medical Green 1.2.0 · NixOS / KDE Plasma 6 浅色主题** · [English](README.en.md)
+**Kal'tsit Medical Green 1.3.0 · NixOS / KDE Plasma 6 浅色主题** · [English](README.en.md)
 
 暖白背景、深灰绿正文、青绿强调色，配合凯尔希壁纸、动态指针与浅色终端。
 安装后主动切换，可恢复之前的设置；面板布局、字体、缩放和指针尺寸继续使用你的选择。
 
-v1.2 保留原版锁屏，桌面采用 D1：面板圆角 8、弹窗 10、提示框 6，阴影不透明度 0.12。
-保留你的面板高度、位置和组件顺序；本轮实机验收使用 46 逻辑像素底栏。
-新增只读 Plasma 版本诊断，并完善配置恢复、使用文档和每周兼容性检查。
-发布状态见 [GitHub Releases](https://github.com/JohnSmith-dink/kaltsit-medical-green/releases)。
-
-开发分支另提供可选的[动态壁纸](docs/MOTION.md)（`1.3.0-dev.2`）；独立安装，不自动启用。
+v1.3 新增可选的[本地动态壁纸](docs/MOTION.md)：静音循环、右键暂停/继续、视频不可用时静态回退。
+`kaltsit-motion` 独立安装和启用；公开源码与发行包不含视频，使用时选择自己的本地文件。
+保留原版锁屏与 D1 桌面，不安装启动过渡，不改变面板布局、字体或缩放。
+发布依据与已验收范围见 [v1.3 发布记录](docs/V1.3-RELEASE.md)；公开版本见 [GitHub Releases](https://github.com/JohnSmith-dink/kaltsit-medical-green/releases)。
 
 [![桌面](previews/v1.2/thumbs/primary/desktop.png)](previews/v1.2/actual/primary/desktop.png)
 
@@ -31,7 +29,7 @@ v1.2 保留原版锁屏，桌面采用 D1：面板圆角 8、弹窗 10、提示�
 
 </details>
 
-以上为已验收开发源码 `9438a15` 的原生 KDE 隔离截图；1.2.0 沿用其运行逻辑与外观，仅更新版本标识和发布文档。
+以上为 v1.2 的原版锁屏与 D1 原生隔离截图（来源 `9438a15`）；v1.3 沿用这些外观资源。静态截图不表示动态壁纸正在播放。
 点击缩略图查看原图；[双分辨率画廊](previews/v1.2/index.html)与[来源及哈希](previews/v1.2/manifest.json)分别记录原图和缩略图。
 原版锁屏亮度、密码解锁、D1 观感与鼠标点击已通过本机用户验收；范围见 [v1.2 发布依据](docs/V1.2-RELEASE.md)。
 

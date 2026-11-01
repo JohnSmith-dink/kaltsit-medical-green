@@ -1,5 +1,7 @@
 # 升级、恢复与卸载
 
+v1.3 新增独立[动态壁纸](MOTION.md)。执行基础主题 restore/升级或移除扩展前，先在桌面设置恢复原图像壁纸；`kaltsit-theme restore` 不管理扩展选择。仅安装扩展无需重新应用基础主题。
+
 [English](UPGRADE-RECOVERY.en.md) · [返回 README](../README.md)
 
 ## 升级顺序

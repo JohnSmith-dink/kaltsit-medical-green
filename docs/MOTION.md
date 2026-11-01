@@ -1,8 +1,8 @@
-# 动态壁纸（开发版）
+# 动态壁纸 · v1.3.0
 
-`kaltsit-motion` 是 v1.2 之外的可选包，目前版本为 `1.3.0-dev.2`。
+`kaltsit-motion` 是独立的可选扩展包，版本为 `1.3.0`。
 包含独立的 Plasma 壁纸资源：**医疗白绿 · 动态壁纸**。
-用户选定只部署动态壁纸，启动过渡已从本版移除。
+本包只提供动态壁纸，不安装启动画面。
 安装资源不会自动启用；原版锁屏、D1 桌面、启动画面设置、CLI、Home Manager 模块和恢复记录格式不变。
 
 ## 行为
@@ -15,7 +15,7 @@
 
 ## 构建与安装
 
-在本开发分支目录中可构建默认包：
+在本版本源码目录中构建：
 
 ```sh
 nix build --no-write-lock-file path:.#kaltsit-motion
@@ -66,8 +66,9 @@ d1e60abcb03a0a2a7dc687886f23ba8e0ff741a125f6d8ee17e2b4aad1d5254e
 
 本轮使用与锁定依赖一致的 Plasma 6.6.6 / Qt 6.11.2，在独立 HOME、D-Bus 和 KWin 虚拟输出中验证。
 覆盖 1920×1080 / 100% 与 3120×2080 / 175%，以及原生播放、暂停、隐藏、循环、错误回退和恢复。
-硬件解码、长期功耗、多屏与桌面右键交互需实机验收。
-具体结果与录屏保存在本次私人预览报告中；现有 84 项测试及 Nix 构建检查另行记录。
+已验收开发源码 `7c175b8` 部署至 NixOS generation 56；3120×2080 / 175% 内屏上，用户确认「画面流畅，暂停和继续正常」。
+正式版沿用同一播放器逻辑，单独检查版本标识、构建与发行包。现有 84 项测试及 Nix flake check 通过。
+硬件解码未确定测量，长期功耗和多屏未验收；不把内屏验收扩大到这些范围。见 [发布依据](V1.3-RELEASE.md)与[最小验收记录](v1.3-acceptance.json)。
 
 实现依据：[Qt MediaPlayer](https://doc.qt.io/qt-6/qml-qtmultimedia-mediaplayer.html)、
 [KDE 原生壁纸接口](https://raw.githubusercontent.com/KDE/plasma-workspace/Plasma/6.6/wallpapers/image/imagepackage/contents/ui/main.qml)。

@@ -1,5 +1,7 @@
 # Upgrade, recovery and removal
 
+v1.3 adds an optional [video wallpaper](MOTION.en.md). Before base-theme restore/upgrade or addon removal, select the original image wallpaper in desktop settings. The optional selection is not managed by `kaltsit-theme restore`. Installing only the addon does not require reapplying the base theme.
+
 [中文](UPGRADE-RECOVERY.md) · [Back to README](../README.en.md)
 
 ## Upgrade order

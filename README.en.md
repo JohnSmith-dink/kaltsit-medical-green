@@ -75,7 +75,7 @@ Restore an active application before changing options or versions. Repeating the
 | `gtk` | Breeze GTK colors. |
 | `ghostty` / `konsole` | Complete light ANSI palettes. |
 
-The development branch uses the palette background for logout, restart and shutdown confirmation, keeping dark text in a light scheme readable against Breeze's backdrop. Only the background changes; native buttons, cancellation and countdown remain unchanged. SDDM and Plymouth are unaffected.
+The development branch draws no full-screen overlay for logout, restart and shutdown confirmation, preserving the wallpaper brightness behind it. Text has a thin light outline; icons retain individual light discs and focus borders. Native button, cancellation and countdown behavior stays unchanged. SDDM and Plymouth are unaffected.
 
 Repeat `--skip` as needed. Symlink-managed optional configuration skips the whole component and reports why; managed core configuration stops apply before writes.
 Missing lockscreen resources remain an explicit error with zero writes; use `--skip lockscreen` deliberately when needed. Check individual component results: a successful exit does not mean every component was applied.

@@ -20,7 +20,7 @@ Based on pinned [`nixos/modules/services/display-managers/sddm.nix`](https://git
 - `services.displayManager.sddm.theme` is a string, default empty; `extraPackages` lists additional Qt plugins/QML libraries.
 - ThemeDir is `/run/current-system/sw/share/sddm/themes`; enabling SDDM links `/share/sddm`.
 - Install the theme at `$out/share/sddm/themes/KaltsitMedicalGreen`; `environment.systemPackages` makes it discoverable.
-- `programs.kaltsit-sddm.enable` defaults to false. Explicit enabling installs the separate `kaltsit-sddm` package and sets the theme with `lib.mkDefault`. Explicit user themes win. Do not enable SDDM itself or change PAM, autologin or unrelated settings.
+- `programs.kaltsit-sddm.enable` defaults to false. Explicit enabling installs the separate `kaltsit-sddm` package and sets the theme with `lib.mkOverride 900` (above Plasma defaults, below explicit user settings). Explicit user themes win. Do not enable SDDM itself or change PAM, autologin or unrelated settings.
 - Existing greeter dependencies cover planned imports; no extraPackages are expected. Add a dependency only if loading demonstrates a specific missing module. Reuse the caller's `pkgs`, with no second nixpkgs.
 
 ## Visual and interaction scope
@@ -54,3 +54,5 @@ Or set `programs.kaltsit-sddm.enable` back to false, restore any previously expl
 ## Unconfirmed
 
 At the design stage the new theme, VM authentication/power actions/broken-theme fallback, physical machine and recovery path are unverified. Multi-display behavior, special input methods and assistive authentication are also unverified. Screenshots will not be presented as proof of those checks. If VM execution is blocked, retain unverified status and reproduction steps without activating the host theme.
+
+Implementation correction: `services/desktop-managers/plasma6.nix` sets `mkDefault "breeze"` at priority 1000. Another equal-priority default would conflict, so the theme uses 900, retaining explicit user settings at priority 100. Evaluation checks cover both Plasma defaults and user overrides. No service enablement or authentication behavior was added.

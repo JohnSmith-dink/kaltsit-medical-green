@@ -20,7 +20,7 @@
 - `services.displayManager.sddm.theme` 是字符串，默认空；`extraPackages` 是额外 Qt 插件／QML 库列表。
 - 模块将配置中的 ThemeDir 设为 `/run/current-system/sw/share/sddm/themes`，在 SDDM 启用时链接 `/share/sddm`。
 - 主题包安装到 `$out/share/sddm/themes/KaltsitMedicalGreen`，加入 `environment.systemPackages` 后由系统环境提供发现路径。
-- 新模块 `programs.kaltsit-sddm.enable` 默认 false；仅显式启用时安装独立 `kaltsit-sddm` 包，并用 `lib.mkDefault` 设置主题名。用户显式设置的主题优先，不启用 SDDM 服务本身，不改 PAM、自动登录或其他系统设置。
+- 新模块 `programs.kaltsit-sddm.enable` 默认 false；仅显式启用时安装独立 `kaltsit-sddm` 包，并用 `lib.mkOverride 900` 设置主题名（高于 Plasma 的默认值、低于用户显式值）。用户显式设置的主题优先，不启用 SDDM 服务本身，不改 PAM、自动登录或其他系统设置。
 - 现有 greeter 依赖已涵盖计划中的 Qt 导入，预期无需额外 `extraPackages`；加载检查若发现确切缺失才补对应包。保持调用者的 `pkgs`，不引入第二套 nixpkgs。
 
 ## 外观与交互范围
@@ -54,3 +54,5 @@ sudo reboot
 ## 尚未确认
 
 设计阶段尚未加载新主题、未测 VM 认证／电源操作／损坏主题回退，未验证真机或恢复路径，也未验证多屏、特殊输入法与无障碍辅助认证。不会把后续截图当作这些项目的证明。若 VM 环境受阻，保留未验证状态和复现步骤，不启用主机主题。
+
+实现阶段修正：实际检查 `services/desktop-managers/plasma6.nix` 发现它使用 `mkDefault "breeze"`（优先级 1000）。再用同级 `mkDefault` 会冲突，故主题改用 900，仍让显式设置的 100 优先；求值检查同时覆盖 Plasma 默认值与用户覆盖。未增加服务启用或认证行为。

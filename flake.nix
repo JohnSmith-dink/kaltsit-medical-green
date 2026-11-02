@@ -49,6 +49,38 @@
         assert motion ? override;
         assert (motion.override { videoFile = ./LICENSE; }).version == motion.version;
         pkgs.runCommand "kaltsit-home-module-check" { } "echo 'Home Manager motion assertions passed' > $out";
+      nixosBase = nixpkgs.lib.nixosSystem {
+        inherit system;
+        modules = [ ./nixos-module.nix {
+          nixpkgs.pkgs = pkgs;
+          system.stateVersion = "26.05";
+        } ];
+      };
+      evalNixos = settings: (nixosBase.extendModules { modules = [ settings ]; }).config;
+      nixosOff = nixosBase.config;
+      nixosOn = evalNixos { programs.kaltsit-sddm.enable = true; };
+      nixosPlasma = evalNixos {
+        programs.kaltsit-sddm.enable = true;
+        services.desktopManager.plasma6.enable = true;
+      };
+      nixosCustom = evalNixos {
+        programs.kaltsit-sddm.enable = true;
+        services.desktopManager.plasma6.enable = true;
+        services.displayManager.sddm.theme = "existing-user-theme";
+      };
+      nixosDisabledCustom = evalNixos { services.displayManager.sddm.theme = "existing-user-theme"; };
+      nixosModuleCheck = assert !nixosOff.programs.kaltsit-sddm.enable;
+        assert nixosOff.services.displayManager.sddm.theme == "";
+        assert nixosOff.services.displayManager.sddm.extraPackages == [ ];
+        assert !(builtins.any (p: (p.pname or "") == "kaltsit-sddm") nixosOff.environment.systemPackages);
+        assert nixosOn.services.displayManager.sddm.theme == "KaltsitMedicalGreen";
+        assert !nixosOn.services.displayManager.sddm.enable;
+        assert nixosOn.services.displayManager.sddm.extraPackages == [ ];
+        assert builtins.elem sddmTheme nixosOn.environment.systemPackages;
+        assert nixosPlasma.services.displayManager.sddm.theme == "KaltsitMedicalGreen";
+        assert nixosCustom.services.displayManager.sddm.theme == "existing-user-theme";
+        assert nixosDisabledCustom.services.displayManager.sddm.theme == "existing-user-theme";
+        pkgs.runCommand "kaltsit-nixos-module-check" { } "echo 'SDDM NixOS module assertions passed' > $out";
       app = {
         type = "app";
         program = "${theme}/bin/kaltsit-theme";
@@ -70,7 +102,13 @@
       };
 
       homeManagerModules.default = import ./home-manager.nix;
-      checks.${system} = { inherit theme motion; home-module = homeModuleCheck; sddm = sddmTheme; };
+      nixosModules.default = import ./nixos-module.nix;
+      checks.${system} = {
+        inherit theme motion;
+        home-module = homeModuleCheck;
+        sddm = sddmTheme;
+        nixos-module = nixosModuleCheck;
+      };
       devShells.${system}.default = pkgs.mkShell {
         packages = [ (pkgs.python3.withPackages (packages: [ packages.pillow ])) ];
         PYTHONDONTWRITEBYTECODE = "1";

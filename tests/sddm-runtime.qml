@@ -329,6 +329,10 @@ Item {
             compare(item("clockTime").font.letterSpacing, -.5);
             if (root.args[5]) compare(theme.item.resolvedFontFamily, "OPPO Sans 4.0");
             else verify(theme.item.resolvedFontFamily !== "OPPO Sans 4.0");
+            let powerValue = findChild(item("shutdownButton"), "controlValue");
+            let sessionLabel = findChild(item("sessionSelection"), "controlLabel");
+            compare(powerValue.fontInfo.weight, Font.Medium);
+            compare(sessionLabel.fontInfo.weight, Font.Normal);
             for (let hour of [0, 10, 17, 23]) {
                 theme.item.now = new Date(2026, 10, 2, hour, 5);
                 wait(20);
@@ -338,7 +342,10 @@ Item {
             }
             console.log("SDDM_FONT " + JSON.stringify({family: theme.item.resolvedFontFamily,
                 clockFamily: item("clockTime").fontInfo.family, clockWeight: item("clockTime").fontInfo.weight,
-                usernameFamily: item("usernameDisplay").fontInfo.family, usernameWeight: item("usernameDisplay").fontInfo.weight}));
+                usernameFamily: item("usernameDisplay").fontInfo.family, usernameWeight: item("usernameDisplay").fontInfo.weight,
+                controlFamily: powerValue.fontInfo.family, controlWeight: powerValue.fontInfo.weight,
+                labelFamily: sessionLabel.fontInfo.family, labelWeight: sessionLabel.fontInfo.weight,
+                powerButtonWidth: item("shutdownButton").width, keyboardButtonWidth: item("keyboardLayout").width}));
         }
         function test_footer_groups_and_elision() {
             reset(["tester"], "tester", ["Plasma (Wayland) with a very long name"]);

@@ -98,6 +98,8 @@ class SddmTests(unittest.TestCase):
             'sddm/login-v2.png','sddm/login-v2-error.png',
             'sddm/login-v3.png','sddm/login-v3-error.png','sddm/login-v3-multiuser.png',
             'sddm/login-v5.png','sddm/login-v5-error.png','sddm/login-v5-multiuser.png',
+            'sddm/login-v6.png','sddm/login-v6-error.png','sddm/login-v6-long-session.png',
+            'sddm/login-v6-nofont.png','sddm/login-v6-multiuser.png',
         })
         for item in captures:
             with self.subTest(file=item['file']):
@@ -107,12 +109,17 @@ class SddmTests(unittest.TestCase):
                 self.assertEqual(item['pixels'],[1280,800])
                 self.assertEqual(item['kind'],'SDDM screenshot in isolated NixOS VM')
                 self.assertFalse(item['physical_desktop_acceptance'])
-                if item['file'].startswith(('sddm/login-v2','sddm/login-v3','sddm/login-v5')):
+                if item['file'].startswith(('sddm/login-v2','sddm/login-v3','sddm/login-v5','sddm/login-v6')):
                     self.assertEqual(item['development_layout'],re.search(r'login-(v\d+)',item['file'])[1])
                     self.assertEqual(item['release_status'],'Unreleased')
-                    self.assertTrue(item['sddm_authentication_performed'])
+                    self.assertEqual(item['sddm_authentication_performed'],item['file'] != 'sddm/login-v6-nofont.png')
                     self.assertEqual(item['image_processing'],'none; original QEMU screenshot bytes')
                     self.assertRegex(item['runtime_source_commit'],r'^[0-9a-f]{40}$')
+                if item['file'].startswith('sddm/login-v6'):
+                    self.assertFalse(item['font_binary_distributed'])
+                    self.assertEqual(item['font_family'], 'system fallback' if item['file'].endswith('nofont.png') else 'OPPO Sans 4.0')
+                    if item['font_family'] != 'system fallback':
+                        self.assertRegex(item['local_font_sha256'],r'^[0-9a-f]{64}$')
 
     def test_qt6_metadata_and_entrypoint(self):
         meta=read_ini(ROOT/'sddm/metadata.desktop')['SddmGreeterTheme']

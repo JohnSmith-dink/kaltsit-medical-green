@@ -1,21 +1,21 @@
 # Login screen (SDDM, experimental)
 
 `kaltsit-sddm` is a separate static Qt 6 login theme, disabled by default. It does not change the desktop, lockscreen, Home Manager, authentication policy or daily restoration records. It uses the existing still and generates colors from the existing scheme at build time.
-See the [initial design](SDDM-DESIGN.en.md) for pinned dependencies and fallback boundaries. The v5 layout below is an unpublished UI revision; the package version remains 1.3.0.
+See the [initial design](SDDM-DESIGN.en.md) for pinned dependencies and fallback boundaries. The v6 layout below is an unpublished UI revision; the package version remains 1.3.0.
 
-## v5 layout and keyboard controls
+## v6 typography, optical alignment and keyboard controls
 
-- The wallpaper retains its original brightness and aspect-preserving crop. Clock, date and login panel occupy the left column at approximately x=64…384 logical pixels. The center has no login controls and there is no full-screen overlay.
-- Time starts at (64,64), using 72px Light weight; the date uses 18px Normal weight. Both inherit the greeter system font and use existing dark text without outlines. Actual background sampling and contrast results appear below.
-- The login area retains v3's 320px width, 16px padding and spacing, and normal center at roughly 55% of screen height. Its container draws no background, rounded frame, border or shadow; there is no blur. Usernames and footer text use existing white with the dark body color at alpha 0.85 for glyph outlines. Clock and date are unchanged.
-- The avatar remains a drawn 48px green circle with a 22px white initial; the username is 18px. A single-user row is focusable but opens no menu and offers no “Other account” entry. Multiple users retain the existing inline list and “Other…” entry. An empty model or unlisted remembered account shows the username input; the latter is prefilled.
-- The password row remains 44px high with an 8px radius and embedded 36px green arrow. Password and manual-username inputs use their own white surface at alpha 0.94, retaining dark text and placeholders. The 14px error row retains the existing red Negative color with a thin white outline at alpha 0.90; it takes no space when empty. The error border still lasts approximately 600 ms. Submission and failure clear the password; failure restores password focus. Changing accounts clears the password and old error.
-- Session, keyboard layout, shutdown and reboot retain their original footer row. Ghost controls are normally transparent and retain their own white alpha-0.90 surface and border on hover/focus. Keyboard layout is focusable but remains read-only; no switching action is added. Long session names are elided and appear in full in the list. Both expanded lists retain their own white alpha-0.90 background, dark text and green selection. No separator existed and none was added.
-- Tab follows avatar row → password → login → session → keyboard → shutdown → reboot; Shift+Tab reverses the order. Manual username editing stays in the avatar row; unavailable/hidden controls are skipped. Initial focus still goes to password or username according to whether an account is known.
-- Tab/Shift+Tab traverse available controls. Arrow keys move through lists, Return selects, and Esc closes and restores trigger focus without leaking Return into login. User lists expand down and session lists up; only one is open at a time. Height is capped with scrolling, keeping lists inside the panel and clear of the clock. Empty session models explain why login is disabled; submission prevents duplicate actions.
-- Package version, authentication policy, CLI, Nix interfaces and the lockscreen are unchanged. Passwords are not logged or written to files.
+- The wallpaper retains its original brightness and aspect-preserving crop. The login container is fully transparent, with no panel surface, frame, shadow, blur or full-screen overlay. All colors still come from the existing palette.
+- If Qt finds local `OPPO Sans 4.0`, the theme uses it; otherwise it retains the greeter's system font. Time uses 72px, 400 Regular, tabular figures and -0.5px letter spacing; the date uses 18px, 400. Both remain dark and unoutlined. No font binary or network download is added.
+- Alignment uses visible glyph edges, not only text boxes: the usual shared edge is E=72px, with clock ink at y=71.75px and date ink at y=152.25px. TextMetrics receives the same family, weight, numeral features and render type as the text and adjusts the side bearings dynamically. Narrow layouts use E=max(24,floor(width×0.075)); column width is capped at 288px.
+- The login area normally begins at about 45.1% of screen height, with bottom clearance. The avatar is a 48px green circle with a 22px/500 white initial; username text is 18px/500. The password field is 288px wide, 42px high with an 8px radius and 33px arrow. Password and manual-username fields retain the existing warm-white View background, now opaque, with 15px/400 input text.
+- Usernames and footer text retain dark glyph outlines at alpha 0.85. Errors retain the existing red Negative color and white alpha-0.90 outline at 14px/400; the design reference's new red or white error text is not adopted. The error row has an 8px gap and takes no space when empty. Brief error borders, password clearing on submission/failure and refocusing remain unchanged.
+- The footer is 32px high with a 10px gap: session and read-only keyboard layout form the left group, shutdown and reboot align right, with at least 12px between groups. Text is 14px, with 400 labels and 500 values/buttons. Only the session value elides; labels, keyboard layout and power text do not shrink. The session list shows full names. Hover uses warm white at alpha 0.16; focus uses a white alpha-0.85 border with a thin dark outer edge. Resting controls have no surface. Control boxes may hang slightly outside the optical edge while text aligns.
+- Both inline lists retain their own white alpha-0.90 surface, dark text and green selection. User lists expand down, sessions up, mutually exclusively; height limits, scrolling and focus return remain unchanged.
+- Tab still follows avatar row → password → login → session → keyboard → shutdown → reboot; Shift+Tab reverses it. The single-user avatar and keyboard layout remain focusable without new actions. Multiple users retain “Other…”; empty models/unlisted remembered accounts use manual input. Hidden or unavailable items are skipped, list Return does not leak into login, and Esc restores trigger focus.
+- Accounts, session indices, authentication, no-session blocking, duplicate-submit protection, password clearing and power-capability checks are preserved. Version, CLI, Home Manager and lockscreen are unchanged. The sole new module option is the optional local font path below.
 
-Outlines use only [QtQuick Text.Outline](https://doc.qt.io/qt-6.11/qml-qtquick-text.html#style-prop), with no new Qt module or font. White comes from the existing Selection foreground; this scheme's Complementary foreground is dark, not white. Normal, error and multiple-user previews, together with raw and outlined contrast values, appear in the v5 evidence below.
+Outlines still use [QtQuick Text.Outline](https://doc.qt.io/qt-6.11/qml-qtquick-text.html#style-prop) without additional Qt modules. [Browser design references](design/sddm-v6-mockups/README.en.md) are stored separately from actual Qt/VM evidence below; mockups are not login screenshots.
 
 ## Install and enable
 
@@ -33,6 +33,19 @@ Add `kaltsit-sddm` to your existing `nixpkgs.config.allowUnfreePredicate`, retai
 
 Importing the module or only adding the package to `environment.systemPackages` does not select the theme. Only setting the option to true installs resources and sets a theme name, still without enabling the SDDM service.
 The theme default uses priority 900, overriding Plasma's `mkDefault "breeze"` (1000) while explicit user `services.displayManager.sddm.theme = "…"` (100) wins. Remove an old explicit value or select `KaltsitMedicalGreen` yourself; the module never forces it.
+
+### Optional local font
+
+`programs.kaltsit-sddm.fontFile` has type `nullOr path` and defaults to `null`. Only when the theme is enabled and the path is non-null does it add a local font package to `fonts.packages`. Disabled/null configurations add no font and do not set the system default family. QML still loads without OPPO Sans; the font is not a login requirement.
+
+```nix
+programs.kaltsit-sddm = {
+  enable = true;
+  fontFile = /absolute/private/path/OPPO-Sans-4.0.ttf;
+};
+```
+
+Obtain the font and check its license separately. The project neither downloads, publicly distributes nor modifies it, and has not verified a license conclusion from the handoff's secondary reporting. An absolute path outside the flake requires `--impure` for future evaluation/builds (for example `nixos-rebuild build --impure --flake /path/to/system#host`); do not commit the font to a public repository to bypass this restriction. Explicit use imports the file into the local Nix store and the built system's font collection; avoid uploading font-containing outputs to a public cache. This run built the font package and loaded it in a test VM only, without installing it on the host.
 
 For a future first physical-machine activation, retain known-good configuration and a previous generation, complete VM checks below, then configure the option and run:
 
@@ -61,9 +74,11 @@ python3 tests/run-sddm-native.py "$(realpath result)" \
   --qml /path/to/matching/qml --output /tmp/kaltsit-sddm-native-result
 ```
 
-It loads the real greeter with `--test-mode --theme` and ends that process after six seconds, then sends actual key and mouse events through the matching `qmltestrunner` with mock SDDM models. Each run has 15 behavior checks covering zero/one/multiple users, manual usernames, sessions, Tab/Return/Esc, duplicate submissions, password clearing, errors and power calls. Layouts are checked at 1280×800/100%, 1920×1080/100% and 3120×2080/175%.
+Append `--font-file /absolute/private/path/OPPO-Sans-4.0.ttf` and use a separate `--output` directory to test the font-enabled mode. The runner copies it only into its private HOME with a separate fontconfig cache. Omit the argument to test the system-font fallback; keep the output directories separate.
 
-The output root contains `results.json`. Resolution subdirectories contain native PNGs for a single user, errors, multiple-user lists, long usernames, session lists, empty user models, avatar/keyboard focus and a background-only frame, plus per-region `contrast.json`. These are native Qt renders with mocks, not authentication evidence. At 175%, Qt rounds the logical capture size and produces a raw 3120×2081 PNG. The report records requested layout, logical size and captured pixels separately; it does not crop or resize away that difference.
+It loads the real greeter with `--test-mode --theme` and ends that process after six seconds, then sends actual key and mouse events through the matching `qmltestrunner` with mock SDDM models. Each run has 17 behavior checks covering zero/one/multiple users, manual usernames, sessions, Tab/Return/Esc, duplicate submissions, password clearing, errors and power calls. Layouts are checked at 1280×800/100%, 1920×1080/100% and 3120×2080/175%.
+
+The output root contains `results.json`. Resolution subdirectories contain native PNGs for a single user, errors, multiple-user lists, long usernames, session lists, empty user models, avatar/keyboard focus and a background-only frame, plus per-region `contrast.json` and glyph-edge `alignment.json`. These are native Qt renders with mocks, not authentication evidence. At 175%, Qt rounds the logical capture size and produces a raw 3120×2081 PNG. The report records requested layout, logical size and captured pixels separately; it does not crop or resize away that difference.
 
 [tests/sddm-vm.nix](../tests/sddm-vm.nix) is **test-only; never import it into a physical-machine configuration**. It uses 2 cores / 2048 MiB, 1280×800, static wallpaper and X11 greeter. An xterm session isolates SDDM testing; it is not Plasma desktop acceptance. Account `tester` has the public disposable password `wallpaper-test`. There is no host HOME sharing, real credential or host configuration import. A separate read-only Nix store image contains the test closure; default shares and external network access are disabled.
 
@@ -192,6 +207,80 @@ The new [normal login](../previews/sddm/login-v5.png), [wrong-password error](..
 
 A real high-DPI greeter, multiple monitors and physical activation remain unverified; 175% evidence comes from mock-model offscreen rendering. Full shutdown/reboot was not retested and the earlier failure record remains. No host configuration or host SDDM was changed; the harness only terminated its own VM process at the end. One rerun was interrupted by a signal (unit/native checks exited 143; flake exited 1); logs were retained, then sequential reruns passed. Interrupted checks are not counted as passes.
 
+## v6 local font and actual validation
+
+On 2026-11-02 (America/Los_Angeles), runtime QML, module and build source were `88b9b971e9b5f42fe71a851f52346a899e7b1674`; the package remains 1.3.0. Phase-one `python3 -m unittest discover -s tests -v` actually returned `Ran 108 tests in 49.435s / OK`, exit 0. `nix flake check --no-write-lock-file path:.` returned `all checks passed!`, exit 0. Two unit tests were added relative to v5 to accept aligned images and reject displacement, missing ink and wrong dimensions; existing contrast and preview tests were updated. Nix evaluation checks cover default-null fontFile, no font effect while disabled, one local font package when enabled with a path, and explicit user theme precedence.
+
+The local font package was actually built; source and packaged font SHA-256 both equal `6c7d5864c661516e1f400d9f21e4297f2e2a0719909691e29607cc4ef484a9f4`. An initial build exposed an absolute string path not imported into the build sandbox; explicitly importing it with `builtins.path` fixed the build. Evaluation alone was not counted as font-build evidence.
+
+Real greeter test-mode loaded both with and without the font in private HOME/D-Bus/offscreen software environments. Each mode ran 17 QtTest behaviors at three sizes, 102 checks total, all exit 0. Font/clock metrics and footer grouping add two behaviors per layout to v5's 15 retained interactions. Actual Qt `fontInfo` reports OPPO Sans 4.0, clock 400, username/buttons 500 and labels 400. Without the font it resolves to system Noto Sans. The single-user avatar and keyboard layout remain read-only focus stops.
+
+Native normal/error/long-name/list/focus captures were inspected without observed overlap or overflow. The alignment checker identifies leftmost ink against an independent same-size background using summed RGB difference >60 and a 1.5 logical-pixel tolerance. Clock prefixes 00, 10, 17 and 23 were checked, avoiding a single-digit hardcoded offset. Maximum drift is 1px at 1280×800 and 1920×1080 (error outline), and 0.571429px at 175%. VM normal/no-font clock, date, avatar, field border and first footer label all start at x=72; the error outline starts at x=71. The empty container gap matches the wallpaper pixel for pixel.
+
+### Contrast and sampling
+
+The table uses actual font-enabled control coordinates and independent Qt background frames, taking each region's minimum over six states. Required ratios are ≥4.5:1 for text and ≥3:1 for focus; label alpha 0.8 participates in compositing. The no-font mode independently passed the same checks. Unoutlined white/red text can still fail: raw values remain visible and are not counted as passes. The local-outline backdrop rationale and antialiasing limitations are the same as v5.
+
+| Region | 1280×800 / 100% | 1920×1080 / 100% | 3120×2080 / 175% |
+|---|---:|---:|---:|
+| Clock | 10.619 | 10.196 | 11.455 |
+| Date | 9.264 | 8.911 | 11.012 |
+| Username / outline | 8.070 | 8.980 | 8.393 |
+| Input text | 11.953 | 11.953 | 11.953 |
+| Placeholder | 4.890 | 4.890 | 4.890 |
+| Error / outline | 5.440 | 5.395 | 5.490 |
+| Session value / outline | 10.437 | 11.647 | 11.111 |
+| Keyboard value / outline | 9.807 | 11.300 | 10.736 |
+| Shutdown / outline | 8.946 | 11.060 | 9.962 |
+| Reboot / outline | 8.525 | 10.437 | 9.525 |
+| Session label / outline (alpha 0.8) | 6.870 | 7.575 | 7.242 |
+| Keyboard label / outline (alpha 0.8) | 6.507 | 7.349 | 7.053 |
+| Minimum focus | 5.234 | 5.200 | 5.292 |
+| Raw username (no outline) | 1.003 | 1.559 | 1.180 |
+| Raw error (no outline) | 1.001 | 1.003 | 1.001 |
+| Minimum raw footer (no outline) | 1.249 | 3.274 | 1.964 |
+
+Sampling uses every distinct RGB inside each actual rectangle, not an average. Logical boxes below are (x,y,width,height); physical boxes use floor(left/top×scale) and ceil(right/bottom×scale). For the fixed 3840×2160 source, f=max(W/3840,H/2160), offsets=((3840f−W)/2,(2160f−H)/2), and source coordinates=(physical+offset)/f. Every run writes the exact logical, physical and source rectangles, darkest/lightest RGB/luminance, raw/outlined extrema and minimum ratios to `contrast.json`. The table records normal controls and the error-state error row; expanded states are also checked in that JSON.
+
+| Size / region | Logical rectangle | Darkest RGB (luminance) | Lightest RGB (luminance) |
+|---|---|---|---|
+| 1280x800-1 / Clock | (72, 71.75, 186, 55) | `#ddede0` (0.813223) | `#f6fffd` (0.982047) |
+| 1280x800-1 / Date | (72, 152.25, 175, 18) | `#cedfcd` (0.703049) | `#ecfcf1` (0.938045) |
+| 1280x800-1 / Username | (134, 361, 226, 48) | `#566544` (0.117031) | `#eef6eb` (0.900868) |
+| 1280x800-1 / Error | (72, 477, 288, 18) | `#38352e` (0.035842) | `#d8e1d0` (0.730034) |
+| 1280x800-1 / Session | (61, 479, 125.641, 32) | `#37342d` (0.034577) | `#646963` (0.137133) |
+| 1280x800-1 / Keyboard | (186.641, 479, 70.172, 32) | `#5a6158` (0.114276) | `#8f9a8c` (0.308443) |
+| 1280x800-1 / Shutdown | (268.812, 479, 49.594, 32) | `#97a291` (0.344643) | `#c2cbb8` (0.576419) |
+| 1280x800-1 / Reboot | (318.406, 479, 49.594, 32) | `#bdc6b3` (0.544617) | `#dbe3d4` (0.747517) |
+| 1920x1080-1 / Clock | (72, 71.75, 186, 55) | `#d8e9d9` (0.778865) | `#edfbee` (0.931719) |
+| 1920x1080-1 / Date | (72, 152.25, 175, 18) | `#cadbc9` (0.674366) | `#e1f1e4` (0.845196) |
+| 1920x1080-1 / Username | (134, 487, 226, 48) | `#313c2c` (0.040665) | `#92a47e` (0.341683) |
+| 1920x1080-1 / Error | (72, 603, 288, 18) | `#32312d` (0.030642) | `#65735a` (0.157664) |
+| 1920x1080-1 / Session | (61, 605, 125.641, 32) | `#33322e` (0.031823) | `#43423e` (0.054375) |
+| 1920x1080-1 / Keyboard | (186.641, 605, 70.172, 32) | `#353430` (0.034263) | `#444c3f` (0.067567) |
+| 1920x1080-1 / Shutdown | (268.812, 605, 49.594, 32) | `#454d41` (0.069546) | `#55614d` (0.110165) |
+| 1920x1080-1 / Reboot | (318.406, 605, 49.594, 32) | `#51594e` (0.094441) | `#68765d` (0.166902) |
+| 3120x2080-1.75 / Clock | (72, 71.75, 186, 55) | `#e7f5e8` (0.881199) | `#f3fff5` (0.971673) |
+| 3120x2080-1.75 / Date | (72, 152.25, 175, 18) | `#e1f1e4` (0.845196) | `#effdf0` (0.948926) |
+| 3120x2080-1.75 / Username | (134, 536, 226, 48) | `#5b6d42` (0.135548) | `#cfdac9` (0.676253) |
+| 3120x2080-1.75 / Error | (72, 652, 288, 18) | `#3e423a` (0.052261) | `#aab79d` (0.448473) |
+| 3120x2080-1.75 / Session | (61, 654, 125.641, 32) | `#3d413c` (0.050989) | `#5a664e` (0.122265) |
+| 3120x2080-1.75 / Keyboard | (186.641, 654, 70.172, 32) | `#525d4d` (0.101584) | `#728162` (0.201598) |
+| 3120x2080-1.75 / Shutdown | (268.812, 654, 49.594, 32) | `#727e65` (0.194387) | `#92a184` (0.332667) |
+| 3120x2080-1.75 / Reboot | (318.406, 654, 49.594, 32) | `#8d9b81` (0.306904) | `#b1bda5` (0.484589) |
+
+### VM captures and differences from the design reference
+
+The existing NixOS 26.05 / SDDM 0.21.0 / Qt 6.11.2 / 1280×800 / X11/xterm VM runner was reused with a fresh temporary disk; build-vm was not rerun. Only built theme and local-font-package outputs were copied into the guest. No host HOME sharing or host theme activation occurred. Guest fontconfig listed OPPO and its named weights; the greeter process mapped the font file. A no-font capture was taken first. With the font loaded, the run exercised real wrong-password rejection, fixture-password PAM login into xterm, logout, real multiple-user listing and broken-QML embedded fallback. Authentication was not repeated inside fallback; the no-font capture proves loading, not a separate PAM login.
+
+The first VM attempt passed login/logout but stopped because the external harness assumed `/etc/sddm.conf` existed; this guest uses `/etc/sddm.conf.d/`. After correcting the harness, the complete flow passed on a new disk with exit 0. This was not a host configuration change; the failed attempt was retained.
+
+New original QEMU PNGs: [normal](../previews/sddm/login-v6.png), [wrong password](../previews/sddm/login-v6-error.png), [long session/shutdown focus](../previews/sddm/login-v6-long-session.png), [no-font fallback](../previews/sddm/login-v6-nofont.png), [multiple users](../previews/sddm/login-v6-multiuser.png). All five are unprocessed 1280×800/100% captures. The manifest appends files, SHA-256, source and font provenance without changing prior images/entries. Only tester authenticated; preview2 is a locked temporary guest account. The long-name image renames the guest's xterm display label to “Plasma (Wayland)”; it does not validate a Plasma session.
+
+Compared with the [Chromium references](design/sddm-v6-mockups/README.en.md), primary positions and optical left edges match, but Qt rasterization, numeral/text widths and outlines differ. Qt power buttons have a natural width of about 49.594px; the long session elides earlier (visibly “Plasma (…”) and shutdown focus sits slightly further left. Text was not compressed to hide that difference. Stronger dark glyph outlines and a dark outer focus edge are retained; errors still use the existing red with white outline. The real VM clock shows capture time; references are fixed at 17:05. Browser mockups were not counted as test evidence.
+
+Complete shutdown/reboot were not retested; the initial failed flow remains unresolved. The harness stopped its own VM process, which is not a successful shutdown test. Physical hardware, a real high-DPI greeter, multiple displays, TTY recovery and host activation are unverified. The 3:2/175% evidence is native Qt offscreen only (raw 3120×2081 due to logical-size rounding); no VM 3:2 capture was fabricated. The font was not committed or publicly distributed. No push, tag, Release or PR was made.
+
 ## Checklist (blank for a new environment)
 
 | Check | Result | Environment / evidence |
@@ -208,5 +297,5 @@ A real high-DPI greeter, multiple monitors and physical activation remain unveri
 
 ## Known limitations
 
-This is an experimental Qt 6 login theme. Physical hardware, boot-menu rollback, TTY recovery, multiple displays, special input methods and assistive authentication are unverified. The system needs a font supporting Chinese; the module does not change user font configuration.
+This is an experimental Qt 6 login theme. Physical hardware, boot-menu rollback, TTY recovery, multiple displays, special input methods and assistive authentication are unverified. The system needs a font supporting Chinese; optional `fontFile` only installs the supplied font and does not change the default family.
 Keyboard layout may appear as unknown in isolated Wayland test-mode; do not interpret it as a physical keyboard layout. SDDM/PAM controls actual authentication. There is no custom fingerprint, smart-card or multi-factor prompt interaction, and no claim of support for those environments.

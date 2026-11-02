@@ -36,6 +36,9 @@ stdenvNoCC.mkDerivation {
       ${kdePackages.plasma-desktop} ${kdePackages.plasma-workspace} "$out" \
       ${lib.escapeShellArg kdePackages.plasma-desktop.version} \
       ${lib.escapeShellArg kdePackages.plasma-workspace.version}
+    ${python}/bin/python3 scripts/readable-logout.py \
+      ${kdePackages.plasma-workspace} "$out" \
+      ${lib.escapeShellArg kdePackages.plasma-workspace.version}
     cp tools/kaltsit_theme.py "$out/libexec/kaltsit_theme.py"
     makeWrapper ${python}/bin/python3 "$out/bin/kaltsit-theme" \
       --add-flags "$out/libexec/kaltsit_theme.py" \

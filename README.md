@@ -75,6 +75,8 @@ kaltsit-theme apply --wallpaper /absolute/path/to/wallpaper.png
 | `gtk` | Breeze GTK 配色。 |
 | `ghostty` / `konsole` | 完整浅色 ANSI 配色。 |
 
+开发分支的退出／重启／关机确认页使用配色背景，避免浅色主题的深色文字落在 Breeze 的黑色遮罩上。仅调整背景，原生按钮、取消与倒计时保持不变；不涉及 SDDM 或 Plymouth。
+
 `--skip` 可重复。可选组件的配置由符号链接管理时，会跳过整个组件并报告；核心配置受管理时，在写入前停止。
 缺失锁屏资源会明确报错并保持零写入；需要跳过时显式使用 `--skip lockscreen`。请检查每个组件的结果，成功退出不等于全部已应用。
 基础主题包不包含 SDDM；可选的独立登录主题见下节。Plymouth、引导菜单与应用自绘皮肤仍不在范围内。

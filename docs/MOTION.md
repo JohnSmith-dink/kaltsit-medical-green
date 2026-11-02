@@ -72,3 +72,21 @@ d1e60abcb03a0a2a7dc687886f23ba8e0ff741a125f6d8ee17e2b4aad1d5254e
 
 实现依据：[Qt MediaPlayer](https://doc.qt.io/qt-6/qml-qtmultimedia-mediaplayer.html)、
 [KDE 原生壁纸接口](https://raw.githubusercontent.com/KDE/plasma-workspace/Plasma/6.6/wallpapers/image/imagepackage/contents/ui/main.qml)。
+
+## 自动暂停信号调研（Unreleased）
+
+基线为锁定 nixpkgs `da6dc0e7b26060f2f71ce3ef7088fb56ee44fa36`，Plasma 6.6.6 / Qt 6.11.2。
+2026-11-01 在独立 HOME、运行目录和 D-Bus 的 offscreen Qt 进程中，以假服务触发了真实 KDE QML 模块：
+
+| 条件 | 来源与观察 | 接入决定 |
+|---|---|---|
+| 电池 | `powermanagement` 的 `AC Adapter / Plugged in` 随假服务的 `PowerSaveStatusChanged` 在 true/false 间变化；服务离开及重连也由 `DBusServiceWatcher` 观测到 | 直接读取同一服务的 `GetPowerSaveStatus` 并订阅通知，避免数据引擎在查询失败时把状态默认为接电 |
+| 锁屏 | `org.freedesktop.ScreenSaver` 的 `/ScreenSaver`，初始 `GetActive=false`，`ActiveChanged(true/false)` 均到达真实 `SignalWatcher` | 接入初始查询及配对通知；不使用 `canLock` 或 `AboutToLock` |
+| DPMS | 尚未找到并复现适合壁纸组件的每屏电源通知；没有观察到真实虚拟输出熄灭／唤醒 | 尚未接入；不把空闲或 `visible` 等同于 DPMS |
+| 完全遮挡 | 未验证跨屏、虚拟桌面、活动及透明窗口的完全覆盖信号 | 尚未接入；最大化不足以判断遮挡 |
+
+以上电池及锁屏变化来自**可控假 D-Bus 服务**，不是拔电源或真实认证锁屏；Qt、DataSource、SignalWatcher 和服务监视器是真实模块。未对日常桌面施加任何操作。没有为未接入条件新增进程轮询、守护进程或窗口跟踪服务。
+
+来源：[电源引擎](https://github.com/KDE/plasma5support/blob/v6.6.6/src/dataengines/powermanagement/powermanagementengine.cpp)、[锁定状态实现](https://github.com/KDE/kscreenlocker/blob/v6.6.6/interface.cpp)、[QML 信号订阅接口](https://github.com/KDE/plasma-workspace/blob/v6.6.6/components/dbus/dbussignalwatcher.h)。
+`GetActive` 比较的是 `KSldApp::Locked`；锁定、解锁分别发出 `ActiveChanged(true/false)`。
+Qt Multimedia 的 `playbackRate` 是播放速度，未证明能保持原速度并可靠降低解码帧率，因此不提供 `reduce` 策略。

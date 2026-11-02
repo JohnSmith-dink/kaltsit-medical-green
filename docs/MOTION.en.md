@@ -48,3 +48,21 @@ Accepted development source `7c175b8` ran on NixOS generation 56, Plasma 6.6.6 /
 The user confirmed smooth appearance and working right-click pause/resume. Isolated native checks also covered 1920×1080 / 100%, looping, hidden-state pause, error fallback and recovery.
 Release builds keep the same playback logic. Hardware decoding was not conclusively measured; long-term power use and multiple displays remain untested.
 See [release evidence](V1.3-RELEASE.md), [acceptance data](v1.3-acceptance.json) and [credits](../CREDITS.md).
+
+## Automatic pause signal research (Unreleased)
+
+The pinned nixpkgs revision is `da6dc0e7b26060f2f71ce3ef7088fb56ee44fa36`, with Plasma 6.6.6 / Qt 6.11.2.
+On 2026-11-01 an offscreen Qt process with a private HOME, runtime directory and D-Bus observed real KDE QML modules driven by fake services:
+
+| Condition | Source and observation | Decision |
+|---|---|---|
+| Battery | The powermanagement DataSource `AC Adapter / Plugged in` followed fake `PowerSaveStatusChanged` transitions in both directions; DBusServiceWatcher observed service loss and reconnection | Query the same service's `GetPowerSaveStatus` directly and subscribe to changes, avoiding the engine's fallback to AC when its initial query fails |
+| Lock | `org.freedesktop.ScreenSaver`, `/ScreenSaver`: initial `GetActive=false` and both `ActiveChanged(true/false)` reached the real SignalWatcher | Use the initial query and paired notifications, not `canLock` or `AboutToLock` |
+| DPMS | No suitable per-screen power notification was found and reproduced; no real virtual output off/on transition was observed | Not connected; neither idle time nor `visible` is treated as DPMS |
+| Complete occlusion | Complete coverage across screens, virtual desktops, activities and transparent windows was not verified | Not connected; maximization alone is insufficient |
+
+Battery and lock transitions used **controlled fake D-Bus services**, not physical unplugging or authenticated locking. Qt, DataSource, SignalWatcher and service watchers were real. The daily desktop was untouched. No process polling, daemon or window-tracking service was added for missing conditions.
+
+Sources: [power engine](https://github.com/KDE/plasma5support/blob/v6.6.6/src/dataengines/powermanagement/powermanagementengine.cpp), [lock state implementation](https://github.com/KDE/kscreenlocker/blob/v6.6.6/interface.cpp), [QML signal interface](https://github.com/KDE/plasma-workspace/blob/v6.6.6/components/dbus/dbussignalwatcher.h).
+`GetActive` compares `KSldApp::Locked`; lock/unlock emit `ActiveChanged(true/false)` respectively.
+Qt Multimedia's `playbackRate` changes playback speed. Reliable decoder frame limiting at normal speed was not established, so no `reduce` policy is offered.

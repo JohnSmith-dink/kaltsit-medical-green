@@ -8,9 +8,11 @@ Item {
     id: root
     readonly property real leftInset: 64
     readonly property real panelWidth: 320
-    readonly property real panelOpacity: 0.86
-    readonly property real inputOpacity: 0.9
-    readonly property color panelColor: Palette.view
+    readonly property real inputOpacity: 0.94
+    readonly property real surfaceOpacity: 0.90
+    readonly property real bodyOutlineOpacity: 0.85
+    readonly property real errorOutlineOpacity: 0.90
+    readonly property color bodyOutlineColor: Palette.text
     readonly property color inputColor: Palette.window
     readonly property bool canChooseUser: users.count > 1
     property bool busy: false
@@ -31,7 +33,7 @@ Item {
         for (let i = 0; i < users.count; ++i) if (users.textAt(i) === name) return i;
         return -1;
     }
-    function firstInput() { return manualUser ? (canChooseUser ? manualMenu : username) : (canChooseUser ? userButton : password); }
+    function firstInput() { return manualUser ? (canChooseUser ? manualMenu : username) : userButton; }
     function focusInput() {
         if (loginUser.length) password.forceActiveFocus();
         else username.forceActiveFocus();
@@ -101,7 +103,9 @@ Item {
         Keys.onEnterPressed: if (enabled) clicked()
         contentItem: Text {
             text: button.text; textFormat: Text.PlainText
-            color: Palette.text; font: button.font
+            color: Palette.selectedText; font: button.font
+            style: Text.Outline
+            styleColor: Qt.rgba(root.bodyOutlineColor.r, root.bodyOutlineColor.g, root.bodyOutlineColor.b, root.bodyOutlineOpacity)
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             elide: Text.ElideRight
@@ -109,7 +113,7 @@ Item {
         background: Rectangle {
             radius: 6
             color: button.enabled && (button.activeFocus || button.hovered)
-                ? Qt.rgba(root.inputColor.r, root.inputColor.g, root.inputColor.b, root.inputOpacity) : "transparent"
+                ? Qt.rgba(root.inputColor.r, root.inputColor.g, root.inputColor.b, root.surfaceOpacity) : "transparent"
             border.color: Palette.accent
             border.width: button.activeFocus ? 2 : (button.enabled && button.hovered ? 1 : 0)
         }
@@ -173,7 +177,7 @@ Item {
         function choose(index) { close(); chosen(index); }
         Rectangle {
             anchors.fill: parent; radius: 6
-            color: Qt.rgba(root.inputColor.r, root.inputColor.g, root.inputColor.b, root.inputOpacity)
+            color: Qt.rgba(root.inputColor.r, root.inputColor.g, root.inputColor.b, root.surfaceOpacity)
             border.color: Palette.accent; border.width: list.activeFocus ? 2 : 1
         }
         ListView {
@@ -246,10 +250,6 @@ Item {
         x: root.leftInset; width: root.panelWidth
         y: baseTop - (sessionList.opened ? sessionList.height + 16 : 0)
         height: content.height + 32
-        Rectangle {
-            anchors.fill: parent; radius: 12
-            color: Qt.rgba(root.panelColor.r, root.panelColor.g, root.panelColor.b, root.panelOpacity)
-        }
         Column {
             id: content
             x: 16; y: 16; width: parent.width - 32
@@ -264,8 +264,8 @@ Item {
                     anchors.fill: parent
                     leftPadding: 0; rightPadding: 0; topPadding: 0; bottomPadding: 0
                     visible: !root.manualUser
-                    enabled: root.canChooseUser && !root.busy
-                    focusPolicy: root.canChooseUser ? Qt.StrongFocus : Qt.NoFocus
+                    enabled: !root.busy
+                    focusPolicy: Qt.StrongFocus
                     Accessible.name: root.canChooseUser ? qsTr("选择用户：%1").arg(root.selectedUser) : root.selectedUser
                     onClicked: root.openUsers(userButton)
                     contentItem: Row {
@@ -275,7 +275,9 @@ Item {
                             objectName: "usernameDisplay"
                             width: userRow.width - 64; height: 48
                             text: root.selectedUser; textFormat: Text.PlainText
-                            font.pixelSize: 18; color: Palette.text
+                            font.pixelSize: 18; color: Palette.selectedText
+                            style: Text.Outline
+                            styleColor: Qt.rgba(root.bodyOutlineColor.r, root.bodyOutlineColor.g, root.bodyOutlineColor.b, root.bodyOutlineOpacity)
                             verticalAlignment: Text.AlignVCenter; elide: Text.ElideRight
                         }
                     }
@@ -334,7 +336,7 @@ Item {
                     inputMethodHints: Qt.ImhSensitiveData | Qt.ImhHiddenText | Qt.ImhNoPredictiveText
                     onAccepted: root.login()
                     KeyNavigation.tab: loginButton
-                    KeyNavigation.backtab: root.manualUser ? username : (root.canChooseUser ? userButton : rebootButton)
+                    KeyNavigation.backtab: root.manualUser ? username : userButton
                 }
                 Controls.Button {
                     id: loginButton
@@ -381,6 +383,8 @@ Item {
                 text: sessions.count === 0 ? qsTr("没有可用会话，请检查系统配置。") : root.errorMessage
                 textFormat: Text.PlainText
                 color: Palette.negative; font.pixelSize: 14
+                style: Text.Outline
+                styleColor: Qt.rgba(root.inputColor.r, root.inputColor.g, root.inputColor.b, root.errorOutlineOpacity)
                 verticalAlignment: Text.AlignVCenter
             }
             InlineChoices {
@@ -408,17 +412,19 @@ Item {
                         sessionList.currentIndex = Math.max(0, root.selectedSession);
                         sessionList.open();
                     }
-                    KeyNavigation.tab: shutdownButton
+                    KeyNavigation.tab: keyboardText
                     KeyNavigation.backtab: loginButton
                 }
-                Text {
+                GhostButton {
                     id: keyboardText
                     objectName: "keyboardLayout"
-                    width: Math.min(72, implicitWidth); height: 32
+                    width: Math.min(72, contentItem.implicitWidth); height: 32
+                    leftPadding: 0; rightPadding: 0; topPadding: 0; bottomPadding: 0
+                    enabled: !root.busy
                     text: qsTr("键盘:%1").arg(keyboard.layouts.length > keyboard.currentLayout && keyboard.currentLayout >= 0 ? keyboard.layouts[keyboard.currentLayout].shortName : qsTr("未知"))
-                    textFormat: Text.PlainText
-                    font.pixelSize: 14; color: Palette.text
-                    verticalAlignment: Text.AlignVCenter; elide: Text.ElideRight
+                    Accessible.role: Accessible.StaticText
+                    KeyNavigation.tab: shutdownButton
+                    KeyNavigation.backtab: sessionButton
                 }
                 GhostButton {
                     id: shutdownButton
@@ -427,7 +433,7 @@ Item {
                     enabled: !root.busy && sddm.canPowerOff
                     onClicked: sddm.powerOff()
                     KeyNavigation.tab: rebootButton
-                    KeyNavigation.backtab: sessionButton
+                    KeyNavigation.backtab: keyboardText
                 }
                 GhostButton {
                     id: rebootButton

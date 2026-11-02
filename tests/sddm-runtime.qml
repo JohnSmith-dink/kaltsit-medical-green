@@ -43,7 +43,7 @@ Item {
     }
     TestCase {
         id: test
-        name: "SddmV3"
+        name: "SddmV5"
         when: windowShown
         function item(name) {
             let result = findChild(theme.item, name);
@@ -105,16 +105,39 @@ Item {
         }
         function test_tab_and_backtab_cycle() {
             proxy.canPowerOff = true; proxy.canReboot = true;
-            focusControl("password");
-            for (let name of ["loginButton", "sessionSelection", "shutdownButton", "rebootButton", "password"]) {
+            focusControl("userSelection");
+            for (let name of ["password", "loginButton", "sessionSelection", "keyboardLayout", "shutdownButton", "rebootButton", "userSelection"]) {
                 keyClick(Qt.Key_Tab); tryCompare(item(name), "activeFocus", true);
             }
-            keyClick(Qt.Key_Backtab, Qt.ShiftModifier);
-            tryCompare(item("rebootButton"), "activeFocus", true);
+            for (let name of ["rebootButton", "shutdownButton", "keyboardLayout", "sessionSelection", "loginButton", "password", "userSelection"]) {
+                keyClick(Qt.Key_Backtab, Qt.ShiftModifier); tryCompare(item(name), "activeFocus", true);
+            }
             compare(proxy.loginCalls, 0);
-            verify(!item("userSelection").enabled);
+            verify(item("userSelection").enabled);
+            keyClick(Qt.Key_Return); keyClick(Qt.Key_Space);
             mouseClick(item("userSelection"));
             verify(!item("userList").opened);
+            focusControl("keyboardLayout");
+            keyClick(Qt.Key_Return); keyClick(Qt.Key_Space); mouseClick(item("keyboardLayout"));
+            compare(layout.currentLayout, 0);
+            verify(!item("userList").opened && !item("sessionList").opened);
+            compare(proxy.loginCalls, 0); compare(proxy.powerCalls, 0); compare(proxy.rebootCalls, 0);
+        }
+        function test_tab_skips_unavailable_and_hidden_controls() {
+            reset(["fixture"], "fixture", []);
+            focusControl("password"); keyClick(Qt.Key_Tab);
+            tryCompare(item("keyboardLayout"), "activeFocus", true);
+            keyClick(Qt.Key_Tab); tryCompare(item("userSelection"), "activeFocus", true);
+            reset([], "", ["Test session"]);
+            focusControl("username"); keyClick(Qt.Key_Tab);
+            tryCompare(item("password"), "activeFocus", true);
+            keyClick(Qt.Key_Backtab, Qt.ShiftModifier);
+            tryCompare(item("username"), "activeFocus", true);
+            reset(["fixture", "omega"], "fixture", ["Test session"]);
+            openUserMenu(); keyClick(Qt.Key_Tab);
+            tryCompare(item("userSelection"), "activeFocus", true);
+            verify(!item("userList").opened);
+            keyClick(Qt.Key_Tab); tryCompare(item("password"), "activeFocus", true);
         }
         function test_multiple_users_other_and_back() {
             reset(["fixture", "omega"], "fixture", ["Test session"]);
@@ -209,7 +232,7 @@ Item {
             item("password").text = "synthetic-only"; keyClick(Qt.Key_Return);
             theme.item.login(); keyClick(Qt.Key_Return);
             compare(proxy.loginCalls, 1);
-            for (let name of ["password", "userSelection", "loginButton", "sessionSelection", "shutdownButton", "rebootButton"])
+            for (let name of ["password", "userSelection", "loginButton", "sessionSelection", "keyboardLayout", "shutdownButton", "rebootButton"])
                 verify(!item(name).enabled, "Busy disables " + name);
         }
         function test_success_keeps_credential_empty() {
@@ -245,7 +268,7 @@ Item {
         function recordGeometry(state) {
             wait(30); // Record settled geometry, not the previous layout pass.
             let regions = {};
-            for (let name of ["clockTime", "calendarDate", "loginPanel", "usernameDisplay", "username", "password", "loginError", "footer", "userList", "sessionList"]) {
+            for (let name of ["clockTime", "calendarDate", "loginPanel", "usernameDisplay", "username", "password", "loginError", "footer", "sessionSelection", "keyboardLayout", "shutdownButton", "rebootButton", "userList", "sessionList"]) {
                 let control = item(name);
                 if (control.visible) {
                     let p = control.mapToItem(stage, 0, 0);
@@ -283,6 +306,11 @@ Item {
             keyClick(Qt.Key_Escape);
             reset([], "", ["Test session"]);
             recordGeometry("empty-users"); capture("empty-users");
+            reset(["fixture"], "fixture", ["Test session"]);
+            // Separate focused/hovered surfaces from the unpainted normal state.
+            focusControl("userSelection"); capture("focus-user");
+            focusControl("keyboardLayout"); capture("focus-keyboard");
+            focusControl("password");
             item("clock").visible = false; item("loginPanel").visible = false;
             capture("background");
             item("clock").visible = true; item("loginPanel").visible = true;

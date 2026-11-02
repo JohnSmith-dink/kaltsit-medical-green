@@ -38,7 +38,9 @@ def sample_region(image, logical_box, scale, layers, foregrounds, frame_size):
         worst = min(pixels,key=lambda p:contrast(color,composites[p]))
         ratio = contrast(color,composites[worst])
         results[role] = dict(ratio=round(ratio,6), required=threshold,
-                             source_rgb=hex_rgb(worst), composite_rgb=composites[worst])
+                             source_rgb=hex_rgb(worst), composite_rgb=composites[worst],
+                             darkest_pixel_ratio=round(contrast(color,composites[darkest]),6),
+                             lightest_pixel_ratio=round(contrast(color,composites[lightest]),6))
     # Image.PreserveAspectCrop uses centered uniform scaling of the existing still.
     factor = max(frame_size[0]/3840, frame_size[1]/2160)
     offset = [(3840*factor-frame_size[0])/2, (2160*factor-frame_size[1])/2]
@@ -124,7 +126,8 @@ class SddmTests(unittest.TestCase):
     def test_translucent_controls_contrast_after_compositing(self):
         from PIL import Image, ImageOps
         colors=palette_module.palette(ROOT/'share/color-schemes/KaltsitMedicalGreen.colors')
-        alpha, input_alpha=qml_number('panelOpacity'),qml_number('inputOpacity')
+        input_alpha=qml_number('inputOpacity')
+        surface_alpha=qml_number('surfaceOpacity')
         left, width=qml_number('leftInset'),qml_number('panelWidth')
         self.assertEqual((left,width),(64,320))
         with Image.open(ROOT/'share/wallpapers/KaltsitMedicalGreen/contents/images/3840x2160.jpg') as source:
@@ -133,13 +136,37 @@ class SddmTests(unittest.TestCase):
                 top=h/scale*.55-94
                 # Conservative envelope includes upward sessions, downward users and errors.
                 box=[left,200 if h==800 else top-148,width,top+372-(200 if h==800 else top-148)]
-                panel=[(colors['view'],alpha)]
                 with self.subTest(layout=(w,h,scale)):
-                    assert_sample(sample_region(frame,box,scale,panel,
-                        {key:(colors[key],limit) for key,limit in [('text',4.5),('negative',4.5),('accent',3)]},(w,h)))
-                    assert_sample(sample_region(frame,box,scale,panel+[(colors['window'],input_alpha)],
-                        {'placeholder':(colors['secondary'],4.5),'focus':(colors['accent'],3)},(w,h)))
+                    assert_sample(sample_region(frame,box,scale,[(colors['window'],input_alpha)],
+                        {'text':(colors['text'],4.5),'placeholder':(colors['secondary'],4.5),
+                         'error_border':(colors['negative'],3),'focus':(colors['accent'],3)},(w,h)))
+                    assert_sample(sample_region(frame,box,scale,[(colors['window'],surface_alpha)],
+                        {'list_text':(colors['text'],4.5),'focus':(colors['accent'],3)},(w,h)))
+                    for foreground, outline, alpha in (
+                        ('selectedText','text',qml_number('bodyOutlineOpacity')),
+                        ('negative','window',qml_number('errorOutlineOpacity')),
+                    ):
+                        assert_sample(sample_region(frame,box,scale,[(colors[outline],alpha)],
+                            {foreground:(colors[foreground],4.5)},(w,h)))
         self.assertGreaterEqual(contrast(colors['selectedText'],colors['accent']),4.5)
+
+    def test_outlines_and_input_against_extreme_underlays(self):
+        from PIL import Image
+        colors=palette_module.palette(ROOT/'share/color-schemes/KaltsitMedicalGreen.colors')
+        # Removing the parent surface must not silently invalidate placeholder contrast.
+        for backdrop in ('#000000','#ffffff'):
+            frame=Image.new('RGB',(1,1),backdrop)
+            for foreground, layer, alpha, required in (
+                ('selectedText','text',qml_number('bodyOutlineOpacity'),4.5),
+                ('negative','window',qml_number('errorOutlineOpacity'),4.5),
+                ('secondary','window',qml_number('inputOpacity'),4.5),
+                ('text','window',qml_number('inputOpacity'),4.5),
+                ('accent','window',qml_number('inputOpacity'),3),
+                ('accent','window',qml_number('surfaceOpacity'),3),
+            ):
+                with self.subTest(backdrop=backdrop,foreground=foreground,alpha=alpha):
+                    assert_sample(sample_region(frame,[0,0,1,1],1,[(colors[layer],alpha)],
+                        {foreground:(colors[foreground],required)},(1,1)))
 
     def test_clock_and_date_on_sampled_wallpaper(self):
         from PIL import Image, ImageOps

@@ -77,15 +77,15 @@ def main():
             # Keep the raw extra row at 175%; never crop/resample evidence.
             capture_size=tuple(int(int(d/scale+0.5)*scale+0.5) for d in (width,height))
             assert all(abs(actual-requested)<=1 for actual,requested in zip(capture_size,(width,height)))
-            for name in ('single-user','error','multi-user-menu','long-username','session-menu','empty-users','background'):
+            for name in ('single-user','error','multi-user-menu','long-username','session-menu','empty-users','focus-user','focus-keyboard','background'):
                 with Image.open(destination/(name+'.png')) as capture:
                     assert capture.size==capture_size,(name,capture.size)
             from test_sddm import sample_region, assert_sample, palette_module
             colors=palette_module.palette(Path(__file__).resolve().parents[1]/'share/color-schemes/KaltsitMedicalGreen.colors')
             runtime=(theme/'Main.qml').read_text()
             alpha=lambda name:float(re.search(r'readonly property real '+name+r':\s*([0-9.]+)',runtime)[1])
-            panel_layers=[(colors['view'],alpha('panelOpacity'))]
-            input_layers=panel_layers+[(colors['window'],alpha('inputOpacity'))]
+            input_layers=[(colors['window'],alpha('inputOpacity'))]
+            surface_layers=[(colors['window'],alpha('surfaceOpacity'))]
             states=[json.loads(raw) for raw in re.findall(r'SDDM_GEOMETRY (\{[^\n]+\})',log)]
             assert len(states)==6, 'Missing geometry evidence'
             sampling=[]
@@ -93,23 +93,39 @@ def main():
                 for state in states:
                     samples={}
                     for name,box in state['regions'].items():
+                        if name == 'loginPanel': continue  # Layout-only Item, no painted surface.
                         if name in ('clockTime','calendarDate'):
                             layers=[]; roles={'text':(colors['text'],4.5)}
                         elif name in ('password','username'):
                             layers=input_layers
                             roles={'text':(colors['text'],4.5),'placeholder':(colors['secondary'],4.5),'focus':(colors['accent'],3)}
                         elif name in ('userList','sessionList'):
-                            layers=input_layers; roles={'text':(colors['text'],4.5),'focus':(colors['accent'],3)}
+                            layers=surface_layers; roles={'text':(colors['text'],4.5),'focus':(colors['accent'],3)}
                         else:
-                            layers=panel_layers
-                            roles={'text':(colors['text'],4.5),'focus':(colors['accent'],3)}
-                            if name in ('loginError','loginPanel'): roles['error']=(colors['negative'],4.5)
+                            error=name == 'loginError'
+                            foreground=colors['negative' if error else 'selectedText']
+                            layers=[(colors['window' if error else 'text'],alpha('errorOutlineOpacity' if error else 'bodyOutlineOpacity'))]
+                            roles={'text':(foreground,4.5)}
+                            # Preserve the failing raw ratio; the outline is the accepted local backdrop.
+                            samples[name+'_without_outline']=sample_region(background,box,scale,[],
+                                {'text':(foreground,4.5)},(width,height))
                         sample=sample_region(background,box,scale,layers,roles,(width,height))
                         assert_sample(sample); samples[name]=sample
+                        if name in ('sessionSelection','keyboardLayout','shutdownButton','rebootButton','usernameDisplay'):
+                            focus=sample_region(background,box,scale,surface_layers,{'border':(colors['accent'],3)},(width,height))
+                            assert_sample(focus); samples[name+'_focus']=focus
                     sampling.append(dict(state=state['state'],regions=samples))
+                # At rest the empty container margin must exactly reveal the wallpaper.
+                from PIL import ImageChops
+                normal=next(state for state in states if state['state']=='single-user')
+                x,y,w,h=normal['regions']['loginPanel']
+                margin=(round((x+2)*scale),round((y+20)*scale),round((x+12)*scale),round((y+h-20)*scale))
+                with Image.open(destination/'single-user.png') as frame:
+                    assert ImageChops.difference(frame.convert('RGB').crop(margin),background.convert('RGB').crop(margin)).getbbox() is None, 'Login container still paints a surface'
             (destination/'contrast.json').write_text(json.dumps(sampling,indent=2)+'\n')
             matrix.append(dict(layout_pixels=[width,height],scale=scale,capture_pixels=capture_size,
-                               logical_surface=[width/scale,height/scale],checks=checks,exit_code=result.returncode))
+                               logical_surface=[width/scale,height/scale],checks=checks,exit_code=result.returncode,
+                               container_margin_matches_wallpaper=True))
         report=dict(greeter_test_mode_loaded=True,ui_mock_matrix=matrix,authentication_tested=False,
                     actual_power_actions_tested=False,screenshot_kind='native offscreen Qt with mock SDDM models',
                     keyboard_events='QtTest keyClick; real QKeyEvent dispatch',

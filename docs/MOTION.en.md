@@ -34,10 +34,10 @@ A path selected directly in wallpaper settings is not copied into the Nix store 
 ## Behavior and recovery
 
 Playback is silent and loops without color grading or overlays. Choose aspect-preserving crop or fit.
-The desktop context menu pauses and resumes playback. Pause keeps the current frame; hidden components pause.
-Missing or invalid video falls back to a still and recovers when a valid source is supplied.
+The desktop context menu pauses and resumes playback. Pause keeps the current frame; hidden components pause. The `Paused` setting persists across sessions: a right-click pause remains paused after restart.
+Missing or invalid video falls back to a still. While playback is allowed, retry every 60 seconds, at most three additional attempts. Pausing blocks reopening media; resuming waits a full interval. Show video only after a new valid frame arrives. Exhaustion is logged and keeps the still; changing the video source resets the budget.
 Qt Quick's pure software backend uses the still rather than continuous playback; Qt Quick RHI is required for video rendering.
-Fullscreen-window occlusion, locking and battery state are not automatic pause triggers in this version.
+Battery power pauses by default, with an option to keep playing. A locked-session signal also pauses. Manual pause takes priority and is never cleared by automatic conditions. DPMS and complete window occlusion are not connected.
 
 To disable, choose your original wallpaper plugin and image before removing the addon.
 The existing `kaltsit-theme apply/restore` commands do not manage the optional wallpaper selection. Before upgrading or restoring the base theme, return to the original image wallpaper; then follow the [base-theme recovery guide](UPGRADE-RECOVERY.en.md).
@@ -66,3 +66,5 @@ Battery and lock transitions used **controlled fake D-Bus services**, not physic
 Sources: [power engine](https://github.com/KDE/plasma5support/blob/v6.6.6/src/dataengines/powermanagement/powermanagementengine.cpp), [lock state implementation](https://github.com/KDE/kscreenlocker/blob/v6.6.6/interface.cpp), [QML signal interface](https://github.com/KDE/plasma-workspace/blob/v6.6.6/components/dbus/dbussignalwatcher.h).
 `GetActive` compares `KSldApp::Locked`; lock/unlock emit `ActiveChanged(true/false)` respectively.
 Qt Multimedia's `playbackRate` changes playback speed. Reliable decoder frame limiting at normal speed was not established, so no `reduce` policy is offered.
+
+Completion checks: real Qt RHI / Mesa software OpenGL passed 35 behavior checks in private KWin; the pure software renderer passed static fallback. Signals came from private fake services. Checks include same-source file repair, exhaustion of three retries, paused retry suppression, reconnection, and recreating the component with the persisted pause value supplied. Tests shorten the internal interval to 700 ms; production defaults to 60000 ms. Physical unplugging, authenticated locking and DPMS were not tested.

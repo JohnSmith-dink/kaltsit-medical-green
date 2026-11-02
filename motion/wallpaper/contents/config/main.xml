@@ -6,5 +6,6 @@
     <entry name="Image" type="String"><default></default></entry>
     <entry name="FillMode" type="Int"><default>2</default></entry>
     <entry name="Paused" type="Bool"><default>false</default></entry>
+    <entry name="BatteryPolicy" type="String"><default>pause</default></entry>
   </group>
 </kcfg>

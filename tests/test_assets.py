@@ -184,6 +184,22 @@ class ThemeAssetTests(unittest.TestCase):
         # Native interaction controls deliberately continue to come from Breeze.
         self.assertFalse((root / "widgets/button.svg").exists())
 
+    def test_motion_pause_settings_and_persistence_contract(self):
+        ui = ROOT / "motion/wallpaper/contents/ui"
+        entries = ET.parse(ui.parent / "config/main.xml").getroot()
+        ns = {"k": "http://www.kde.org/standards/kcfg/1.0"}
+        settings = {entry.get("name"): (entry.get("type"), entry.findtext("k:default", namespaces=ns))
+                    for entry in entries.findall(".//k:entry", ns)}
+        self.assertEqual(settings["Paused"], ("Bool", "false"))
+        self.assertEqual(settings["BatteryPolicy"], ("String", "pause"))
+        main = (ui / "main.qml").read_text()
+        self.assertIn("root.configuration.Paused || !root.visible", main)
+        self.assertIn("root.configuration.writeConfig()", main)
+        self.assertIn('root.configuration.BatteryPolicy || "pause"', main)
+        config = (ui / "config.qml").read_text()
+        self.assertIn('currentIndex === 1 ? "ignore" : "pause"', config)
+        self.assertNotIn('"reduce"', config)
+
     def test_pinned_cursor_files_and_aliases(self):
         manifest = json.loads((ROOT / "docs/cursor-source.json").read_text())
         self.assertEqual(manifest["revision"], "7ef139a6210fd8eb03d0296b624d71eaa3120589")

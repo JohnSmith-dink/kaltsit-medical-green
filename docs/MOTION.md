@@ -8,10 +8,10 @@
 ## 行为
 
 - 动态壁纸只读取本地视频，静音循环。支持保持比例裁切或完整显示、桌面右键暂停/继续。
-- 暂停保留当前帧；组件隐藏时暂停。视频缺失或解码失败时显示静态图片，修正路径后可恢复。
+- 暂停保留当前帧；组件隐藏时暂停。右键暂停写入 `Paused` 配置，跨会话保留，重启后仍为暂停。视频缺失或解码失败时显示静态图片。允许播放时每隔 60 秒最多额外重试 3 次；暂停期间不重开媒体，恢复后等待完整间隔。重试成功收到新帧后才显示视频，失败达到上限会记录日志并保留静图；更换视频源重置预算。
 - 使用 Qt Multimedia 与 Qt Quick RHI。Qt Quick 的纯软件绘制后端使用静态图，不持续播放；RHI 使用软件 OpenGL 的隔离会话已验证播放。
 - 不做亮度、对比度、饱和度或遮罩处理。不把视频接入锁屏。
-- 不承诺被窗口遮挡、锁屏、电池供电时自动暂停；这些状态尚未接入。可在需要时手动暂停。
+- 电池供电默认自动暂停，可选“照常播放”；收到锁定状态时自动暂停。手动暂停优先，自动条件解除不会清除它。DPMS 和窗口完全遮挡尚未接入。
 
 ## 构建与安装
 
@@ -90,3 +90,5 @@ d1e60abcb03a0a2a7dc687886f23ba8e0ff741a125f6d8ee17e2b4aad1d5254e
 来源：[电源引擎](https://github.com/KDE/plasma5support/blob/v6.6.6/src/dataengines/powermanagement/powermanagementengine.cpp)、[锁定状态实现](https://github.com/KDE/kscreenlocker/blob/v6.6.6/interface.cpp)、[QML 信号订阅接口](https://github.com/KDE/plasma-workspace/blob/v6.6.6/components/dbus/dbussignalwatcher.h)。
 `GetActive` 比较的是 `KSldApp::Locked`；锁定、解锁分别发出 `ActiveChanged(true/false)`。
 Qt Multimedia 的 `playbackRate` 是播放速度，未证明能保持原速度并可靠降低解码帧率，因此不提供 `reduce` 策略。
+
+补完版原生检查：真实 Qt RHI / Mesa 软件 OpenGL 在独立 KWin 中通过 35 项行为检查，纯软件绘制后端通过静态回退检查。信号由私有假服务控制；同源文件修复、三次重试耗尽、暂停阻止重试、服务重连及重建组件后保留传入的暂停设置均已检查。测试把内部重试间隔缩为 700 ms；生产默认仍为 60000 ms。未执行物理拔电源、真实认证锁屏或 DPMS 验证。

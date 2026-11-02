@@ -5,7 +5,34 @@
 ## Install and select
 
 Build from the release source with `nix build --no-write-lock-file path:.#kaltsit-motion`.
-For installation, use the same `pkgs` as the running Plasma/Qt system. For example:
+Prefer a flake input for the local development source, following the system's pinned nixpkgs:
+
+```nix
+# Add to the system flake inputs. The local branch is not published yet.
+inputs.kaltsit.url = "path:/absolute/path/to/kaltsit-medical-green";
+inputs.kaltsit.inputs.nixpkgs.follows = "nixpkgs";
+```
+
+In a NixOS module receiving `inputs`:
+
+```nix
+{ inputs, pkgs, ... }:
+let
+  motion = inputs.kaltsit.packages.${pkgs.stdenv.hostPlatform.system}.kaltsit-motion.override {
+    inherit (pkgs) lib stdenvNoCC kdePackages;
+    baseTheme = pkgs.callPackage (inputs.kaltsit + "/package.nix") { };
+    # Both optional: select media later in wallpaper settings instead.
+    videoFile = /absolute/path/to/balanced.mp4;
+    posterFile = /absolute/path/to/poster.jpg;
+  };
+in { environment.systemPackages = [ motion ]; }
+```
+
+Pass inputs to NixOS modules using `specialArgs = { inherit inputs; };`.
+The package already supports `.override { videoFile = ...; posterFile = ...; }`.
+Passing the system's build arguments and base resource package also keeps Plasma/Qt overlays consistent.
+
+Alternatively, use local `callPackage`:
 
 ```nix
 { pkgs, ... }:
@@ -24,7 +51,24 @@ in {
 ```
 
 Allow the `kaltsit-theme` and `kaltsit-motion` unfree package names using your existing Nix configuration policy.
-Home Manager users may put the same derivation in `home.packages` instead; the existing theme module API is unchanged.
+Home Manager can install the extension independently:
+
+```nix
+{ inputs, ... }: {
+  imports = [ inputs.kaltsit.homeManagerModules.default ];
+  programs.kaltsit-theme.motion = {
+    enable = true;
+    # videoFile = /absolute/path/to/balanced.mp4;
+    # posterFile = /absolute/path/to/poster.jpg;
+  };
+}
+```
+
+Pass inputs via Home Manager's `extraSpecialArgs`. `motion.enable` defaults to false; both paths default to null.
+It does not require the base theme's `enable`. It reuses the module's `pkgs` and existing `package` option for the base still, only adds resources to `home.packages`, and never writes KDE settings or selects a wallpaper.
+
+The default poster's relative path supports only the Nix package layout. If copying the plugin manually into `~/.local/share`, specify a still in settings. The relative-path implementation is unchanged.
+
 Select **Medical Green · Motion** in Configure Desktop and Wallpaper. The default package contains no video and shows the existing still image until a local video is selected.
 If an already-running Plasma process cannot find the newly installed QML dependency, log out and back in.
 

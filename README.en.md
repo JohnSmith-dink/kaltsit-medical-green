@@ -10,6 +10,8 @@ Install and select `kaltsit-motion` separately. Public source and release archiv
 The original lockscreen and D1 desktop remain unchanged. No startup splash is installed, and panel layout, fonts and scale are preserved.
 See the [v1.3 release evidence](docs/V1.3-RELEASE.md) and [GitHub Releases](https://github.com/JohnSmith-dink/kaltsit-medical-green/releases).
 
+The development branch supports independent `programs.kaltsit-theme.motion.enable = true` with optional `videoFile` / `posterFile`. It installs resources only, defaults off, and never selects a wallpaper. See the [motion guide](docs/MOTION.en.md) for flake and matching `pkgs` examples.
+
 [![Desktop](previews/v1.2/thumbs/primary/desktop.png)](previews/v1.2/actual/primary/desktop.png)
 
 <details>

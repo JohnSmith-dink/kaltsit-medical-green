@@ -3,7 +3,7 @@
 `kaltsit-motion` 是独立的可选扩展包，版本为 `1.3.0`。
 包含独立的 Plasma 壁纸资源：**医疗白绿 · 动态壁纸**。
 本包只提供动态壁纸，不安装启动画面。
-安装资源不会自动启用；原版锁屏、D1 桌面、启动画面设置、CLI、Home Manager 模块和恢复记录格式不变。
+安装资源不会自动启用；原版锁屏、D1 桌面、启动画面设置、CLI、恢复记录格式不变；Home Manager 仅增加可选资源安装项。
 
 ## 行为
 
@@ -21,7 +21,33 @@
 nix build --no-write-lock-file path:.#kaltsit-motion
 ```
 
-默认包不含视频，未选视频时显示已有静态壁纸。安装应复用系统的 `pkgs`，与当前 Plasma/Qt 版本匹配，例如在 NixOS 配置中：
+默认包不含视频，未选视频时显示已有静态壁纸。优先通过 flake 引用本地开发源码，沿用系统锁定的 nixpkgs：
+
+```nix
+# 加到系统 flake 的 inputs；本地分支尚未发布，不指向公开旧版本。
+inputs.kaltsit.url = "path:/absolute/path/to/kaltsit-medical-green";
+inputs.kaltsit.inputs.nixpkgs.follows = "nixpkgs";
+```
+
+在接收 `inputs` 的 NixOS 模块中：
+
+```nix
+{ inputs, pkgs, ... }:
+let
+  motion = inputs.kaltsit.packages.${pkgs.stdenv.hostPlatform.system}.kaltsit-motion.override {
+    inherit (pkgs) lib stdenvNoCC kdePackages;
+    baseTheme = pkgs.callPackage (inputs.kaltsit + "/package.nix") { };
+    # 两者均可省略，稍后在壁纸设置中选择。
+    videoFile = /absolute/path/to/balanced.mp4;
+    posterFile = /absolute/path/to/poster.jpg;
+  };
+in { environment.systemPackages = [ motion ]; }
+```
+
+通过 `specialArgs = { inherit inputs; };` 将 inputs 传给系统模块。包原本已支持 `.override { videoFile = ...; posterFile = ...; }`。
+上例同时传入系统的构建参数和基础素材包，保持与运行中的 Plasma/Qt（包括 overlays）一致。
+
+第二种方式仍可用本地 `callPackage`：
 
 ```nix
 { pkgs, ... }:
@@ -46,6 +72,25 @@ in {
 
 1. 安装资源后，在桌面「配置桌面和壁纸」中选择「医疗白绿 · 动态壁纸」。留空使用安装时的视频，也可选择自己的本地文件。
 2. 如果既有 Plasma 进程未发现新安装的 QML 依赖，注销后重新登录。
+
+
+### Home Manager
+
+```nix
+{ inputs, ... }: {
+  imports = [ inputs.kaltsit.homeManagerModules.default ];
+  programs.kaltsit-theme.motion = {
+    enable = true;
+    # videoFile = /absolute/path/to/balanced.mp4;
+    # posterFile = /absolute/path/to/poster.jpg;
+  };
+}
+```
+
+通过 Home Manager 的 `extraSpecialArgs` 传入 inputs。`motion.enable` 默认 false，两个素材路径均默认 null。
+它独立于基础主题的 `enable`，复用模块的 `pkgs` 和已有 `package` 选项提供的基础静帧；只增加 `home.packages`，不写 KDE 配置，也不选择壁纸。
+
+默认海报相对路径仅支持 Nix 包布局。手动复制插件到 `~/.local/share` 时，必须在设置页指定静帧；本轮保留相对路径实现。
 
 `kaltsit-theme apply/restore` 仍只管理原版主题组件，不负责启用或备份动态壁纸。
 启用前记下原有壁纸选择；停用时在相同页面恢复原壁纸插件（通常为「图像」）与图片，再移除可选包。

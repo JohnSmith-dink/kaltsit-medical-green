@@ -10,6 +10,8 @@ v1.3 新增可选的[本地动态壁纸](docs/MOTION.md)：静音循环、右键
 保留原版锁屏与 D1 桌面，不安装启动过渡，不改变面板布局、字体或缩放。
 发布依据与已验收范围见 [v1.3 发布记录](docs/V1.3-RELEASE.md)；公开版本见 [GitHub Releases](https://github.com/JohnSmith-dink/kaltsit-medical-green/releases)。
 
+开发分支的 Home Manager 可独立设置 `programs.kaltsit-theme.motion.enable = true`，可选 `videoFile` / `posterFile`；只安装资源，默认关闭，不切换壁纸。flake 与同一套 `pkgs` 的示例见[动态壁纸文档](docs/MOTION.md)。
+
 [![桌面](previews/v1.2/thumbs/primary/desktop.png)](previews/v1.2/actual/primary/desktop.png)
 
 <details>

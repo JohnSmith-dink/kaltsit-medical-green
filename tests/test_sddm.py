@@ -68,6 +68,7 @@ class SddmTests(unittest.TestCase):
         self.assertEqual({item['file'] for item in captures},{
             'sddm/login.png','sddm/wrong-password.png',
             'sddm/login-v2.png','sddm/login-v2-error.png',
+            'sddm/login-v3.png','sddm/login-v3-error.png','sddm/login-v3-multiuser.png',
         })
         for item in captures:
             with self.subTest(file=item['file']):
@@ -77,8 +78,8 @@ class SddmTests(unittest.TestCase):
                 self.assertEqual(item['pixels'],[1280,800])
                 self.assertEqual(item['kind'],'SDDM screenshot in isolated NixOS VM')
                 self.assertFalse(item['physical_desktop_acceptance'])
-                if item['file'] in ('sddm/login-v2.png','sddm/login-v2-error.png'):
-                    self.assertEqual(item['development_layout'],'v2')
+                if item['file'].startswith(('sddm/login-v2','sddm/login-v3')):
+                    self.assertEqual(item['development_layout'],'v3' if 'login-v3' in item['file'] else 'v2')
                     self.assertEqual(item['release_status'],'Unreleased')
                     self.assertTrue(item['sddm_authentication_performed'])
                     self.assertEqual(item['image_processing'],'none; original QEMU screenshot bytes')

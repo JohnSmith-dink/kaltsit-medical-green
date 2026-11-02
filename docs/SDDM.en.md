@@ -1,16 +1,18 @@
 # Login screen (SDDM, experimental)
 
 `kaltsit-sddm` is a separate static Qt 6 login theme, disabled by default. It does not change the desktop, lockscreen, Home Manager, authentication policy or daily restoration records. It uses the existing still and generates colors from the existing scheme at build time.
-See the [initial design](SDDM-DESIGN.en.md) for pinned dependencies and fallback boundaries. The v2 layout below is an unpublished UI revision; the package version remains 1.3.0.
+See the [initial design](SDDM-DESIGN.en.md) for pinned dependencies and fallback boundaries. The v3 layout below is an unpublished UI revision; the package version remains 1.3.0.
 
-## v2 layout and keyboard controls
+## v3 layout and keyboard controls
 
-- The wallpaper retains its original brightness and aspect-preserving crop, with no full-screen overlay, large card or blur. Centered time and date appear above, using the greeter font and minute precision; the clock uses existing dark text with a thin white outline.
-- The lower-center login area places the username above a 280×48 logical-pixel password field and a separate circular arrow. Username, inputs, errors and bottom actions have separate 96%-opaque white backplates. Text and borders remain opaque; no text is smaller than 14 logical pixels.
-- Activate the username even with a single user to open the list. “Other…” replaces the username line with an input; an empty model shows it directly. An unlisted remembered username is prefilled, and the adjacent list button returns to listed accounts. Changing accounts clears the password and old error.
-- Initial focus goes to the password, or to the username when unknown. Tab/Shift+Tab traverse visible controls; arrow keys move in a list, Return selects, and Esc closes it and restores trigger focus. Return used to select a list item does not submit credentials.
-- Session selection and the read-only keyboard layout sit at bottom left; shutdown and reboot text buttons sit at bottom right. An empty session list explains why login is disabled. Submission prevents duplicate actions and retains the original session index and power-capability checks.
-- Errors occupy reserved space below the password and wrap when needed. A roughly 600 ms error border is separate from the focus border. Submission and failure clear the password; failure restores password focus. Passwords are not logged or written to files. Authentication behavior, CLI, Nix interfaces and the lockscreen are unchanged.
+- The wallpaper retains its original brightness and aspect-preserving crop. Clock, date and login panel occupy the left column at approximately x=64…384 logical pixels. The center has no login controls and there is no full-screen overlay.
+- Time starts at (64,64), using 72px Light weight; the date uses 18px Normal weight. Both inherit the greeter system font and use existing dark text without outlines. Actual background sampling and contrast results appear below.
+- The panel is 320px wide with a 12px radius, 16px padding and 16px spacing. Its normal center sits at roughly 55% of screen height. Existing warm white uses alpha 0.86, with no outer border or shadow. Alpha was increased from the original 0.78 proposal so Negative error text reaches 4.5:1.
+- The avatar is a drawn 48px green circle with a 22px white initial; the username is 18px. A single-user row is display-only and skipped by Tab, without an “Other account” entry. Multiple users open an inline list retaining “Other…” at the end. An empty model or unlisted remembered account shows the username input; the latter is prefilled.
+- The password row is 44px high with existing pure white at alpha 0.9 and an embedded 36px green arrow. The 14px error row takes no space when empty. An error border lasts approximately 600 ms before restoring focus styling. Submission and failure clear the password; failure restores password focus. Changing accounts clears the password and old error.
+- Session selection, read-only keyboard layout, shutdown and reboot share the panel footer without permanent button backgrounds. Interactive controls show a light surface and border on hover/focus. Long session names are elided in the footer and wrap in the expanded list. Keyboard layout switching is not added.
+- Tab/Shift+Tab traverse available controls. Arrow keys move through lists, Return selects, and Esc closes and restores trigger focus without leaking Return into login. User lists expand down and session lists up; only one is open at a time. Height is capped with scrolling, keeping lists inside the panel and clear of the clock. Empty session models explain why login is disabled; submission prevents duplicate actions.
+- Package version, authentication policy, CLI, Nix interfaces and the lockscreen are unchanged. Passwords are not logged or written to files.
 
 ## Install and enable
 
@@ -56,9 +58,9 @@ python3 tests/run-sddm-native.py "$(realpath result)" \
   --qml /path/to/matching/qml --output /tmp/kaltsit-sddm-native-result
 ```
 
-It loads the real greeter with `--test-mode --theme` and ends that process after six seconds, then sends actual key and mouse events through the matching `qmltestrunner` with mock SDDM models. Each run has 13 behavior checks covering zero/one/multiple users, manual usernames, sessions, Tab/Return/Esc, duplicate submissions, password clearing, errors and power calls. Layouts are checked at 1280×800/100%, 1920×1080/100% and 3120×2080/175%.
+It loads the real greeter with `--test-mode --theme` and ends that process after six seconds, then sends actual key and mouse events through the matching `qmltestrunner` with mock SDDM models. Each run has 14 behavior checks covering zero/one/multiple users, manual usernames, sessions, Tab/Return/Esc, duplicate submissions, password clearing, errors and power calls. Layouts are checked at 1280×800/100%, 1920×1080/100% and 3120×2080/175%.
 
-Resolution-specific output directories contain `single-user.png`, `error.png`, `multi-user-menu.png`, `long-username.png` and `results.json`. These are native Qt renders with mocks, not authentication evidence. At 175%, Qt rounds the logical capture size and produces a raw 3120×2081 PNG. The report records requested layout, logical size and captured pixels separately; it does not crop or resize away that difference.
+The output root contains `results.json`. Resolution subdirectories contain native PNGs for a single user, errors, multiple-user lists, long usernames, session lists, empty user models and a background-only frame, plus per-region `contrast.json`. These are native Qt renders with mocks, not authentication evidence. At 175%, Qt rounds the logical capture size and produces a raw 3120×2081 PNG. The report records requested layout, logical size and captured pixels separately; it does not crop or resize away that difference.
 
 [tests/sddm-vm.nix](../tests/sddm-vm.nix) is **test-only; never import it into a physical-machine configuration**. It uses 2 cores / 2048 MiB, 1280×800, static wallpaper and X11 greeter. An xterm session isolates SDDM testing; it is not Plasma desktop acceptance. Account `tester` has the public disposable password `wallpaper-test`. There is no host HOME sharing, real credential or host configuration import. A separate read-only Nix store image contains the test closure; default shares and external network access are disabled.
 
@@ -111,6 +113,26 @@ On 2026-11-02 (America/Los_Angeles), the runtime UI came from `6afcb9ecf12112d4c
 - Power buttons were checked only against the mock backend; full VM shutdown/reboot was not retested. The initial incomplete power-cycle checks remain unresolved. The harness stopped its own VM process at the end; that is not evidence of a successful shutdown action.
 
 The [v2 login screen](../previews/sddm/login-v2.png) and [v2 wrong-password screen](../previews/sddm/login-v2-error.png) are original 1280×800 QEMU captures from that VM, without postprocessing. Only these two entries and their SHA-256 values were appended to the manifest; earlier captures and entries remain intact. Physical hardware, a real high-DPI greeter, multiple displays and full power cycles remain outside this round's validation conclusions.
+
+## v3 validation and wallpaper sampling
+
+On 2026-11-02 (America/Los_Angeles), runtime UI came from `5d80b1b858fdae23a797178dd6238e6181a65219`. Real greeter test-mode loaded successfully. Mock-model QtTest passed 14 behaviors at each of three sizes, 42 in total, including actual key events, left-column bounds, list directions and collapsing/expanding errors.
+
+An independently rendered Qt background-only frame was sampled using actual control coordinates, without averaging colors. Clock and date logical regions are `(64,64,320,88)` and `(64,160,320,24)` respectively (x, y, width, height). Each panel state records darkest/lightest pixels, luminance, source-image mapping and minimum contrast for each foreground. Warm white at alpha 0.86 is composited first; inputs add pure white at alpha 0.9.
+
+| Size / scale | Clock | Date | Username | Password placeholder | Error row | Conservative error-color minimum over panel | Conservative focus-border minimum |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| 1280×800 / 100% | 8.28 | 8.53 | 9.91 | 5.14 | 4.79 | 4.68 | 4.51 |
+| 1920×1080 / 100% | 9.53 | 7.89 | 9.32 | 5.11 | 4.69 | 4.59 | 4.42 |
+| 3120×2080 / 175% | 11.15 | 10.91 | 9.81 | 5.14 | 4.79 | 4.68 | 4.52 |
+
+Values are contrast ratios (:1); the clock needs no backplate. The worst whole-panel sample is the 1920×1080 expanded user list: physical region `(64,500)…(384,836)`, darkest source pixel `#21261f` (luminance 0.018085), lightest `#9ba988` (0.371221). The darkest pixel becomes `#d6dad4` after compositing, giving Negative text 4.585709:1. These are sampled/calculated values, not additions to the theme palette. Per-run `contrast.json` contains the remaining regions; unit tests also check a larger combined expansion/error envelope.
+
+The existing NixOS 26.05 test VM runner was reused with a fresh temporary disk; build-vm was not rerun. New theme resources were copied to a guest temporary directory, SHA-256 checked and loaded only inside the guest. A real incorrect password was rejected, the fixture password passed PAM into xterm, and logout returned to v3. A locked guest-only account, `preview2`, provided a real multiple-user model for the expanded-list capture. Only `tester` authenticated; `preview2` login was not tested. Deliberately breaking guest temporary QML produced embedded fallback; authentication was not repeated in that UI.
+
+The [v3 login](../previews/sddm/login-v3.png), [v3 error](../previews/sddm/login-v3-error.png) and [v3 multiple-user list](../previews/sddm/login-v3-multiuser.png) are original 1280×800 QEMU PNGs from the VM. Three manifest entries were appended without overwriting old captures. The first VM script hit the guest service start-rate limit after rapid restarts; resetting that counter only in the guest test harness allowed the complete rerun to pass.
+
+No host deployment, service operation or daily wallpaper change occurred. Full power cycles were not retested; the initial failure record still applies. The 175% run remains mock-model offscreen validation, retaining Qt's extra raw image row from size rounding. Fonts follow the runtime environment, with Light glyph availability depending on installed fonts; no font files were added.
 
 ## Checklist (blank for a new environment)
 

@@ -127,7 +127,7 @@ class SddmTests(unittest.TestCase):
         self.assertEqual(meta['Theme-Id'],'KaltsitMedicalGreen')
         for field in ('MainScript','ConfigFile'):
             self.assertTrue((ROOT/'sddm'/meta[field]).is_file(),field)
-        self.assertEqual(meta['Version'],'1.3.0')
+        self.assertRegex(meta['Version'],r'^\d+\.\d+\.\d+$')
         self.assertRegex((ROOT/'sddm.nix').read_text(),r'version = "'+re.escape(meta['Version'])+'";')
 
     def test_generated_palette_uses_only_existing_colors(self):

@@ -1,15 +1,15 @@
-# Local video wallpaper · v1.3.0
+# Local video wallpaper · v1.4.0
 
 `kaltsit-motion` is an optional Plasma wallpaper package. Installing it does not activate it or change the global theme, lockscreen, panel or startup splash.
 
 ## Install and select
 
 Build from the release source with `nix build --no-write-lock-file path:.#kaltsit-motion`.
-Prefer a flake input for the local development source, following the system's pinned nixpkgs:
+Use a v1.4.0 flake input following the system's pinned nixpkgs:
 
 ```nix
-# Add to the system flake inputs. The local branch is not published yet.
-inputs.kaltsit.url = "path:/absolute/path/to/kaltsit-medical-green";
+# Add to the system flake inputs; a local path to downloaded source also works.
+inputs.kaltsit.url = "github:JohnSmith-dink/kaltsit-medical-green/v1.4.0";
 inputs.kaltsit.inputs.nixpkgs.follows = "nixpkgs";
 ```
 
@@ -93,7 +93,7 @@ The user confirmed smooth appearance and working right-click pause/resume. Isola
 Release builds keep the same playback logic. Hardware decoding was not conclusively measured; long-term power use and multiple displays remain untested.
 See [release evidence](V1.3-RELEASE.md), [acceptance data](v1.3-acceptance.json) and [credits](../CREDITS.md).
 
-## Automatic pause signal research (Unreleased)
+## Automatic pause signal research (v1.4)
 
 The pinned nixpkgs revision is `da6dc0e7b26060f2f71ce3ef7088fb56ee44fa36`, with Plasma 6.6.6 / Qt 6.11.2.
 On 2026-11-01 an offscreen Qt process with a private HOME, runtime directory and D-Bus observed real KDE QML modules driven by fake services:
@@ -126,4 +126,6 @@ Defaults are silent H.264 / yuv420p / faststart / 30 fps, width at most 1920, pr
 Default output is `<name>-wallpaper.mp4` in the input's real directory. Explicit output must remain in that directory; existing files and symlinks are rejected. Only local file protocols are allowed; no network, audio, subtitle, data tracks or metadata are retained. Handle any partial output from a failed run yourself, then retry with a new filename.
 Fake ffmpeg tests check arguments and path boundaries; this script has not undergone real transcoding acceptance. See the [measurement procedure](MOTION-MEASUREMENT.en.md).
 
-CI boundary: the local real-playback probe using `QT_QPA_PLATFORM=offscreen` and software OpenGL timed out in its first phase. The pure software renderer establishes only static fallback. No playback job was added to the existing `weekly.yml`; `ci.yml` is unchanged, and GitHub Actions was not run. Passing private KWin checks does not establish Ubuntu hosted-runner compatibility.
+CI boundary: the local real-playback probe using `QT_QPA_PLATFORM=offscreen` and software OpenGL timed out in its first phase. The pure software renderer establishes only static fallback. No playback job was added to the existing `weekly.yml`; `ci.yml` is unchanged. Development did not run GitHub Actions; release build CI is checked separately and is not playback validation. Passing private KWin checks does not establish Ubuntu hosted-runner compatibility.
+
+Current release build evidence: [v1.4 release record](V1.4-RELEASE.md).

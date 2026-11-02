@@ -2,7 +2,7 @@
 
 stdenvNoCC.mkDerivation {
   pname = "kaltsit-sddm";
-  version = "1.3.0";
+  version = "1.4.0";
   src = ./sddm;
   nativeBuildInputs = [ python3 ];
   buildPhase = ''

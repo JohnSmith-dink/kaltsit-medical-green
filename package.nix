@@ -5,7 +5,7 @@ let
 in
 stdenvNoCC.mkDerivation {
   pname = "kaltsit-theme";
-  version = "1.3.0";
+  version = "1.4.0";
   src = lib.cleanSourceWith {
     src = ./.;
     filter = path: type:

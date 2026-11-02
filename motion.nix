@@ -2,7 +2,7 @@
 
 stdenvNoCC.mkDerivation {
   pname = "kaltsit-motion";
-  version = "1.3.0";
+  version = "1.4.0";
   src = ./motion;
   dontBuild = true;
   propagatedUserEnvPkgs = [ kdePackages.qtmultimedia ];

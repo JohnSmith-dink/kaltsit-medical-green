@@ -22,6 +22,17 @@ rc.3 的 Nix 构建使用匹配的 `plasma-desktop` 和 `plasma-workspace` 依�
 未改动的认证和界面文件在构建时从对应 KDE 依赖逐字节复制，遵循各自上游许可。
 仓库不维护独立的认证源码分支，原生认证、输入及焦点行为保留；这些实现仍属于 KDE 上游，而非本项目原创。
 
+## KDE 退出确认页与可选 SDDM
+
+v1.4 的 `scripts/readable-logout.py` 从匹配的 `plasma-workspace` 构建依赖生成局部外观差异。
+`Logout.qml`、`LogoutButton.qml` 保留上游 GPL-2.0-or-later 声明；
+`ActionButton.qml`、`UserDelegate.qml` 的局部副本保留 LGPL-2.0-or-later 声明及原作者署名。
+这些派生 QML 不属于本项目 MIT 范围；上游按钮、倒计时及电源信号逻辑保留。
+许可文本：[GPL](LICENSES/GPL-2.0-or-later.txt)、[LGPL 2.0](https://www.gnu.org/licenses/old-licenses/lgpl-2.0.html)。
+
+独立 SDDM 的原创 QML、Nix 模块与测试使用 MIT；其背景复用下述已有壁纸及权利范围。
+可选 OPPO Sans 字体由使用者本地提供，不随仓库或公开发行包分发，也不由本项目下载。
+
 ## 凯尔希 · 思衡托鼠标指针
 
 - 原作者：[一球咸鱼](https://space.bilibili.com/3585839)。

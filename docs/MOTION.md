@@ -1,6 +1,6 @@
-# 动态壁纸 · v1.3.0
+# 动态壁纸 · v1.4.0
 
-`kaltsit-motion` 是独立的可选扩展包，版本为 `1.3.0`。
+`kaltsit-motion` 是独立的可选扩展包，版本为 `1.4.0`。
 包含独立的 Plasma 壁纸资源：**医疗白绿 · 动态壁纸**。
 本包只提供动态壁纸，不安装启动画面。
 安装资源不会自动启用；原版锁屏、D1 桌面、启动画面设置、CLI、恢复记录格式不变；Home Manager 仅增加可选资源安装项。
@@ -21,11 +21,11 @@
 nix build --no-write-lock-file path:.#kaltsit-motion
 ```
 
-默认包不含视频，未选视频时显示已有静态壁纸。优先通过 flake 引用本地开发源码，沿用系统锁定的 nixpkgs：
+默认包不含视频，未选视频时显示已有静态壁纸。可通过 flake 引用 v1.4.0，沿用系统锁定的 nixpkgs：
 
 ```nix
-# 加到系统 flake 的 inputs；本地分支尚未发布，不指向公开旧版本。
-inputs.kaltsit.url = "path:/absolute/path/to/kaltsit-medical-green";
+# 加到系统 flake 的 inputs；也可使用下载后源码的本地 path。
+inputs.kaltsit.url = "github:JohnSmith-dink/kaltsit-medical-green/v1.4.0";
 inputs.kaltsit.inputs.nixpkgs.follows = "nixpkgs";
 ```
 
@@ -107,18 +107,18 @@ d1e60abcb03a0a2a7dc687886f23ba8e0ff741a125f6d8ee17e2b4aad1d5254e
 私人预览使用 2560×1440 / 30 fps 的静音转码，保留原时间线与原色，不插帧，不增加装饰。
 原片和衍生视频均不加入 Git；保留已有素材署名与许可范围，不因用户提供本地文件推定公开再分发授权。
 
-## 验证范围
+## v1.3 历史验证范围
 
 本轮使用与锁定依赖一致的 Plasma 6.6.6 / Qt 6.11.2，在独立 HOME、D-Bus 和 KWin 虚拟输出中验证。
 覆盖 1920×1080 / 100% 与 3120×2080 / 175%，以及原生播放、暂停、隐藏、循环、错误回退和恢复。
 已验收开发源码 `7c175b8` 部署至 NixOS generation 56；3120×2080 / 175% 内屏上，用户确认「画面流畅，暂停和继续正常」。
-正式版沿用同一播放器逻辑，单独检查版本标识、构建与发行包。现有 84 项测试及 Nix flake check 通过。
+v1.3 正式版沿用当时的播放器逻辑，单独检查版本标识、构建与发行包。现有 84 项测试及 Nix flake check 通过。
 硬件解码未确定测量，长期功耗和多屏未验收；不把内屏验收扩大到这些范围。见 [发布依据](V1.3-RELEASE.md)与[最小验收记录](v1.3-acceptance.json)。
 
 实现依据：[Qt MediaPlayer](https://doc.qt.io/qt-6/qml-qtmultimedia-mediaplayer.html)、
 [KDE 原生壁纸接口](https://raw.githubusercontent.com/KDE/plasma-workspace/Plasma/6.6/wallpapers/image/imagepackage/contents/ui/main.qml)。
 
-## 自动暂停信号调研（Unreleased）
+## v1.4 自动暂停信号与隔离验证
 
 基线为锁定 nixpkgs `da6dc0e7b26060f2f71ce3ef7088fb56ee44fa36`，Plasma 6.6.6 / Qt 6.11.2。
 2026-11-01 在独立 HOME、运行目录和 D-Bus 的 offscreen Qt 进程中，以假服务触发了真实 KDE QML 模块：
@@ -151,4 +151,6 @@ bash scripts/encode-wallpaper.sh --fps 24 --width 1280 --bitrate 4M /path/to/inp
 默认输出为输入真实目录下的 `<名称>-wallpaper.mp4`；指定输出也必须在同一真实目录，已有文件和符号链接均拒绝覆盖。只允许本地文件协议，不联网；不保留音轨、字幕、数据轨及元数据。失败留下的部分输出需自行处理后使用新文件名重试。
 脚本参数及路径边界由假 ffmpeg 测试；未用此脚本进行真实转码验收。测量方法见[动态壁纸测量页](MOTION-MEASUREMENT.md)。
 
-持续集成边界：本地 `QT_QPA_PLATFORM=offscreen` 加软件 OpenGL 的真实播放探测在首阶段超时；纯软件后端只证明静态回退。因此没有在实际存在的 `weekly.yml` 中新增播放任务，`ci.yml` 行为不变，也未运行 GitHub Actions。独立 KWin 的行为通过不等于 Ubuntu 托管运行器已通过。
+持续集成边界：本地 `QT_QPA_PLATFORM=offscreen` 加软件 OpenGL 的真实播放探测在首阶段超时；纯软件后端只证明静态回退。因此没有在实际存在的 `weekly.yml` 中新增播放任务，`ci.yml` 行为不变。开发阶段未运行 GitHub Actions；正式发布构建另行核对，不把构建 CI 当作播放验证。独立 KWin 的行为通过不等于 Ubuntu 托管运行器已通过。
+
+当前正式版的版本与构建记录见 [v1.4 发布依据](V1.4-RELEASE.md)。

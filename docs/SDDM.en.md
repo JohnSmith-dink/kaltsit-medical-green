@@ -1,7 +1,7 @@
 # Login screen (SDDM, experimental)
 
 `kaltsit-sddm` is a separate static Qt 6 login theme, disabled by default. It does not change the desktop, lockscreen, Home Manager, authentication policy or daily restoration records. It uses the existing still and generates colors from the existing scheme at build time.
-See the [initial design](SDDM-DESIGN.en.md) for pinned dependencies and fallback boundaries. The v6 layout below is an unpublished UI revision; the package version remains 1.3.0.
+See the [initial design](SDDM-DESIGN.en.md) for pinned dependencies and fallback boundaries. Version 1.4.0 publishes the finalized v6 layout below. Historical checks retain their original source/version identities; see the [v1.4 release record](V1.4-RELEASE.md).
 
 ## v6 typography, optical alignment and keyboard controls
 
@@ -13,13 +13,13 @@ See the [initial design](SDDM-DESIGN.en.md) for pinned dependencies and fallback
 - The footer is 32px high with a 10px gap: session and read-only keyboard layout form the left group, shutdown and reboot align right, with at least 12px between groups. Text is 14px, with 400 labels and 500 values/buttons. Only the session value elides; labels, keyboard layout and power text do not shrink. The session list shows full names. Hover uses warm white at alpha 0.16; focus uses a white alpha-0.85 border with a thin dark outer edge. Resting controls have no surface. Control boxes may hang slightly outside the optical edge while text aligns.
 - Both inline lists retain their own white alpha-0.90 surface, dark text and green selection. User lists expand down, sessions up, mutually exclusively; height limits, scrolling and focus return remain unchanged.
 - Tab still follows avatar row → password → login → session → keyboard → shutdown → reboot; Shift+Tab reverses it. The single-user avatar and keyboard layout remain focusable without new actions. Multiple users retain “Other…”; empty models/unlisted remembered accounts use manual input. Hidden or unavailable items are skipped, list Return does not leak into login, and Esc restores trigger focus.
-- Accounts, session indices, authentication, no-session blocking, duplicate-submit protection, password clearing and power-capability checks are preserved. Version, CLI, Home Manager and lockscreen are unchanged. The sole new module option is the optional local font path below.
+- Accounts, session indices, authentication, no-session blocking, duplicate-submit protection, password clearing and power-capability checks are preserved. This UI revision does not change the CLI, Home Manager or lockscreen. The sole new module option is the optional local font path below.
 
 Outlines still use [QtQuick Text.Outline](https://doc.qt.io/qt-6.11/qml-qtquick-text.html#style-prop) without additional Qt modules. [Browser design references](design/sddm-v6-mockups/README.en.md) are stored separately from actual Qt/VM evidence below; mockups are not login screenshots.
 
 ## Install and enable
 
-Reference the local development branch in the system flake, with `inputs.kaltsit.inputs.nixpkgs.follows = "nixpkgs"`, and pass inputs to modules via `specialArgs`. Use a local path for unpublished code; the public 1.3.0 release does not contain this work.
+Set `inputs.kaltsit.url = "github:JohnSmith-dink/kaltsit-medical-green/v1.4.0"` in the system flake, with `inputs.kaltsit.inputs.nixpkgs.follows = "nixpkgs"`, and pass inputs to modules via `specialArgs`. A local path to downloaded source also works.
 
 ```nix
 { inputs, ... }: {
@@ -45,9 +45,9 @@ programs.kaltsit-sddm = {
 };
 ```
 
-Obtain the font and check its license separately. The project neither downloads, publicly distributes nor modifies it, and has not verified a license conclusion from the handoff's secondary reporting. An absolute path outside the flake requires `--impure` for future evaluation/builds (for example `nixos-rebuild build --impure --flake /path/to/system#host`); do not commit the font to a public repository to bypass this restriction. Explicit use imports the file into the local Nix store and the built system's font collection; avoid uploading font-containing outputs to a public cache. This run built the font package and loaded it in a test VM only, without installing it on the host.
+Obtain the font and check its license separately. The project neither downloads, publicly distributes nor modifies it, and has not verified a license conclusion from the handoff's secondary reporting. An absolute path outside the flake requires `--impure` for future evaluation/builds (for example `nixos-rebuild build --impure --flake /path/to/system#host`); do not commit the font to a public repository to bypass this restriction. Explicit use imports the file into the local Nix store and the built system's font collection; avoid uploading font-containing outputs to a public cache. Development first loaded the font in a test VM, then deployed it through the system font configuration at the user’s request; the font binary remains local.
 
-For a future first physical-machine activation, retain known-good configuration and a previous generation, complete VM checks below, then configure the option and run:
+For initial activation on a new machine, retain known-good configuration and a previous generation, complete VM checks below, then configure the option and run:
 
 ```sh
 sudo nixos-rebuild build --flake /path/to/system#host
@@ -55,7 +55,7 @@ sudo nixos-rebuild boot --flake /path/to/system#host
 # Reboot when convenient; activate on the next boot, not with switch initially.
 ```
 
-These are future operator instructions. This round did not deploy a host configuration: no host switch, boot, test or login-service restart was performed.
+These are instructions for a new environment. The development build was deployed using build then boot; publication does not switch the host again. See the [v1.4 release record](V1.4-RELEASE.md) for deployment versus validation scope. Historical stage reports below retain their original time context.
 
 ## Disable and recover
 

@@ -1,6 +1,6 @@
 # SDDM 实验性主题设计
 
-此设计对应 Unreleased，版本号保持 1.3.0。仓库不存在 `docs/ROADMAP-v1.2.md`；现有 `V1.2-DEVELOPMENT.md` 仅把 SDDM 列为暂缓。本轮将它作为独立、默认关闭的系统级扩展，不扩大原主题包或 Home Manager 的运行职责。
+这是 v1.4 开发阶段的初版设计记录，当时版本号保持 1.3.0；最终发布范围见 [v1.4 记录](V1.4-RELEASE.md)。仓库不存在 `docs/ROADMAP-v1.2.md`；现有 `V1.2-DEVELOPMENT.md` 仅把 SDDM 列为暂缓。本轮将它作为独立、默认关闭的系统级扩展，不扩大原主题包或 Home Manager 的运行职责。
 
 ## 已检查的依赖与主题格式
 

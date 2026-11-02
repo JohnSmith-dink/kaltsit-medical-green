@@ -1,6 +1,6 @@
 # Experimental SDDM theme design
 
-This design belongs to Unreleased; the version remains 1.3.0. `docs/ROADMAP-v1.2.md` does not exist. `V1.2-DEVELOPMENT.md` only postpones SDDM. This round adds an independent, disabled-by-default system extension without expanding the base package or Home Manager's runtime responsibilities.
+This is the initial v1.4 development design, recorded while package versions remained 1.3.0. See the [v1.4 release record](V1.4-RELEASE.md) for final scope. `docs/ROADMAP-v1.2.md` does not exist. `V1.2-DEVELOPMENT.md` only postpones SDDM. This round adds an independent, disabled-by-default system extension without expanding the base package or Home Manager's runtime responsibilities.
 
 ## Inspected dependencies and format
 

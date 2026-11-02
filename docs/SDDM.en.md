@@ -1,18 +1,21 @@
 # Login screen (SDDM, experimental)
 
 `kaltsit-sddm` is a separate static Qt 6 login theme, disabled by default. It does not change the desktop, lockscreen, Home Manager, authentication policy or daily restoration records. It uses the existing still and generates colors from the existing scheme at build time.
-See the [initial design](SDDM-DESIGN.en.md) for pinned dependencies and fallback boundaries. The v3 layout below is an unpublished UI revision; the package version remains 1.3.0.
+See the [initial design](SDDM-DESIGN.en.md) for pinned dependencies and fallback boundaries. The v5 layout below is an unpublished UI revision; the package version remains 1.3.0.
 
-## v3 layout and keyboard controls
+## v5 layout and keyboard controls
 
 - The wallpaper retains its original brightness and aspect-preserving crop. Clock, date and login panel occupy the left column at approximately x=64…384 logical pixels. The center has no login controls and there is no full-screen overlay.
 - Time starts at (64,64), using 72px Light weight; the date uses 18px Normal weight. Both inherit the greeter system font and use existing dark text without outlines. Actual background sampling and contrast results appear below.
-- The panel is 320px wide with a 12px radius, 16px padding and 16px spacing. Its normal center sits at roughly 55% of screen height. Existing warm white uses alpha 0.86, with no outer border or shadow. Alpha was increased from the original 0.78 proposal so Negative error text reaches 4.5:1.
-- The avatar is a drawn 48px green circle with a 22px white initial; the username is 18px. A single-user row is display-only and skipped by Tab, without an “Other account” entry. Multiple users open an inline list retaining “Other…” at the end. An empty model or unlisted remembered account shows the username input; the latter is prefilled.
-- The password row is 44px high with existing pure white at alpha 0.9 and an embedded 36px green arrow. The 14px error row takes no space when empty. An error border lasts approximately 600 ms before restoring focus styling. Submission and failure clear the password; failure restores password focus. Changing accounts clears the password and old error.
-- Session selection, read-only keyboard layout, shutdown and reboot share the panel footer without permanent button backgrounds. Interactive controls show a light surface and border on hover/focus. Long session names are elided in the footer and wrap in the expanded list. Keyboard layout switching is not added.
+- The login area retains v3's 320px width, 16px padding and spacing, and normal center at roughly 55% of screen height. Its container draws no background, rounded frame, border or shadow; there is no blur. Usernames and footer text use existing white with the dark body color at alpha 0.85 for glyph outlines. Clock and date are unchanged.
+- The avatar remains a drawn 48px green circle with a 22px white initial; the username is 18px. A single-user row is focusable but opens no menu and offers no “Other account” entry. Multiple users retain the existing inline list and “Other…” entry. An empty model or unlisted remembered account shows the username input; the latter is prefilled.
+- The password row remains 44px high with an 8px radius and embedded 36px green arrow. Password and manual-username inputs use their own white surface at alpha 0.94, retaining dark text and placeholders. The 14px error row retains the existing red Negative color with a thin white outline at alpha 0.90; it takes no space when empty. The error border still lasts approximately 600 ms. Submission and failure clear the password; failure restores password focus. Changing accounts clears the password and old error.
+- Session, keyboard layout, shutdown and reboot retain their original footer row. Ghost controls are normally transparent and retain their own white alpha-0.90 surface and border on hover/focus. Keyboard layout is focusable but remains read-only; no switching action is added. Long session names are elided and appear in full in the list. Both expanded lists retain their own white alpha-0.90 background, dark text and green selection. No separator existed and none was added.
+- Tab follows avatar row → password → login → session → keyboard → shutdown → reboot; Shift+Tab reverses the order. Manual username editing stays in the avatar row; unavailable/hidden controls are skipped. Initial focus still goes to password or username according to whether an account is known.
 - Tab/Shift+Tab traverse available controls. Arrow keys move through lists, Return selects, and Esc closes and restores trigger focus without leaking Return into login. User lists expand down and session lists up; only one is open at a time. Height is capped with scrolling, keeping lists inside the panel and clear of the clock. Empty session models explain why login is disabled; submission prevents duplicate actions.
 - Package version, authentication policy, CLI, Nix interfaces and the lockscreen are unchanged. Passwords are not logged or written to files.
+
+Outlines use only [QtQuick Text.Outline](https://doc.qt.io/qt-6.11/qml-qtquick-text.html#style-prop), with no new Qt module or font. White comes from the existing Selection foreground; this scheme's Complementary foreground is dark, not white. Normal, error and multiple-user previews, together with raw and outlined contrast values, appear in the v5 evidence below.
 
 ## Install and enable
 
@@ -58,9 +61,9 @@ python3 tests/run-sddm-native.py "$(realpath result)" \
   --qml /path/to/matching/qml --output /tmp/kaltsit-sddm-native-result
 ```
 
-It loads the real greeter with `--test-mode --theme` and ends that process after six seconds, then sends actual key and mouse events through the matching `qmltestrunner` with mock SDDM models. Each run has 14 behavior checks covering zero/one/multiple users, manual usernames, sessions, Tab/Return/Esc, duplicate submissions, password clearing, errors and power calls. Layouts are checked at 1280×800/100%, 1920×1080/100% and 3120×2080/175%.
+It loads the real greeter with `--test-mode --theme` and ends that process after six seconds, then sends actual key and mouse events through the matching `qmltestrunner` with mock SDDM models. Each run has 15 behavior checks covering zero/one/multiple users, manual usernames, sessions, Tab/Return/Esc, duplicate submissions, password clearing, errors and power calls. Layouts are checked at 1280×800/100%, 1920×1080/100% and 3120×2080/175%.
 
-The output root contains `results.json`. Resolution subdirectories contain native PNGs for a single user, errors, multiple-user lists, long usernames, session lists, empty user models and a background-only frame, plus per-region `contrast.json`. These are native Qt renders with mocks, not authentication evidence. At 175%, Qt rounds the logical capture size and produces a raw 3120×2081 PNG. The report records requested layout, logical size and captured pixels separately; it does not crop or resize away that difference.
+The output root contains `results.json`. Resolution subdirectories contain native PNGs for a single user, errors, multiple-user lists, long usernames, session lists, empty user models, avatar/keyboard focus and a background-only frame, plus per-region `contrast.json`. These are native Qt renders with mocks, not authentication evidence. At 175%, Qt rounds the logical capture size and produces a raw 3120×2081 PNG. The report records requested layout, logical size and captured pixels separately; it does not crop or resize away that difference.
 
 [tests/sddm-vm.nix](../tests/sddm-vm.nix) is **test-only; never import it into a physical-machine configuration**. It uses 2 cores / 2048 MiB, 1280×800, static wallpaper and X11 greeter. An xterm session isolates SDDM testing; it is not Plasma desktop acceptance. Account `tester` has the public disposable password `wallpaper-test`. There is no host HOME sharing, real credential or host configuration import. A separate read-only Nix store image contains the test closure; default shares and external network access are disabled.
 
@@ -133,6 +136,61 @@ The existing NixOS 26.05 test VM runner was reused with a fresh temporary disk; 
 The [v3 login](../previews/sddm/login-v3.png), [v3 error](../previews/sddm/login-v3-error.png) and [v3 multiple-user list](../previews/sddm/login-v3-multiuser.png) are original 1280×800 QEMU PNGs from the VM. Three manifest entries were appended without overwriting old captures. The first VM script hit the guest service start-rate limit after rapid restarts; resetting that counter only in the guest test harness allowed the complete rerun to pass.
 
 No host deployment, service operation or daily wallpaper change occurred. Full power cycles were not retested; the initial failure record still applies. The 175% run remains mock-model offscreen validation, retaining Qt's extra raw image row from size rounding. Fonts follow the runtime environment, with Light glyph availability depending on installed fonts; no font files were added.
+
+## v5 transparent login area: validation and contrast
+
+On 2026-11-02 (America/Los_Angeles), runtime source was `9af3ef2d0d834ba8a1badf892973684fe60599de`. Real SDDM 0.21.0 / Qt 6.11.2 test-mode loaded with private HOME, D-Bus and offscreen software rendering. All 15 mock-model QtTest behaviors passed at each of three sizes, 45 in total. A new unavailable/hidden-control check and actual key events cover the read-only focus stops, reverse Tab, Return and Esc. Every matching sampled region retains its v3 coordinates; empty container margins match the background-only frame pixel for pixel at all three sizes.
+
+Normal white text uses a dark alpha-0.85 outline; red errors use a white alpha-0.90 outline; input surfaces use white at alpha 0.94. Outlines follow glyphs without restoring a panel background. Raw and outlined results remain separate; [W3C G18](https://www.w3.org/WAI/WCAG22/Techniques/general/G18) describes a local outline as a contrasting backdrop. The table contains minimum ratios (:1) calculated from sampled real Qt background frames, colors and alpha across six layout states. Text requires 4.5 and focus requires 3. Native normal, error, list and focused captures were also inspected: outlines were visible and no text overlap was observed. This is not a claim that every antialiased edge pixel meets the threshold.
+
+| Target | 1280×800 / 100% | 1920×1080 / 100% | 3120×2080 / 175% |
+|---|---:|---:|---:|
+| Clock | 8.275 | 9.534 | 11.152 |
+| Date | 8.528 | 7.888 | 10.913 |
+| Username / outline | 8.070 | 9.131 | 8.525 |
+| Input text | 11.611 | 11.611 | 11.633 |
+| Placeholder | 4.751 | 4.751 | 4.760 |
+| Error / outline | 5.540 | 5.440 | 5.494 |
+| Session / outline | 9.999 | 11.444 | 10.725 |
+| Keyboard / outline | 9.515 | 11.100 | 10.129 |
+| Shutdown / outline | 8.946 | 10.736 | 9.807 |
+| Reboot / outline | 8.525 | 10.437 | 9.515 |
+| Minimum focus border | 5.234 | 5.187 | 5.292 |
+
+**Without outlines, the following regions still fail** and are not reported as passing. These minima across six states are all below 4.5:1; the rendered outlines provide the contrasting backdrop around the glyphs.
+
+| Region without outline | 1280×800 / 100% | 1920×1080 / 100% | 3120×2080 / 175% |
+|---|---:|---:|---:|
+| Username | 1.003 | 1.666 | 1.240 |
+| Error row | 1.006 | 1.001 | 1.000 |
+| Footer | 1.249 | 3.190 | 1.964 |
+
+Sampling includes every distinct RGB in each whole control rectangle, not an average. The normal username region is `(144,y,224,48)`; password is `(80,y+64,288,44)`; error is `(80,y+124,288,20)`; footer is `(80,y+124,288,32)`, moving down 36 when an error appears. The three layouts use y=362, 516 and 575.714286 logical pixels respectively. Expanded-list positions are recorded separately for each state. Clock `(64,64,320,88)` and date `(64,160,320,24)` remain unchanged.
+
+Pixel bounds use floor(logical coordinate×scale) on left/top and ceil on right/bottom, retaining floating-point layout values; the 1280 error box is therefore `(80,486)…(368,507)`. The source is 3840×2160: let f=max(target width/3840,target height/2160), with offset `((3840f−target width)/2,(2160f−target height)/2)`. Source coordinates are `(screen pixel coordinate+offset)/f`. Each `contrast.json` region records logical, physical and source-image bounds, darkest/lightest RGB and luminance, their contrast and the region minimum. Raw extrema in normal/error states follow:
+
+| Size / region | Darkest RGB (luminance) | Lightest RGB (luminance) | Raw contrast: darkest / lightest / region minimum |
+|---|---|---|---|
+| 1280×800 / 100% / username | `#576743` (0.121320) | `#eef6eb` (0.900868) | 6.129 / 1.104 / 1.104 |
+| 1280×800 / 100% / error row | `#474843` (0.063796) | `#dae2d3` (0.740013) | 1.422 / 4.883 / 1.006 |
+| 1280×800 / 100% / normal footer | `#474843` (0.063796) | `#dbe3d4` (0.747517) | 9.227 / 1.317 / 1.317 |
+| 1280×800 / 100% / error footer | `#30332a` (0.031632) | `#dae3d2` (0.744967) | 12.863 / 1.321 / 1.321 |
+| 1920×1080 / 100% / username | `#333831` (0.037539) | `#889873` (0.289285) | 11.995 / 3.095 / 3.095 |
+| 1920×1080 / 100% / error row | `#35342f` (0.034181) | `#606b5d` (0.137925) | 1.922 / 1.162 / 1.001 |
+| 1920×1080 / 100% / normal footer | `#35342f` (0.034181) | `#606b5d` (0.137925) | 12.473 / 5.587 / 5.587 |
+| 1920×1080 / 100% / error footer | `#37372f` (0.037498) | `#70756f` (0.173150) | 12.000 / 4.705 / 4.705 |
+| 3120×2080 / 175% / username | `#536241` (0.109560) | `#c9d4c3` (0.634446) | 6.581 / 1.534 / 1.534 |
+| 3120×2080 / 175% / error row | `#454641` (0.060272) | `#a9b69c` (0.442912) | 1.467 / 3.047 / 1.000 |
+| 3120×2080 / 175% / normal footer | `#454641` (0.060272) | `#a9b69c` (0.442912) | 9.522 / 2.130 / 2.130 |
+| 3120×2080 / 175% / error footer | `#494a45` (0.067437) | `#a9b4a3` (0.437219) | 8.941 / 2.155 / 2.155 |
+
+Unit tests also cover pure black/white underlays: white text against its dark outline reaches at least 8.070:1, red against its light outline 5.200:1, and input placeholders 4.637:1. Those extreme cases and actual screenshot-background samples are recorded separately. All theme colors come from the existing palette.
+
+The original NixOS 26.05 VM runner was reused with a fresh temporary disk; build-vm was not rerun. Only guest temporary resources were replaced, SHA-256 checked and loaded inside the guest. In the 1280×800, 100%, X11/xterm environment, PAM rejected an incorrect password; the fixture password entered xterm, and logout returned to v5. A temporary locked guest account, `preview2`, provided the multiple-user list; only `tester` authenticated. A deliberately broken temporary guest QML copy triggered embedded fallback; authentication was not repeated in that UI.
+
+The new [normal login](../previews/sddm/login-v5.png), [wrong-password error](../previews/sddm/login-v5-error.png) and [multiple-user list](../previews/sddm/login-v5-multiuser.png) are original 1280×800 QEMU PNGs from that VM, without postprocessing. Only three entries and their SHA-256 values were appended; all 17 earlier entries and images remain intact. The light avatar row in the multiple-user capture is hover feedback; the list owns its light background, while the container remains fully transparent.
+
+A real high-DPI greeter, multiple monitors and physical activation remain unverified; 175% evidence comes from mock-model offscreen rendering. Full shutdown/reboot was not retested and the earlier failure record remains. No host configuration or host SDDM was changed; the harness only terminated its own VM process at the end. One rerun was interrupted by a signal (unit/native checks exited 143; flake exited 1); logs were retained, then sequential reruns passed. Interrupted checks are not counted as passes.
 
 ## Checklist (blank for a new environment)
 

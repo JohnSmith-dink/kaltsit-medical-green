@@ -23,6 +23,7 @@ WallpaperItem {
         videoSource: root.localVideo(root.configuration.Video || Defaults.video)
         posterSource: root.configuration.Image || root.defaultPoster
         paused: root.configuration.Paused || !root.visible
+        batteryPolicy: root.configuration.BatteryPolicy || "pause"
         fillMode: root.configuration.FillMode === undefined ? 2 : root.configuration.FillMode
     }
     PlasmaCore.Action {

@@ -5,7 +5,7 @@ let
 in
 stdenvNoCC.mkDerivation {
   pname = "kaltsit-theme";
-  version = "1.3.0";
+  version = "1.4.0";
   src = lib.cleanSourceWith {
     src = ./.;
     filter = path: type:
@@ -35,6 +35,9 @@ stdenvNoCC.mkDerivation {
     ${python}/bin/python3 scripts/neutral-lockscreen.py \
       ${kdePackages.plasma-desktop} ${kdePackages.plasma-workspace} "$out" \
       ${lib.escapeShellArg kdePackages.plasma-desktop.version} \
+      ${lib.escapeShellArg kdePackages.plasma-workspace.version}
+    ${python}/bin/python3 scripts/readable-logout.py \
+      ${kdePackages.plasma-workspace} "$out" \
       ${lib.escapeShellArg kdePackages.plasma-workspace.version}
     cp tools/kaltsit_theme.py "$out/libexec/kaltsit_theme.py"
     makeWrapper ${python}/bin/python3 "$out/bin/kaltsit-theme" \

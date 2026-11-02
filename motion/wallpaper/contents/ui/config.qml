@@ -16,6 +16,8 @@ ColumnLayout {
     property int cfg_FillModeDefault: 2
     property bool cfg_Paused: false
     property bool cfg_PausedDefault: false
+    property string cfg_BatteryPolicy: "pause"
+    property string cfg_BatteryPolicyDefault: "pause"
 
     Kirigami.FormLayout {
         Layout.fillWidth: true
@@ -49,6 +51,12 @@ ColumnLayout {
             text: qsTr("暂停播放（也可通过桌面右键菜单切换）")
             checked: root.cfg_Paused
             onToggled: root.cfg_Paused = checked
+        }
+        Controls.ComboBox {
+            Kirigami.FormData.label: qsTr("使用电池时：")
+            model: [qsTr("暂停动态壁纸"), qsTr("照常播放")]
+            currentIndex: root.cfg_BatteryPolicy === "ignore" ? 1 : 0
+            onActivated: root.cfg_BatteryPolicy = currentIndex === 1 ? "ignore" : "pause"
         }
     }
     Controls.Label {

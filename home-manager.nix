@@ -27,13 +27,31 @@ in
         allow kaltsit-theme, or this option can use the flake package output.
       '';
     };
+    motion = {
+      enable = lib.mkEnableOption "the optional local video wallpaper resources";
+      videoFile = lib.mkOption {
+        type = lib.types.nullOr lib.types.path;
+        default = null;
+        description = "Optional local video copied into the Nix store; null selects it later in wallpaper settings.";
+      };
+      posterFile = lib.mkOption {
+        type = lib.types.nullOr lib.types.path;
+        default = null;
+        description = "Optional still image; null uses the existing package option's wallpaper.";
+      };
+    };
   };
 
   # No activation hook or session service: switching is an explicit action.
-  config = lib.mkIf cfg.enable {
+  config = lib.mkMerge [ (lib.mkIf cfg.enable {
     home.packages = [ cfg.package pkgs.kdePackages.breeze-gtk ];
     xdg.configFile."ghostty/themes/Kaltsit Medical Green" = lib.mkIf cfg.ghosttyThemeFile {
       source = "${cfg.package}/share/ghostty/themes/Kaltsit Medical Green";
     };
-  };
+  }) (lib.mkIf cfg.motion.enable {
+    home.packages = [ (pkgs.callPackage ./motion.nix {
+      baseTheme = cfg.package;
+      inherit (cfg.motion) videoFile posterFile;
+    }) ];
+  }) ];
 }

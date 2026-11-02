@@ -92,3 +92,16 @@ d1e60abcb03a0a2a7dc687886f23ba8e0ff741a125f6d8ee17e2b4aad1d5254e
 Qt Multimedia 的 `playbackRate` 是播放速度，未证明能保持原速度并可靠降低解码帧率，因此不提供 `reduce` 策略。
 
 补完版原生检查：真实 Qt RHI / Mesa 软件 OpenGL 在独立 KWin 中通过 35 项行为检查，纯软件绘制后端通过静态回退检查。信号由私有假服务控制；同源文件修复、三次重试耗尽、暂停阻止重试、服务重连及重建组件后保留传入的暂停设置均已检查。测试把内部重试间隔缩为 700 ms；生产默认仍为 60000 ms。未执行物理拔电源、真实认证锁屏或 DPMS 验证。
+
+## 准备视频
+
+仓库不分发视频，视频版权与使用权限由使用者负责。独立脚本 [encode-wallpaper.sh](../scripts/encode-wallpaper.sh) 不包装进 Nix 包；需要 Bash、GNU coreutils 与 ffmpeg：
+
+```sh
+bash scripts/encode-wallpaper.sh /path/to/input.mp4
+bash scripts/encode-wallpaper.sh --fps 24 --width 1280 --bitrate 4M /path/to/input.mp4 /path/to/wallpaper.mp4
+```
+
+默认静音 H.264 / yuv420p / faststart / 30 fps，宽度上限 1920，保持比例、不放大，尺寸为偶数，码率上限 6M。`--fps`、`--width`、`--bitrate` 可覆盖这些数值。
+默认输出为输入真实目录下的 `<名称>-wallpaper.mp4`；指定输出也必须在同一真实目录，已有文件和符号链接均拒绝覆盖。只允许本地文件协议，不联网；不保留音轨、字幕、数据轨及元数据。失败留下的部分输出需自行处理后使用新文件名重试。
+脚本参数及路径边界由假 ffmpeg 测试；未用此脚本进行真实转码验收。测量方法见[动态壁纸测量页](MOTION-MEASUREMENT.md)。

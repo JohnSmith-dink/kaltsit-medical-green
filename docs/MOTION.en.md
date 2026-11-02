@@ -68,3 +68,16 @@ Sources: [power engine](https://github.com/KDE/plasma5support/blob/v6.6.6/src/da
 Qt Multimedia's `playbackRate` changes playback speed. Reliable decoder frame limiting at normal speed was not established, so no `reduce` policy is offered.
 
 Completion checks: real Qt RHI / Mesa software OpenGL passed 35 behavior checks in private KWin; the pure software renderer passed static fallback. Signals came from private fake services. Checks include same-source file repair, exhaustion of three retries, paused retry suppression, reconnection, and recreating the component with the persisted pause value supplied. Tests shorten the internal interval to 700 ms; production defaults to 60000 ms. Physical unplugging, authenticated locking and DPMS were not tested.
+
+## Prepare a video
+
+The repository distributes no video. Users are responsible for video copyright and usage permission. The standalone [encode-wallpaper.sh](../scripts/encode-wallpaper.sh) is not wrapped into a Nix package; it requires Bash, GNU coreutils and ffmpeg:
+
+```sh
+bash scripts/encode-wallpaper.sh /path/to/input.mp4
+bash scripts/encode-wallpaper.sh --fps 24 --width 1280 --bitrate 4M /path/to/input.mp4 /path/to/wallpaper.mp4
+```
+
+Defaults are silent H.264 / yuv420p / faststart / 30 fps, width at most 1920, preserved aspect ratio without upscaling, even dimensions, and maxrate 6M. Override numeric settings with `--fps`, `--width` and `--bitrate`.
+Default output is `<name>-wallpaper.mp4` in the input's real directory. Explicit output must remain in that directory; existing files and symlinks are rejected. Only local file protocols are allowed; no network, audio, subtitle, data tracks or metadata are retained. Handle any partial output from a failed run yourself, then retry with a new filename.
+Fake ffmpeg tests check arguments and path boundaries; this script has not undergone real transcoding acceptance. See the [measurement procedure](MOTION-MEASUREMENT.en.md).

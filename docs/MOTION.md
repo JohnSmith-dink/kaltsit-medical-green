@@ -150,3 +150,5 @@ bash scripts/encode-wallpaper.sh --fps 24 --width 1280 --bitrate 4M /path/to/inp
 默认静音 H.264 / yuv420p / faststart / 30 fps，宽度上限 1920，保持比例、不放大，尺寸为偶数，码率上限 6M。`--fps`、`--width`、`--bitrate` 可覆盖这些数值。
 默认输出为输入真实目录下的 `<名称>-wallpaper.mp4`；指定输出也必须在同一真实目录，已有文件和符号链接均拒绝覆盖。只允许本地文件协议，不联网；不保留音轨、字幕、数据轨及元数据。失败留下的部分输出需自行处理后使用新文件名重试。
 脚本参数及路径边界由假 ffmpeg 测试；未用此脚本进行真实转码验收。测量方法见[动态壁纸测量页](MOTION-MEASUREMENT.md)。
+
+持续集成边界：本地 `QT_QPA_PLATFORM=offscreen` 加软件 OpenGL 的真实播放探测在首阶段超时；纯软件后端只证明静态回退。因此没有在实际存在的 `weekly.yml` 中新增播放任务，`ci.yml` 行为不变，也未运行 GitHub Actions。独立 KWin 的行为通过不等于 Ubuntu 托管运行器已通过。

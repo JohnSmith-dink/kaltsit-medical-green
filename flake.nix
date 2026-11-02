@@ -8,10 +8,11 @@
       system = "x86_64-linux";
       pkgs = import nixpkgs {
         inherit system;
-        config.allowUnfreePredicate = package: builtins.elem (package.pname or "") [ "kaltsit-theme" "kaltsit-motion" ];
+        config.allowUnfreePredicate = package: builtins.elem (package.pname or "") [ "kaltsit-theme" "kaltsit-motion" "kaltsit-sddm" ];
       };
       theme = pkgs.callPackage ./package.nix { };
       motion = pkgs.callPackage ./motion.nix { baseTheme = theme; };
+      sddmTheme = pkgs.callPackage ./sddm.nix { };
       # Evaluate the real module with a small Home Manager option harness.
       # No new input or second nixpkgs; this exercises lazy defaults and mkIf.
       evalHome = settings: (pkgs.lib.evalModules {
@@ -58,6 +59,7 @@
         default = theme;
         kaltsit-theme = theme;
         kaltsit-motion = motion;
+        kaltsit-sddm = sddmTheme;
         # Optional input for native greeter previews in a private compositor.
         preview-wakeup = pkgs.callPackage ./tests/preview-wakeup.nix { };
       };
@@ -68,7 +70,7 @@
       };
 
       homeManagerModules.default = import ./home-manager.nix;
-      checks.${system} = { inherit theme motion; home-module = homeModuleCheck; };
+      checks.${system} = { inherit theme motion; home-module = homeModuleCheck; sddm = sddmTheme; };
       devShells.${system}.default = pkgs.mkShell {
         packages = [ (pkgs.python3.withPackages (packages: [ packages.pillow ])) ];
         PYTHONDONTWRITEBYTECODE = "1";

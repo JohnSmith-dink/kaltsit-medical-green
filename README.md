@@ -77,7 +77,12 @@ kaltsit-theme apply --wallpaper /absolute/path/to/wallpaper.png
 
 `--skip` 可重复。可选组件的配置由符号链接管理时，会跳过整个组件并报告；核心配置受管理时，在写入前停止。
 缺失锁屏资源会明确报错并保持零写入；需要跳过时显式使用 `--skip lockscreen`。请检查每个组件的结果，成功退出不等于全部已应用。
-SDDM、Plymouth、引导菜单与应用自绘皮肤不在范围内。
+基础主题包不包含 SDDM；可选的独立登录主题见下节。Plymouth、引导菜单与应用自绘皮肤仍不在范围内。
+
+## 登录界面（SDDM，实验性）
+
+开发分支新增独立的 `kaltsit-sddm` 包和 NixOS 模块，默认不启用。已在 NixOS 26.05 / SDDM 0.21.0 / Qt 6.11.2 的 1280×800 X11 测试 VM 中加载并完成密码登录、退出返回；测试会话为 xterm，实机未验证。
+使用既有静态壁纸，安装不会启用 SDDM 服务。安装、VM 验证、未来真机先 build 再 boot 的操作顺序与恢复办法见 [SDDM 指南](docs/SDDM.md)。
 
 ## Home Manager
 

@@ -77,7 +77,12 @@ Restore an active application before changing options or versions. Repeating the
 
 Repeat `--skip` as needed. Symlink-managed optional configuration skips the whole component and reports why; managed core configuration stops apply before writes.
 Missing lockscreen resources remain an explicit error with zero writes; use `--skip lockscreen` deliberately when needed. Check individual component results: a successful exit does not mean every component was applied.
-SDDM, Plymouth, boot menus and application-specific custom skins are outside the scope.
+The base theme package does not include SDDM; see the separate optional login theme below. Plymouth, boot menus and application-specific custom skins remain outside the scope.
+
+## Login screen (SDDM, experimental)
+
+The development branch adds a separate `kaltsit-sddm` package and NixOS module, disabled by default. It loaded and completed password login and return from logout in a 1280×800 X11 test VM using NixOS 26.05 / SDDM 0.21.0 / Qt 6.11.2. The test session was xterm; physical hardware remains unverified.
+It uses the existing static wallpaper; installation does not enable the SDDM service. See the [SDDM guide](docs/SDDM.en.md) for installation, VM checks, the future build-then-boot sequence on physical hardware, and recovery.
 
 ## Home Manager
 

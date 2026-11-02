@@ -28,7 +28,7 @@ class VersionTests(unittest.TestCase):
         self.released = self.extract('CHANGELOG.md', r'^## v?(\d+\.\d+\.\d+)(?:\s|$)', 'released version heading (Unreleased is excluded)')
 
     def test_nix_packages_match_latest_release(self):
-        for name in ('package.nix', 'motion.nix'):
+        for name in ('package.nix', 'motion.nix', 'sddm.nix'):
             with self.subTest(file=name):
                 value=self.extract(name, r'^\s*version\s*=\s*"([^"]+)";', 'version')
                 self.assertEqual(value,self.released,f'{name}: version differs from CHANGELOG latest release')
@@ -47,3 +47,7 @@ class VersionTests(unittest.TestCase):
                 self.assertIn('KPlugin',metadata,f'{name}: missing KPlugin')
                 self.assertIn('Version',metadata['KPlugin'],f'{name}: missing KPlugin.Version')
                 self.assertEqual(metadata['KPlugin']['Version'],self.released,f'{name}: KPlugin.Version differs from CHANGELOG latest release')
+
+    def test_sddm_metadata_matches_latest_release(self):
+        value=self.extract('sddm/metadata.desktop',r'^Version=(\S+)$','Version')
+        self.assertEqual(value,self.released,'SDDM metadata Version differs from CHANGELOG latest release')

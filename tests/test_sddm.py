@@ -1,5 +1,6 @@
 """Static SDDM contracts and generated-palette accessibility; no host login."""
 import configparser
+import hashlib
 import importlib.util
 import json
 from pathlib import Path
@@ -17,6 +18,19 @@ spec.loader.exec_module(palette_module)
 
 
 class SddmTests(unittest.TestCase):
+    def test_vm_preview_hashes_and_provenance(self):
+        manifest=json.loads((ROOT/'previews/manifest.json').read_text())
+        captures=[item for item in manifest['screenshots'] if item['file'].startswith('sddm/')]
+        self.assertEqual({item['file'] for item in captures},{'sddm/login.png','sddm/wrong-password.png'})
+        for item in captures:
+            with self.subTest(file=item['file']):
+                path=ROOT/'previews'/item['file']
+                self.assertTrue(path.is_file(),str(path))
+                self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(),item['sha256'])
+                self.assertEqual(item['pixels'],[1280,800])
+                self.assertEqual(item['kind'],'SDDM screenshot in isolated NixOS VM')
+                self.assertFalse(item['physical_desktop_acceptance'])
+
     def test_qt6_metadata_and_entrypoint(self):
         meta=read_ini(ROOT/'sddm/metadata.desktop')['SddmGreeterTheme']
         self.assertEqual(meta['QtVersion'],'6')

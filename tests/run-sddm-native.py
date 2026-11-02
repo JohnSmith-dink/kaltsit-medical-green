@@ -77,9 +77,37 @@ def main():
             # Keep the raw extra row at 175%; never crop/resample evidence.
             capture_size=tuple(int(int(d/scale+0.5)*scale+0.5) for d in (width,height))
             assert all(abs(actual-requested)<=1 for actual,requested in zip(capture_size,(width,height)))
-            for name in ('single-user','error','multi-user-menu','long-username'):
+            for name in ('single-user','error','multi-user-menu','long-username','session-menu','empty-users','background'):
                 with Image.open(destination/(name+'.png')) as capture:
                     assert capture.size==capture_size,(name,capture.size)
+            from test_sddm import sample_region, assert_sample, palette_module
+            colors=palette_module.palette(Path(__file__).resolve().parents[1]/'share/color-schemes/KaltsitMedicalGreen.colors')
+            runtime=(theme/'Main.qml').read_text()
+            alpha=lambda name:float(re.search(r'readonly property real '+name+r':\s*([0-9.]+)',runtime)[1])
+            panel_layers=[(colors['view'],alpha('panelOpacity'))]
+            input_layers=panel_layers+[(colors['window'],alpha('inputOpacity'))]
+            states=[json.loads(raw) for raw in re.findall(r'SDDM_GEOMETRY (\{[^\n]+\})',log)]
+            assert len(states)==6, 'Missing geometry evidence'
+            sampling=[]
+            with Image.open(destination/'background.png') as background:
+                for state in states:
+                    samples={}
+                    for name,box in state['regions'].items():
+                        if name in ('clockTime','calendarDate'):
+                            layers=[]; roles={'text':(colors['text'],4.5)}
+                        elif name in ('password','username'):
+                            layers=input_layers
+                            roles={'text':(colors['text'],4.5),'placeholder':(colors['secondary'],4.5),'focus':(colors['accent'],3)}
+                        elif name in ('userList','sessionList'):
+                            layers=input_layers; roles={'text':(colors['text'],4.5),'focus':(colors['accent'],3)}
+                        else:
+                            layers=panel_layers
+                            roles={'text':(colors['text'],4.5),'focus':(colors['accent'],3)}
+                            if name in ('loginError','loginPanel'): roles['error']=(colors['negative'],4.5)
+                        sample=sample_region(background,box,scale,layers,roles,(width,height))
+                        assert_sample(sample); samples[name]=sample
+                    sampling.append(dict(state=state['state'],regions=samples))
+            (destination/'contrast.json').write_text(json.dumps(sampling,indent=2)+'\n')
             matrix.append(dict(layout_pixels=[width,height],scale=scale,capture_pixels=capture_size,
                                logical_surface=[width/scale,height/scale],checks=checks,exit_code=result.returncode))
         report=dict(greeter_test_mode_loaded=True,ui_mock_matrix=matrix,authentication_tested=False,

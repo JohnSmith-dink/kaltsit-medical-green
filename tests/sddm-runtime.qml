@@ -43,7 +43,7 @@ Item {
     }
     TestCase {
         id: test
-        name: "SddmV2"
+        name: "SddmV3"
         when: windowShown
         function item(name) {
             let result = findChild(theme.item, name);
@@ -73,7 +73,8 @@ Item {
         function openUserMenu() {
             focusControl(theme.item.manualUser ? "manualUserMenu" : "userSelection");
             keyClick(Qt.Key_Return);
-            tryCompare(item("userPopup"), "opened", true);
+            tryCompare(item("userList"), "opened", true);
+            wait(30); // Allow the inline Column positioner to finish its polish.
         }
         function capture(name) {
             let finished = false;
@@ -98,25 +99,27 @@ Item {
             tryCompare(item("password"), "activeFocus", true);
             verify(!item("shutdownButton").enabled && !item("rebootButton").enabled);
             compare(item("password").echoMode, TextInput.Password);
+            compare(item("avatar").width, 48); compare(item("avatar").height, 48);
             item("password").text = "synthetic-only";
             verify(item("password").displayText !== item("password").text);
         }
         function test_tab_and_backtab_cycle() {
             proxy.canPowerOff = true; proxy.canReboot = true;
             focusControl("password");
-            for (let name of ["loginButton", "sessionSelection", "shutdownButton", "rebootButton", "userSelection", "password"]) {
+            for (let name of ["loginButton", "sessionSelection", "shutdownButton", "rebootButton", "password"]) {
                 keyClick(Qt.Key_Tab); tryCompare(item(name), "activeFocus", true);
             }
             keyClick(Qt.Key_Backtab, Qt.ShiftModifier);
-            tryCompare(item("userSelection"), "activeFocus", true);
-            keyClick(Qt.Key_Return); tryCompare(item("userPopup"), "opened", true);
-            keyClick(Qt.Key_Escape); tryCompare(item("userPopup"), "opened", false);
-            tryCompare(item("userSelection"), "activeFocus", true);
+            tryCompare(item("rebootButton"), "activeFocus", true);
             compare(proxy.loginCalls, 0);
+            verify(!item("userSelection").enabled);
+            mouseClick(item("userSelection"));
+            verify(!item("userList").opened);
         }
-        function test_single_user_other_and_back() {
+        function test_multiple_users_other_and_back() {
+            reset(["fixture", "omega"], "fixture", ["Test session"]);
             openUserMenu();
-            keyClick(Qt.Key_Down); keyClick(Qt.Key_Return);
+            keyClick(Qt.Key_Down); keyClick(Qt.Key_Down); keyClick(Qt.Key_Return);
             tryCompare(theme.item, "manualUser", true);
             tryCompare(item("username"), "activeFocus", true);
             compare(proxy.loginCalls, 0);
@@ -125,7 +128,7 @@ Item {
             keyClick(Qt.Key_Return); tryCompare(item("password"), "activeFocus", true);
             item("password").text = "synthetic-only";
             openUserMenu();
-            keyClick(Qt.Key_Up); keyClick(Qt.Key_Return);
+            keyClick(Qt.Key_Up); keyClick(Qt.Key_Up); keyClick(Qt.Key_Return);
             tryCompare(theme.item, "manualUser", false);
             compare(theme.item.loginUser, "fixture");
             compare(item("password").text.length, 0);
@@ -135,7 +138,7 @@ Item {
             reset(["alpha", "fixture", "omega"], "fixture", ["Test session"]);
             item("password").text = "synthetic-only";
             openUserMenu();
-            compare(item("userPopup").currentIndex, 1);
+            compare(item("userList").currentIndex, 1);
             keyClick(Qt.Key_Down); keyClick(Qt.Key_Return);
             tryCompare(theme.item, "selectedUser", "omega");
             compare(item("password").text.length, 0);
@@ -148,7 +151,7 @@ Item {
             reset([], "", ["Test session"]);
             verify(theme.item.manualUser);
             tryCompare(item("username"), "activeFocus", true);
-            verify(!item("manualUserMenu").visible && !item("userSelection").visible);
+            verify(!item("manualUserMenu").enabled && !item("userSelection").visible);
             item("username").text = "   ";
             theme.item.login(); compare(proxy.loginCalls, 0);
             item("username").text = "manual";
@@ -166,7 +169,7 @@ Item {
         function test_sessions_no_enter_leak() {
             reset(["fixture"], "fixture", ["One", "Two"]);
             focusControl("sessionSelection"); keyClick(Qt.Key_Return);
-            tryCompare(item("sessionPopup"), "opened", true);
+            tryCompare(item("sessionList"), "opened", true);
             keyClick(Qt.Key_Down); keyClick(Qt.Key_Return);
             compare(theme.item.selectedSession, 1);
             compare(proxy.loginCalls, 0);
@@ -184,6 +187,8 @@ Item {
         }
         function test_error_clearing_focus_and_stable_layout() {
             let before = item("password").mapToItem(stage, 0, 0).y;
+            let panelHeight = item("loginPanel").height;
+            verify(!item("loginError").visible);
             item("password").text = "synthetic-only";
             keyClick(Qt.Key_Return);
             compare(proxy.loginCalls, 1); compare(proxy.credentialLength, 14);
@@ -191,9 +196,14 @@ Item {
             proxy.loginFailed();
             tryCompare(item("password"), "activeFocus", true);
             verify(item("loginError").visible && theme.item.errorBorder);
+            tryCompare(item("loginPanel"), "height", panelHeight + 36);
             compare(item("password").mapToItem(stage, 0, 0).y, before);
             wait(650);
             verify(!theme.item.errorBorder && item("password").activeFocus);
+            verify(item("loginError").implicitWidth <= item("loginError").width);
+            theme.item.clearAttempt();
+            tryCompare(item("loginPanel"), "height", panelHeight);
+            verify(!item("loginError").visible);
         }
         function test_busy_rejects_duplicates_and_switching() {
             item("password").text = "synthetic-only"; keyClick(Qt.Key_Return);
@@ -217,20 +227,65 @@ Item {
             mouseClick(item("shutdownButton")); mouseClick(item("rebootButton"));
             compare(proxy.powerCalls, 1); compare(proxy.rebootCalls, 1);
         }
-        function test_geometry_and_native_captures() {
-            for (let name of ["clock", "loginGroup", "footerLeft", "footerRight"]) inside(item(name));
-            verify(item("loginGroup").y + item("loginGroup").height < item("footerLeft").y);
-            verify(item("footerLeft").x + item("footerLeft").width < item("footerRight").x);
-            capture("single-user");
-            item("password").text = "synthetic-only"; keyClick(Qt.Key_Return); proxy.loginFailed();
-            capture("error");
-            reset(["alpha", "a-very-long-synthetic-username-that-must-fit-without-overlap", "omega"], "alpha", ["One", "Two"]);
+        function test_lists_are_inline_exclusive_and_bounded() {
+            reset(["fixture", "two", "three", "four", "five"], "fixture", ["One", "Two", "Three", "Four"]);
+            let top = item("loginPanel").y;
+            let footerY = item("footer").mapToItem(stage, 0, 0).y;
             openUserMenu();
-            verify(item("userPopup").x >= 0 && item("userPopup").y + item("userPopup").height <= stage.height);
-            capture("multi-user-menu");
+            compare(item("loginPanel").y, top);
+            inside(item("userList"));
+            focusControl("sessionSelection"); keyClick(Qt.Key_Return);
+            verify(!item("userList").opened && item("sessionList").opened);
+            tryVerify(() => Math.abs(item("footer").mapToItem(stage, 0, 0).y - footerY) < .1);
+            verify(item("loginPanel").y >= item("clock").y + item("clock").height + 16 - .1);
+            keyClick(Qt.Key_Escape);
+            tryCompare(item("sessionSelection"), "activeFocus", true);
+            compare(item("loginPanel").y, top);
+        }
+        function recordGeometry(state) {
+            wait(30); // Record settled geometry, not the previous layout pass.
+            let regions = {};
+            for (let name of ["clockTime", "calendarDate", "loginPanel", "usernameDisplay", "username", "password", "loginError", "footer", "userList", "sessionList"]) {
+                let control = item(name);
+                if (control.visible) {
+                    let p = control.mapToItem(stage, 0, 0);
+                    verify(p.x >= 64 - .1 && p.x + control.width <= 384 + .1, "Control stays in left column: " + name);
+                    inside(control);
+                    regions[name] = [p.x, p.y, control.width, control.height];
+                }
+            }
+            console.log("SDDM_GEOMETRY " + JSON.stringify({state: state, regions: regions}));
+        }
+        function test_geometry_and_native_captures() {
+            for (let name of ["clock", "loginPanel", "footer"]) inside(item(name));
+            compare(item("clock").x, 64); compare(item("clockTime").font.pixelSize, 72);
+            compare(item("clockTime").font.weight, Font.Light);
+            compare(item("calendarDate").font.pixelSize, 18);
+            compare(item("loginPanel").width, 320);
+            verify(item("loginPanel").y >= item("clock").y + item("clock").height + 16);
+            for (let name of ["clock", "loginPanel", "footer"]) {
+                let box = item(name), p = box.mapToItem(stage, 0, 0);
+                verify(p.x >= 64 && p.x + box.width <= 384);
+            }
+            recordGeometry("single-user"); capture("single-user");
+            item("password").text = "synthetic-only"; keyClick(Qt.Key_Return); proxy.loginFailed();
+            recordGeometry("error"); capture("error");
+            reset(["alpha", "a-very-long-synthetic-username-that-must-fit-without-overlap", "omega"], "alpha", ["Plasma (Wayland)", "Two"]);
+            openUserMenu();
+            inside(item("userList")); inside(item("loginPanel"));
+            recordGeometry("multi-user-menu"); capture("multi-user-menu");
             keyClick(Qt.Key_Down); keyClick(Qt.Key_Return);
             inside(item("userSelection"));
-            capture("long-username");
+            recordGeometry("long-username"); capture("long-username");
+            focusControl("sessionSelection"); keyClick(Qt.Key_Return);
+            inside(item("sessionList")); inside(item("loginPanel"));
+            recordGeometry("session-menu"); capture("session-menu");
+            keyClick(Qt.Key_Escape);
+            reset([], "", ["Test session"]);
+            recordGeometry("empty-users"); capture("empty-users");
+            item("clock").visible = false; item("loginPanel").visible = false;
+            capture("background");
+            item("clock").visible = true; item("loginPanel").visible = true;
         }
     }
 }

@@ -21,7 +21,10 @@ class SddmTests(unittest.TestCase):
     def test_vm_preview_hashes_and_provenance(self):
         manifest=json.loads((ROOT/'previews/manifest.json').read_text())
         captures=[item for item in manifest['screenshots'] if item['file'].startswith('sddm/')]
-        self.assertEqual({item['file'] for item in captures},{'sddm/login.png','sddm/wrong-password.png'})
+        self.assertEqual({item['file'] for item in captures},{
+            'sddm/login.png','sddm/wrong-password.png',
+            'sddm/login-v2.png','sddm/login-v2-error.png',
+        })
         for item in captures:
             with self.subTest(file=item['file']):
                 path=ROOT/'previews'/item['file']
@@ -30,6 +33,12 @@ class SddmTests(unittest.TestCase):
                 self.assertEqual(item['pixels'],[1280,800])
                 self.assertEqual(item['kind'],'SDDM screenshot in isolated NixOS VM')
                 self.assertFalse(item['physical_desktop_acceptance'])
+                if item['file'] in ('sddm/login-v2.png','sddm/login-v2-error.png'):
+                    self.assertEqual(item['development_layout'],'v2')
+                    self.assertEqual(item['release_status'],'Unreleased')
+                    self.assertTrue(item['sddm_authentication_performed'])
+                    self.assertEqual(item['image_processing'],'none; original QEMU screenshot bytes')
+                    self.assertRegex(item['runtime_source_commit'],r'^[0-9a-f]{40}$')
 
     def test_qt6_metadata_and_entrypoint(self):
         meta=read_ini(ROOT/'sddm/metadata.desktop')['SddmGreeterTheme']

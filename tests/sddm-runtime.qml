@@ -77,7 +77,8 @@ Item {
         }
         function capture(name) {
             let finished = false;
-            verify(stage.grabToImage(result => {
+            // Popups live in the window Overlay, outside the loaded theme item.
+            verify(root.Window.window.contentItem.grabToImage(result => {
                 verify(result.saveToFile(root.args[1] + "/" + name + ".png"), "Save native capture");
                 finished = true;
             }, Qt.size(stage.width, stage.height)));

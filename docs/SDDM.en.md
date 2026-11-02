@@ -1,7 +1,16 @@
 # Login screen (SDDM, experimental)
 
 `kaltsit-sddm` is a separate static Qt 6 login theme, disabled by default. It does not change the desktop, lockscreen, Home Manager, authentication policy or daily restoration records. It uses the existing still and generates colors from the existing scheme at build time.
-See the [design](SDDM-DESIGN.en.md) for pinned dependencies and fallback boundaries.
+See the [initial design](SDDM-DESIGN.en.md) for pinned dependencies and fallback boundaries. The v2 layout below is an unpublished UI revision; the package version remains 1.3.0.
+
+## v2 layout and keyboard controls
+
+- The wallpaper retains its original brightness and aspect-preserving crop, with no full-screen overlay, large card or blur. Centered time and date appear above, using the greeter font and minute precision; the clock uses existing dark text with a thin white outline.
+- The lower-center login area places the username above a 280×48 logical-pixel password field and a separate circular arrow. Username, inputs, errors and bottom actions have separate 96%-opaque white backplates. Text and borders remain opaque; no text is smaller than 14 logical pixels.
+- Activate the username even with a single user to open the list. “Other…” replaces the username line with an input; an empty model shows it directly. An unlisted remembered username is prefilled, and the adjacent list button returns to listed accounts. Changing accounts clears the password and old error.
+- Initial focus goes to the password, or to the username when unknown. Tab/Shift+Tab traverse visible controls; arrow keys move in a list, Return selects, and Esc closes it and restores trigger focus. Return used to select a list item does not submit credentials.
+- Session selection and the read-only keyboard layout sit at bottom left; shutdown and reboot text buttons sit at bottom right. An empty session list explains why login is disabled. Submission prevents duplicate actions and retains the original session index and power-capability checks.
+- Errors occupy reserved space below the password and wrap when needed. A roughly 600 ms error border is separate from the focus border. Submission and failure clear the password; failure restores password focus. Passwords are not logged or written to files. Authentication behavior, CLI, Nix interfaces and the lockscreen are unchanged.
 
 ## Install and enable
 
@@ -47,7 +56,9 @@ python3 tests/run-sddm-native.py "$(realpath result)" \
   --qml /path/to/matching/qml --output /tmp/kaltsit-sddm-native-result
 ```
 
-It loads the real greeter with `--test-mode --theme`, ends that process after six seconds, then checks focus, password masking/clearing, errors and power capabilities with mock SDDM models. `ui-mock.png` is explicitly native Qt rendering with mocks, not a real login screenshot or proof of authentication.
+It loads the real greeter with `--test-mode --theme` and ends that process after six seconds, then sends actual key and mouse events through the matching `qmltestrunner` with mock SDDM models. Each run has 13 behavior checks covering zero/one/multiple users, manual usernames, sessions, Tab/Return/Esc, duplicate submissions, password clearing, errors and power calls. Layouts are checked at 1280×800/100%, 1920×1080/100% and 3120×2080/175%.
+
+Resolution-specific output directories contain `single-user.png`, `error.png`, `multi-user-menu.png`, `long-username.png` and `results.json`. These are native Qt renders with mocks, not authentication evidence. At 175%, Qt rounds the logical capture size and produces a raw 3120×2081 PNG. The report records requested layout, logical size and captured pixels separately; it does not crop or resize away that difference.
 
 [tests/sddm-vm.nix](../tests/sddm-vm.nix) is **test-only; never import it into a physical-machine configuration**. It uses 2 cores / 2048 MiB, 1280×800, static wallpaper and X11 greeter. An xterm session isolates SDDM testing; it is not Plasma desktop acceptance. Account `tester` has the public disposable password `wallpaper-test`. There is no host HOME sharing, real credential or host configuration import. A separate read-only Nix store image contains the test closure; default shares and external network access are disabled.
 
@@ -76,7 +87,7 @@ nixos-rebuild build-vm --flake path:.#sddm-test
 Try an incorrect password, then the fixture password. Run `exit` in xterm to return to the greeter. Check shutdown/reboot buttons only inside the VM.
 For broken-theme fallback, copy the theme to a temporary directory **inside the VM**, replace Main.qml with invalid QML, point a temporary guest SDDM configuration at it, and restart the guest display-manager. Check `Fallback to embedded theme` and usable login controls, then remove the guest override. Do not do this on the host.
 
-## Evidence from this round
+## Evidence from the initial implementation
 
 On 2026-11-01 (America/Los_Angeles), runtime resources came from `4e9363d` and the module from `e50d903`, using the nixpkgs revision recorded in the design.
 
@@ -88,6 +99,18 @@ On 2026-11-01 (America/Los_Angeles), runtime resources came from `4e9363d` and t
 
 The [login screen](../previews/sddm/login.png) and [wrong-password screen](../previews/sddm/wrong-password.png) retain original QEMU screenshot bytes. The [manifest](../previews/manifest.json) records per-entry VM environment, source commits and SHA-256. Old screenshots are unchanged; no concept image substitutes for validation.
 No host SDDM theme was activated, host service restarted or host configuration deployed. Physical activation remains a future decision; VM login results are not complete physical acceptance.
+
+## v2 validation evidence
+
+On 2026-11-02 (America/Los_Angeles), the runtime UI came from `6afcb9ecf12112d4cbd438ea3a471fcda15f02f9`. The package version remains 1.3.0; Nix packaging, modules and authentication configuration are unchanged.
+
+- The real SDDM 0.21.0 / Qt 6.11.2 test-mode loaded with private HOME, D-Bus and offscreen software rendering. Mock-model checks passed 13 behaviors at each of the three sizes/scales, 39 in total, sending actual Tab, Shift+Tab, Return, Esc, arrow-key and mouse events. Zero/one/multiple users and long usernames are covered; multiple-user lists were not tested with physical-machine accounts.
+- Native Qt captures were inspected at all three sizes for clock outlines, lists, long usernames, errors and bottom controls; no overlap or overflow was observed. Compositing the 96%-opaque white backplate over the darkest underlay gives approximate contrast ratios of 11.85, 4.85, 5.95 and 5.74:1 for body text, placeholder text, errors and focus borders respectively. Calculations use the existing palette without changing color values.
+- This round reused the previously built NixOS 26.05 test VM with a fresh temporary disk; `build-vm` was not rerun. Only the newly built theme resources were copied into a temporary directory **inside the guest**. Main.qml, Palette.js and background SHA-256 values were compared before loading them via a guest-only configuration. No host HOME share or host service operation was used.
+- In the 1280×800, 100%, X11/xterm test environment, PAM rejected an incorrect password. The correct fixture password authenticated and entered xterm; logout returned to the v2 greeter. Deliberately breaking a temporary guest QML copy produced `Fallback to embedded theme` and the embedded login UI. Authentication was not repeated in the fallback UI.
+- Power buttons were checked only against the mock backend; full VM shutdown/reboot was not retested. The initial incomplete power-cycle checks remain unresolved. The harness stopped its own VM process at the end; that is not evidence of a successful shutdown action.
+
+The [v2 login screen](../previews/sddm/login-v2.png) and [v2 wrong-password screen](../previews/sddm/login-v2-error.png) are original 1280×800 QEMU captures from that VM, without postprocessing. Only these two entries and their SHA-256 values were appended to the manifest; earlier captures and entries remain intact. Physical hardware, a real high-DPI greeter, multiple displays and full power cycles remain outside this round's validation conclusions.
 
 ## Checklist (blank for a new environment)
 

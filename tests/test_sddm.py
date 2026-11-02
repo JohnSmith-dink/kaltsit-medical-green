@@ -67,6 +67,28 @@ class SddmTests(unittest.TestCase):
                 with self.subTest(boundary=boundary,background=background):
                     self.assertGreaterEqual(contrast(colors[boundary],colors[background]),3)
 
+    def test_translucent_controls_contrast_after_compositing(self):
+        colors=palette_module.palette(ROOT/'share/color-schemes/KaltsitMedicalGreen.colors')
+        source=(ROOT/'sddm/Main.qml').read_text()
+        match=re.search(r'readonly property real surfaceOpacity:\s*([0-9.]+)',source)
+        self.assertIsNotNone(match,'SDDM backplate opacity must be explicit for contrast validation')
+        alpha=float(match[1])
+        self.assertGreater(alpha,0)
+        self.assertLessEqual(alpha,1)
+        plate=[int(colors['window'][i:i+2],16) for i in (1,3,5)]
+        # Black is the minimum luminance behind this white backplate; also
+        # check white and intermediate grays, without averaging image pixels.
+        for underlay in range(256):
+            background='#'+''.join(f'{round(alpha*c+(1-alpha)*underlay):02x}' for c in plate)
+            for foreground in ('text','secondary','negative'):
+                with self.subTest(underlay=underlay,foreground=foreground):
+                    self.assertGreaterEqual(contrast(colors[foreground],background),4.5)
+            self.assertGreaterEqual(contrast(colors['accent'],background),3)
+            self.assertGreaterEqual(contrast(colors['secondary'],background),3)
+        # Circular primary-button focus ring and clock halo use existing white.
+        self.assertGreaterEqual(contrast(colors['selectedText'],colors['selected']),4.5)
+        self.assertGreaterEqual(contrast(colors['text'],colors['window']),4.5)
+
     def test_palette_missing_or_bad_source_fails(self):
         with tempfile.TemporaryDirectory() as temp:
             path=Path(temp)/'incomplete.colors'

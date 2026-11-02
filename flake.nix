@@ -69,7 +69,16 @@
         services.displayManager.sddm.theme = "existing-user-theme";
       };
       nixosDisabledCustom = evalNixos { services.displayManager.sddm.theme = "existing-user-theme"; };
+      # An existing text fixture is sufficient for option evaluation; no private font enters the flake.
+      nixosFont = evalNixos { programs.kaltsit-sddm = { enable = true; fontFile = ./LICENSE; }; };
+      nixosFontDisabled = evalNixos { programs.kaltsit-sddm.fontFile = ./LICENSE; };
       nixosModuleCheck = assert !nixosOff.programs.kaltsit-sddm.enable;
+        assert nixosOff.programs.kaltsit-sddm.fontFile == null;
+        assert nixosOn.programs.kaltsit-sddm.fontFile == null;
+        assert nixosOn.fonts.packages == nixosOff.fonts.packages;
+        assert nixosFontDisabled.fonts.packages == nixosOff.fonts.packages;
+        assert builtins.length nixosFont.fonts.packages == builtins.length nixosOff.fonts.packages + 1;
+        assert builtins.any (p: (p.fontSource or null) == (builtins.path { path = ./LICENSE; name = "OPPO-Sans-4.0.ttf"; }) && p.preferLocalBuild && !p.allowSubstitutes) nixosFont.fonts.packages;
         assert nixosOff.services.displayManager.sddm.theme == "";
         assert nixosOff.services.displayManager.sddm.extraPackages == [ ];
         assert !(builtins.any (p: (p.pname or "") == "kaltsit-sddm") nixosOff.environment.systemPackages);

@@ -43,7 +43,7 @@ Item {
     }
     TestCase {
         id: test
-        name: "SddmV5"
+        name: "SddmV6"
         when: windowShown
         function item(name) {
             let result = findChild(theme.item, name);
@@ -65,6 +65,8 @@ Item {
             proxy.credentialLength = 0; proxy.submittedUser = ""; proxy.submittedSession = -1;
             theme.source = root.args[0];
             tryCompare(theme, "status", Loader.Ready);
+            item("clockTicker").running = false;
+            theme.item.now = new Date(2026, 10, 2, 17, 5);
             root.Window.window.requestActivate();
             wait(40);
         }
@@ -219,7 +221,7 @@ Item {
             proxy.loginFailed();
             tryCompare(item("password"), "activeFocus", true);
             verify(item("loginError").visible && theme.item.errorBorder);
-            tryCompare(item("loginPanel"), "height", panelHeight + 36);
+            tryCompare(item("loginPanel"), "height", panelHeight + 26);
             compare(item("password").mapToItem(stage, 0, 0).y, before);
             wait(650);
             verify(!theme.item.errorBorder && item("password").activeFocus);
@@ -272,23 +274,27 @@ Item {
                 let control = item(name);
                 if (control.visible) {
                     let p = control.mapToItem(stage, 0, 0);
-                    verify(p.x >= 64 - .1 && p.x + control.width <= 384 + .1, "Control stays in left column: " + name);
+                    verify(p.x >= theme.item.opticalEdge - 20 && p.x + control.width <= theme.item.opticalEdge + theme.item.columnWidth + 10, "Control stays in left column: " + name);
                     inside(control);
                     regions[name] = [p.x, p.y, control.width, control.height];
+                    if (name === "clockTime" || name === "calendarDate") {
+                        let ink = control.inkBounds;
+                        regions[name] = [ink.x, ink.y, ink.width, ink.height];
+                    }
                 }
             }
             console.log("SDDM_GEOMETRY " + JSON.stringify({state: state, regions: regions}));
         }
         function test_geometry_and_native_captures() {
             for (let name of ["clock", "loginPanel", "footer"]) inside(item(name));
-            compare(item("clock").x, 64); compare(item("clockTime").font.pixelSize, 72);
-            compare(item("clockTime").font.weight, Font.Light);
+            compare(item("clockTime").inkBounds.x, theme.item.opticalEdge); compare(item("clockTime").font.pixelSize, 72);
+            compare(item("clockTime").font.weight, Font.Normal);
             compare(item("calendarDate").font.pixelSize, 18);
-            compare(item("loginPanel").width, 320);
+            compare(item("loginPanel").width, 288);
             verify(item("loginPanel").y >= item("clock").y + item("clock").height + 16);
-            for (let name of ["clock", "loginPanel", "footer"]) {
+            for (let name of ["loginPanel", "footer"]) {
                 let box = item(name), p = box.mapToItem(stage, 0, 0);
-                verify(p.x >= 64 && p.x + box.width <= 384);
+                verify(p.x >= theme.item.opticalEdge - 20 && p.x + box.width <= theme.item.opticalEdge + theme.item.columnWidth + 10);
             }
             recordGeometry("single-user"); capture("single-user");
             item("password").text = "synthetic-only"; keyClick(Qt.Key_Return); proxy.loginFailed();
@@ -306,6 +312,9 @@ Item {
             keyClick(Qt.Key_Escape);
             reset([], "", ["Test session"]);
             recordGeometry("empty-users"); capture("empty-users");
+            reset(["tester"], "tester", ["Plasma (Wayland)"]);
+            proxy.canPowerOff = true; proxy.canReboot = true;
+            focusControl("shutdownButton"); capture("long-session-focus-shutdown");
             reset(["fixture"], "fixture", ["Test session"]);
             // Separate focused/hovered surfaces from the unpainted normal state.
             focusControl("userSelection"); capture("focus-user");
@@ -314,6 +323,37 @@ Item {
             item("clock").visible = false; item("loginPanel").visible = false;
             capture("background");
             item("clock").visible = true; item("loginPanel").visible = true;
+        }
+        function test_font_and_optical_clock_metrics() {
+            compare(item("clockTime").font.features.tnum, 1);
+            compare(item("clockTime").font.letterSpacing, -.5);
+            if (root.args[5]) compare(theme.item.resolvedFontFamily, "OPPO Sans 4.0");
+            else verify(theme.item.resolvedFontFamily !== "OPPO Sans 4.0");
+            for (let hour of [0, 10, 17, 23]) {
+                theme.item.now = new Date(2026, 10, 2, hour, 5);
+                wait(20);
+                compare(item("clockTime").inkBounds.x, theme.item.opticalEdge);
+                fuzzyCompare(item("clockTime").inkBounds.y, 71.75, .01);
+                capture("clock-" + hour);
+            }
+            console.log("SDDM_FONT " + JSON.stringify({family: theme.item.resolvedFontFamily,
+                clockFamily: item("clockTime").fontInfo.family, clockWeight: item("clockTime").fontInfo.weight,
+                usernameFamily: item("usernameDisplay").fontInfo.family, usernameWeight: item("usernameDisplay").fontInfo.weight}));
+        }
+        function test_footer_groups_and_elision() {
+            reset(["tester"], "tester", ["Plasma (Wayland) with a very long name"]);
+            let session = item("sessionSelection"), keyboard = item("keyboardLayout");
+            let off = item("shutdownButton"), reboot = item("rebootButton");
+            verify(session.elideValue && !keyboard.elideValue && !off.elideValue && !reboot.elideValue);
+            compare(keyboard.width, keyboard.implicitWidth);
+            compare(off.width, off.implicitWidth); compare(reboot.width, reboot.implicitWidth);
+            verify(off.x - (keyboard.x + keyboard.width) >= 12 - .01);
+            let p = session.mapToItem(stage, 0, 0);
+            fuzzyCompare(p.x + session.firstInkInset, theme.item.opticalEdge, .01);
+            let right = reboot.mapToItem(stage, reboot.width, 0).x;
+            fuzzyCompare(right, theme.item.opticalEdge + theme.item.columnWidth + 8, .01);
+            focusControl("sessionSelection"); keyClick(Qt.Key_Return);
+            compare(item("sessionList").labelFor(0), "Plasma (Wayland) with a very long name");
         }
     }
 }

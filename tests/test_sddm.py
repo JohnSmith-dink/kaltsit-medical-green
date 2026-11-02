@@ -34,13 +34,21 @@ def sample_region(image, logical_box, scale, layers, foregrounds, frame_size):
     darkest, lightest = min(pixels,key=lum.get), max(pixels,key=lum.get)
     composites = {p:compose(p) for p in pixels}
     results = {}
-    for role, (color, threshold) in foregrounds.items():
-        worst = min(pixels,key=lambda p:contrast(color,composites[p]))
-        ratio = contrast(color,composites[worst])
+    for role, values in foregrounds.items():
+        color, threshold = values[:2]
+        opacity = values[2] if len(values) == 3 else 1
+        def ratio_on(background):
+            fg=[int(color[i:i+2],16) for i in (1,3,5)]
+            bg=[int(background[i:i+2],16) for i in (1,3,5)]
+            composed=hex_rgb(tuple(round(opacity*f+(1-opacity)*b) for f,b in zip(fg,bg)))
+            return contrast(composed,background)
+        worst = min(pixels,key=lambda p:ratio_on(composites[p]))
+        ratio = ratio_on(composites[worst])
         results[role] = dict(ratio=round(ratio,6), required=threshold,
                              source_rgb=hex_rgb(worst), composite_rgb=composites[worst],
-                             darkest_pixel_ratio=round(contrast(color,composites[darkest]),6),
-                             lightest_pixel_ratio=round(contrast(color,composites[lightest]),6))
+                             foreground_opacity=opacity,
+                             darkest_pixel_ratio=round(ratio_on(composites[darkest]),6),
+                             lightest_pixel_ratio=round(ratio_on(composites[lightest]),6))
     # Image.PreserveAspectCrop uses centered uniform scaling of the existing still.
     factor = max(frame_size[0]/3840, frame_size[1]/2160)
     offset = [(3840*factor-frame_size[0])/2, (2160*factor-frame_size[1])/2]
@@ -64,6 +72,24 @@ def qml_number(name):
 
 
 class SddmTests(unittest.TestCase):
+    def test_optical_alignment_check_accepts_ink_and_rejects_drift(self):
+        from PIL import Image, ImageDraw
+        from check_sddm_alignment import check
+        background=Image.new('RGB',(1280,800),'white')
+        frame=background.copy();draw=ImageDraw.Draw(frame)
+        for top in (72,153,370,432,490):draw.rectangle((72,top,90,top+6),fill='black')
+        self.assertTrue(all(row['passed'] for row in check(frame,background)))
+        shifted=Image.new('RGB',frame.size,'white');shifted.paste(frame,(5,0))
+        self.assertFalse(any(row['passed'] for row in check(shifted,background)))
+
+    def test_optical_alignment_check_rejects_missing_ink_and_size_mismatch(self):
+        from PIL import Image
+        from check_sddm_alignment import check
+        background=Image.new('RGB',(1280,800),'white')
+        self.assertFalse(any(row['passed'] for row in check(background,background)))
+        with self.assertRaisesRegex(ValueError,'Size mismatch'):
+            check(Image.new('RGB',(1280,801)),background)
+
     def test_vm_preview_hashes_and_provenance(self):
         manifest=json.loads((ROOT/'previews/manifest.json').read_text())
         captures=[item for item in manifest['screenshots'] if item['file'].startswith('sddm/')]
@@ -130,15 +156,15 @@ class SddmTests(unittest.TestCase):
         input_alpha=qml_number('inputOpacity')
         surface_alpha=qml_number('surfaceOpacity')
         left, width=qml_number('leftInset'),qml_number('panelWidth')
-        self.assertEqual((left,width),(64,320))
+        self.assertEqual((left,width),(72,288))
         with Image.open(ROOT/'share/wallpapers/KaltsitMedicalGreen/contents/images/3840x2160.jpg') as source:
             for w,h,scale in ((1280,800,1),(1920,1080,1),(3120,2080,1.75)):
                 frame=ImageOps.fit(source.convert('RGB'),(w,h),method=Image.Resampling.BILINEAR)
-                top=h/scale*.55-94
+                top=round(h/scale*.451)
                 # Conservative envelope includes upward sessions, downward users and errors.
                 box=[left,200 if h==800 else top-148,width,top+372-(200 if h==800 else top-148)]
                 with self.subTest(layout=(w,h,scale)):
-                    assert_sample(sample_region(frame,box,scale,[(colors['window'],input_alpha)],
+                    assert_sample(sample_region(frame,box,scale,[(colors['view'],input_alpha)],
                         {'text':(colors['text'],4.5),'placeholder':(colors['secondary'],4.5),
                          'error_border':(colors['negative'],3),'focus':(colors['accent'],3)},(w,h)))
                     assert_sample(sample_region(frame,box,scale,[(colors['window'],surface_alpha)],
@@ -149,6 +175,9 @@ class SddmTests(unittest.TestCase):
                     ):
                         assert_sample(sample_region(frame,box,scale,[(colors[outline],alpha)],
                             {foreground:(colors[foreground],4.5)},(w,h)))
+                    assert_sample(sample_region(frame,box,scale,[(colors['text'],qml_number('bodyOutlineOpacity'))],
+                        {'label':(colors['view'],4.5,qml_number('labelOpacity')),
+                         'focus':(colors['selectedText'],3,qml_number('focusOpacity'))},(w,h)))
         self.assertGreaterEqual(contrast(colors['selectedText'],colors['accent']),4.5)
 
     def test_outlines_and_input_against_extreme_underlays(self):
@@ -160,9 +189,9 @@ class SddmTests(unittest.TestCase):
             for foreground, layer, alpha, required in (
                 ('selectedText','text',qml_number('bodyOutlineOpacity'),4.5),
                 ('negative','window',qml_number('errorOutlineOpacity'),4.5),
-                ('secondary','window',qml_number('inputOpacity'),4.5),
-                ('text','window',qml_number('inputOpacity'),4.5),
-                ('accent','window',qml_number('inputOpacity'),3),
+                ('secondary','view',qml_number('inputOpacity'),4.5),
+                ('text','view',qml_number('inputOpacity'),4.5),
+                ('accent','view',qml_number('inputOpacity'),3),
                 ('accent','window',qml_number('surfaceOpacity'),3),
             ):
                 with self.subTest(backdrop=backdrop,foreground=foreground,alpha=alpha):
@@ -175,7 +204,7 @@ class SddmTests(unittest.TestCase):
         with Image.open(ROOT/'share/wallpapers/KaltsitMedicalGreen/contents/images/3840x2160.jpg') as source:
             for w,h,scale in ((1280,800,1),(1920,1080,1),(3120,2080,1.75)):
                 frame=ImageOps.fit(source.convert('RGB'),(w,h),method=Image.Resampling.BILINEAR)
-                for label,box in [('clock',[64,64,320,88]),('date',[64,160,320,24])]:
+                for label,box in [('clock',[72,71.75,200,58]),('date',[72,152.25,210,22])]:
                     with self.subTest(layout=(w,h,scale),element=label):
                         assert_sample(sample_region(frame,box,scale,[],{label:(colors['text'],4.5)},(w,h)))
 

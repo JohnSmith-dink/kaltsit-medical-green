@@ -6,14 +6,35 @@ import "Palette.js" as Palette
 
 Item {
     id: root
-    readonly property real leftInset: 64
-    readonly property real panelWidth: 320
-    readonly property real inputOpacity: 0.94
+    readonly property real leftInset: 72
+    readonly property real panelWidth: 288
+    readonly property real opticalEdge: width >= 960 ? leftInset : Math.max(24, Math.floor(width * 0.075))
+    readonly property real columnWidth: Math.min(panelWidth, width - 2 * opticalEdge)
+    readonly property real inputOpacity: 1
     readonly property real surfaceOpacity: 0.90
+    readonly property real hoverOpacity: 0.16
+    readonly property real labelOpacity: 0.80
+    readonly property real focusOpacity: 0.85
     readonly property real bodyOutlineOpacity: 0.85
     readonly property real errorOutlineOpacity: 0.90
     readonly property color bodyOutlineColor: Palette.text
-    readonly property color inputColor: Palette.window
+    readonly property color inputColor: Palette.view
+    readonly property color lightColor: Palette.selectedText
+    readonly property color surfaceColor: Palette.window
+    readonly property string resolvedFontFamily: typography.family
+    Controls.Label { id: systemFont; visible: false }
+    QtObject {
+        id: typography
+        readonly property string family: Qt.fontFamilies().indexOf("OPPO Sans 4.0") >= 0 ? "OPPO Sans 4.0" : systemFont.font.family
+        readonly property int clockSize: 72
+        readonly property int dateSize: 18
+        readonly property int initialSize: 22
+        readonly property int usernameSize: 18
+        readonly property int inputSize: 15
+        readonly property int smallSize: 14
+        readonly property int normal: Font.Normal
+        readonly property int medium: Font.Medium
+    }
     readonly property bool canChooseUser: users.count > 1
     property bool busy: false
     property string errorMessage: ""
@@ -82,7 +103,7 @@ Item {
         function onLoginSucceeded() { password.clear(); }
     }
     Timer { id: errorFlash; interval: 600; onTriggered: root.errorBorder = false }
-    Timer { interval: 1000; running: root.visible; repeat: true; onTriggered: root.now = new Date() }
+    Timer { objectName: "clockTicker"; interval: 1000; running: root.visible; repeat: true; onTriggered: root.now = new Date() }
 
     Rectangle { anchors.fill: parent; color: Palette.view }
     Image {
@@ -95,27 +116,65 @@ Item {
 
     component GhostButton: Controls.Button {
         id: button
+        property string label: ""
+        property bool elideValue: false
+        readonly property real firstInkInset: leftPadding + (contentItem.inkOffset || 0)
         implicitHeight: 32
-        padding: 4
-        font.pixelSize: 14
+        implicitWidth: contentItem.implicitWidth + leftPadding + rightPadding
+        padding: 9
+        topPadding: 0; bottomPadding: 0
+        font.family: typography.family
+        font.pixelSize: typography.smallSize
+        font.weight: typography.medium
         focusPolicy: Qt.StrongFocus
+        Accessible.name: label.length ? label + " " + text : text
         Keys.onReturnPressed: if (enabled) clicked()
         Keys.onEnterPressed: if (enabled) clicked()
-        contentItem: Text {
-            text: button.text; textFormat: Text.PlainText
-            color: Palette.selectedText; font: button.font
-            style: Text.Outline
-            styleColor: Qt.rgba(root.bodyOutlineColor.r, root.bodyOutlineColor.g, root.bodyOutlineColor.b, root.bodyOutlineOpacity)
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-            elide: Text.ElideRight
+        contentItem: Item {
+            readonly property real inkOffset: button.label.length ? prefixInk.tightBoundingRect.x : valueInk.tightBoundingRect.x
+            TextMetrics { id: prefixInk; font: prefix.font; text: prefix.text }
+            TextMetrics { id: valueInk; font: value.font; text: value.text }
+            implicitWidth: (prefix.visible ? prefix.implicitWidth + 6 : 0) + value.implicitWidth
+            Text {
+                id: prefix
+                objectName: "controlLabel"
+                visible: button.label.length > 0
+                anchors.verticalCenter: parent.verticalCenter
+                text: button.label; textFormat: Text.PlainText
+                font.family: typography.family; font.pixelSize: typography.smallSize; font.weight: typography.normal
+                color: Qt.rgba(root.inputColor.r, root.inputColor.g, root.inputColor.b, root.labelOpacity)
+                style: Text.Outline
+                styleColor: Qt.rgba(root.bodyOutlineColor.r, root.bodyOutlineColor.g, root.bodyOutlineColor.b, root.bodyOutlineOpacity)
+            }
+            Text {
+                id: value
+                objectName: "controlValue"
+                x: prefix.visible ? prefix.implicitWidth + 6 : 0
+                width: Math.max(0, parent.width - x)
+                anchors.verticalCenter: parent.verticalCenter
+                text: button.text; textFormat: Text.PlainText
+                color: Palette.selectedText; font: button.font
+                style: Text.Outline
+                styleColor: Qt.rgba(root.bodyOutlineColor.r, root.bodyOutlineColor.g, root.bodyOutlineColor.b, root.bodyOutlineOpacity)
+                elide: button.elideValue ? Text.ElideRight : Text.ElideNone
+            }
         }
         background: Rectangle {
             radius: 6
             color: button.enabled && (button.activeFocus || button.hovered)
-                ? Qt.rgba(root.inputColor.r, root.inputColor.g, root.inputColor.b, root.surfaceOpacity) : "transparent"
-            border.color: Palette.accent
-            border.width: button.activeFocus ? 2 : (button.enabled && button.hovered ? 1 : 0)
+                ? Qt.rgba(root.inputColor.r, root.inputColor.g, root.inputColor.b, root.hoverOpacity) : "transparent"
+            // A glyph-like dark edge keeps the light focus border visible on bright artwork.
+            Rectangle {
+                anchors.fill: parent; anchors.margins: -1; radius: 7
+                color: "transparent"; visible: button.activeFocus
+                border.color: Qt.rgba(root.bodyOutlineColor.r, root.bodyOutlineColor.g, root.bodyOutlineColor.b, root.bodyOutlineOpacity)
+                border.width: 3
+            }
+            Rectangle {
+                anchors.fill: parent; radius: 6; color: "transparent"; visible: button.activeFocus
+                border.color: Qt.rgba(root.lightColor.r, root.lightColor.g, root.lightColor.b, root.focusOpacity)
+                border.width: 1
+            }
         }
     }
     component Avatar: Rectangle {
@@ -127,7 +186,7 @@ Item {
             anchors.centerIn: parent
             text: Array.from(root.loginUser)[0] || ""
             textFormat: Text.PlainText
-            color: Palette.selectedText; font.pixelSize: 22
+            color: Palette.selectedText; font.family: typography.family; font.pixelSize: typography.initialSize; font.weight: typography.medium
         }
         Rectangle {
             anchors.fill: parent; anchors.margins: 3
@@ -139,9 +198,10 @@ Item {
     component ThemeInput: Controls.TextField {
         id: field
         property bool warn: false
-        implicitHeight: 44
-        padding: 10
-        font.pixelSize: 16
+        implicitHeight: 42
+        padding: 15.5
+        topPadding: 0; bottomPadding: 0
+        font.family: typography.family; font.pixelSize: typography.inputSize; font.weight: typography.normal
         color: Palette.text
         placeholderTextColor: Palette.secondary
         selectionColor: Palette.selected
@@ -149,8 +209,8 @@ Item {
         background: Rectangle {
             radius: 8
             color: Qt.rgba(root.inputColor.r, root.inputColor.g, root.inputColor.b, root.inputOpacity)
-            border.color: field.warn ? Palette.negative : (field.activeFocus ? Palette.accent : Palette.secondary)
-            border.width: field.activeFocus || field.warn ? 2 : 1
+            border.color: field.warn ? Palette.negative : Palette.accent
+            border.width: field.activeFocus || field.warn ? 2 : 1.5
         }
     }
     component InlineChoices: Item {
@@ -177,7 +237,7 @@ Item {
         function choose(index) { close(); chosen(index); }
         Rectangle {
             anchors.fill: parent; radius: 6
-            color: Qt.rgba(root.inputColor.r, root.inputColor.g, root.inputColor.b, root.surfaceOpacity)
+            color: Qt.rgba(root.surfaceColor.r, root.surfaceColor.g, root.surfaceColor.b, root.surfaceOpacity)
             border.color: Palette.accent; border.width: list.activeFocus ? 2 : 1
         }
         ListView {
@@ -208,7 +268,7 @@ Item {
                     id: optionText
                     text: choices.labelFor(option.index); textFormat: Text.PlainText
                     color: option.highlighted ? Palette.selectedText : Palette.text
-                    font.pixelSize: 16; wrapMode: Text.WrapAnywhere
+                    font.family: typography.family; font.pixelSize: 16; font.weight: typography.normal; wrapMode: Text.WrapAnywhere
                     verticalAlignment: Text.AlignVCenter
                 }
                 background: Rectangle {
@@ -219,41 +279,48 @@ Item {
         }
     }
 
-    Column {
+    Item {
         id: clock
         objectName: "clock"
-        x: root.leftInset; y: 64; width: root.panelWidth
-        spacing: 8
+        width: root.opticalEdge + root.columnWidth; height: 176
+        TextMetrics { id: clockInk; font: clockTime.font; text: clockTime.text; renderType: clockTime.renderType }
+        TextMetrics { id: dateInk; font: dateText.font; text: dateText.text; renderType: dateText.renderType }
         Text {
+            id: clockTime
             objectName: "clockTime"
-            width: parent.width; height: 88
+            x: root.opticalEdge - clockInk.tightBoundingRect.x
+            y: 71.75 - baselineOffset - clockInk.tightBoundingRect.y
             text: Qt.formatTime(root.now, "HH:mm")
             color: Palette.text
-            font.pixelSize: 72; font.weight: Font.Light
-            verticalAlignment: Text.AlignVCenter
+            font.family: typography.family; font.pixelSize: typography.clockSize; font.weight: typography.normal
+            font.letterSpacing: -0.5
+            font.features: { "tnum": 1 }
+            readonly property rect inkBounds: Qt.rect(x + clockInk.tightBoundingRect.x, y + baselineOffset + clockInk.tightBoundingRect.y, clockInk.tightBoundingRect.width, clockInk.tightBoundingRect.height)
         }
         Text {
+            id: dateText
             objectName: "calendarDate"
-            width: parent.width; height: 24
+            x: root.opticalEdge - dateInk.tightBoundingRect.x
+            y: 152.25 - baselineOffset - dateInk.tightBoundingRect.y
             text: Qt.formatDate(root.now, qsTr("yyyy年M月d日")) + " " + root.weekdays[root.now.getDay()]
             color: Palette.text
-            font.pixelSize: 18; font.weight: Font.Normal
-            verticalAlignment: Text.AlignVCenter
+            font.family: typography.family; font.pixelSize: typography.dateSize; font.weight: typography.normal
+            readonly property rect inkBounds: Qt.rect(x + dateInk.tightBoundingRect.x, y + baselineOffset + dateInk.tightBoundingRect.y, dateInk.tightBoundingRect.width, dateInk.tightBoundingRect.height)
         }
     }
     Item {
         id: panel
         objectName: "loginPanel"
-        readonly property real normalHeight: 188
-        readonly property real baseTop: Math.max(clock.y + clock.height + 16, root.height * 0.55 - normalHeight / 2)
-        readonly property real baseHeight: normalHeight + (errorText.visible ? errorText.height + 16 : 0)
-        x: root.leftInset; width: root.panelWidth
+        readonly property real normalHeight: 150
+        readonly property real baseTop: Math.max(220, Math.min(Math.round(root.height * 0.451), root.height - 24 - baseHeight))
+        readonly property real baseHeight: normalHeight + (errorText.visible ? errorText.height + 8 : 0)
+        x: root.opticalEdge; width: root.columnWidth
         y: baseTop - (sessionList.opened ? sessionList.height + 16 : 0)
-        height: content.height + 32
+        height: content.height
         Column {
             id: content
-            x: 16; y: 16; width: parent.width - 32
-            spacing: 16
+            width: parent.width
+            spacing: 0
             Item {
                 id: userRow
                 objectName: "userRow"
@@ -269,13 +336,13 @@ Item {
                     Accessible.name: root.canChooseUser ? qsTr("选择用户：%1").arg(root.selectedUser) : root.selectedUser
                     onClicked: root.openUsers(userButton)
                     contentItem: Row {
-                        spacing: 16
+                        spacing: 14
                         Avatar { }
                         Text {
                             objectName: "usernameDisplay"
-                            width: userRow.width - 64; height: 48
+                            width: userRow.width - 62; height: 48
                             text: root.selectedUser; textFormat: Text.PlainText
-                            font.pixelSize: 18; color: Palette.selectedText
+                            font.family: typography.family; font.pixelSize: typography.usernameSize; font.weight: typography.medium; color: Palette.selectedText
                             style: Text.Outline
                             styleColor: Qt.rgba(root.bodyOutlineColor.r, root.bodyOutlineColor.g, root.bodyOutlineColor.b, root.bodyOutlineOpacity)
                             verticalAlignment: Text.AlignVCenter; elide: Text.ElideRight
@@ -285,7 +352,7 @@ Item {
                     KeyNavigation.backtab: rebootButton
                 }
                 Row {
-                    anchors.fill: parent; spacing: 16
+                    anchors.fill: parent; spacing: 14
                     visible: root.manualUser
                     GhostButton {
                         id: manualMenu
@@ -304,7 +371,7 @@ Item {
                     ThemeInput {
                         id: username
                         objectName: "username"
-                        width: userRow.width - 64; height: 44; y: 2
+                        width: userRow.width - 62; height: 42; y: 3
                         enabled: !root.busy; placeholderText: qsTr("用户名")
                         inputMethodHints: Qt.ImhNoPredictiveText
                         onAccepted: password.forceActiveFocus()
@@ -313,6 +380,7 @@ Item {
                     }
                 }
             }
+            Item { width: 1; height: userList.opened ? 16 : 0 }
             InlineChoices {
                 id: userList
                 objectName: "userList"
@@ -322,9 +390,10 @@ Item {
                 labelFor: index => index === users.count ? qsTr("其他…") : users.textAt(index)
                 onChosen: index => root.chooseUser(index)
             }
+            Item { width: 1; height: 18 }
             Item {
                 objectName: "passwordRow"
-                width: parent.width; height: 44
+                width: parent.width; height: 42
                 ThemeInput {
                     id: password
                     objectName: "password"
@@ -343,7 +412,7 @@ Item {
                     objectName: "loginButton"
                     anchors.right: parent.right; anchors.rightMargin: 4
                     anchors.verticalCenter: parent.verticalCenter
-                    width: 36; height: 36; padding: 0
+                    width: 33; height: 33; padding: 0
                     focusPolicy: Qt.StrongFocus
                     enabled: !root.busy && root.loginUser.length > 0 && root.selectedSession >= 0 && root.selectedSession < sessions.count
                     Accessible.name: root.busy ? qsTr("正在登录…") : qsTr("登录")
@@ -353,9 +422,9 @@ Item {
                     KeyNavigation.tab: sessionButton
                     KeyNavigation.backtab: password
                     background: Rectangle {
-                        radius: 18; color: Palette.accent
+                        radius: parent.width / 2; color: Palette.accent
                         Rectangle {
-                            anchors.fill: parent; anchors.margins: 3; radius: 15
+                            anchors.fill: parent; anchors.margins: 3; radius: width / 2
                             color: "transparent"; border.color: Palette.selectedText
                             border.width: 2; visible: loginButton.activeFocus
                         }
@@ -375,18 +444,22 @@ Item {
                     }
                 }
             }
+            Item { width: 1; height: errorText.visible ? 8 : 0 }
+            TextMetrics { id: errorInk; font: errorText.font; text: errorText.text; renderType: errorText.renderType }
             Text {
                 id: errorText
                 objectName: "loginError"
-                width: parent.width; height: 20
+                x: -errorInk.tightBoundingRect.x
+                width: parent.width; height: 18
                 visible: text.length > 0
                 text: sessions.count === 0 ? qsTr("没有可用会话，请检查系统配置。") : root.errorMessage
                 textFormat: Text.PlainText
-                color: Palette.negative; font.pixelSize: 14
+                color: Palette.negative; font.family: typography.family; font.pixelSize: typography.smallSize; font.weight: typography.medium
                 style: Text.Outline
-                styleColor: Qt.rgba(root.inputColor.r, root.inputColor.g, root.inputColor.b, root.errorOutlineOpacity)
+                styleColor: Qt.rgba(root.surfaceColor.r, root.surfaceColor.g, root.surfaceColor.b, root.errorOutlineOpacity)
                 verticalAlignment: Text.AlignVCenter
             }
+            Item { width: 1; height: 10 }
             InlineChoices {
                 id: sessionList
                 objectName: "sessionList"
@@ -397,15 +470,19 @@ Item {
                 labelFor: index => sessions.textAt(index)
                 onChosen: index => root.selectedSession = index
             }
-            Row {
+            Item { width: 1; height: sessionList.opened ? 16 : 0 }
+            Item {
                 id: footer
                 objectName: "footer"
-                width: parent.width; height: 32; spacing: 8
+                x: -sessionButton.firstInkInset
+                width: parent.width + 8 - x; height: 32
                 GhostButton {
                     id: sessionButton
                     objectName: "sessionSelection"
-                    width: footer.width - keyboardText.width - shutdownButton.width - rebootButton.width - 24
-                    text: qsTr("会话:%1").arg(root.selectedSession >= 0 && root.selectedSession < sessions.count ? sessions.textAt(root.selectedSession) : qsTr("无"))
+                    width: Math.min(implicitWidth, Math.max(24, footer.width - keyboardText.width - shutdownButton.width - rebootButton.width - 12))
+                    label: qsTr("会话")
+                    text: root.selectedSession >= 0 && root.selectedSession < sessions.count ? sessions.textAt(root.selectedSession) : qsTr("无")
+                    elideValue: true
                     enabled: !root.busy && sessions.count > 0
                     onClicked: {
                         userList.close();
@@ -418,10 +495,11 @@ Item {
                 GhostButton {
                     id: keyboardText
                     objectName: "keyboardLayout"
-                    width: Math.min(72, contentItem.implicitWidth); height: 32
-                    leftPadding: 0; rightPadding: 0; topPadding: 0; bottomPadding: 0
+                    x: sessionButton.width
+                    width: implicitWidth; height: 32
                     enabled: !root.busy
-                    text: qsTr("键盘:%1").arg(keyboard.layouts.length > keyboard.currentLayout && keyboard.currentLayout >= 0 ? keyboard.layouts[keyboard.currentLayout].shortName : qsTr("未知"))
+                    label: qsTr("键盘")
+                    text: keyboard.layouts.length > keyboard.currentLayout && keyboard.currentLayout >= 0 ? keyboard.layouts[keyboard.currentLayout].shortName : qsTr("未知")
                     Accessible.role: Accessible.StaticText
                     KeyNavigation.tab: shutdownButton
                     KeyNavigation.backtab: sessionButton
@@ -429,6 +507,7 @@ Item {
                 GhostButton {
                     id: shutdownButton
                     objectName: "shutdownButton"
+                    anchors.right: rebootButton.left
                     text: qsTr("关机")
                     enabled: !root.busy && sddm.canPowerOff
                     onClicked: sddm.powerOff()
@@ -438,6 +517,7 @@ Item {
                 GhostButton {
                     id: rebootButton
                     objectName: "rebootButton"
+                    anchors.right: parent.right
                     text: qsTr("重启")
                     enabled: !root.busy && sddm.canReboot
                     onClicked: sddm.reboot()

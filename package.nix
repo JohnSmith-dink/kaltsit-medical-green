@@ -53,6 +53,7 @@ stdenvNoCC.mkDerivation {
   installCheckPhase = ''
     runHook preInstallCheck
     ${python}/bin/python3 tests/check-lock-resources.py ${kdePackages.plasma-desktop} "$out"
+    ${python}/bin/python3 tests/check-logout-resources.py ${kdePackages.plasma-workspace} "$out"
     runHook postInstallCheck
   '';
 

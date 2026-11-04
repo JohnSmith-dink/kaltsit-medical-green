@@ -77,7 +77,7 @@ Restore an active application before changing options or versions. Repeating the
 
 The development branch uses the SDDM v6 left column for desktop lock and wake. The idle screen shows the time and date. Waking it reveals the avatar and password field in the same column. This layout applies when the Medical Green lock screen wallpaper is selected.
 
-The development branch draws no full-screen overlay for logout, restart and shutdown confirmation, preserving the wallpaper brightness behind it. Text has a thin light outline; icons retain individual light discs and focus borders. Native button, cancellation and countdown behavior stays unchanged. SDDM and Plymouth are unaffected.
+Logout, restart and shutdown confirmation use the desktop lock screen’s upper-left clock. The avatar, countdown and actions share a transparent left column. Long notices and extra actions can scroll within that column while the wallpaper stays at its original brightness.
 
 Repeat `--skip` as needed. Symlink-managed optional configuration skips the whole component and reports why; managed core configuration stops apply before writes.
 Missing lockscreen resources remain an explicit error with zero writes; use `--skip lockscreen` deliberately when needed. Check individual component results: a successful exit does not mean every component was applied.

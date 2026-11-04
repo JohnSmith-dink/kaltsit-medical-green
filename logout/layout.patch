@@ -1,6 +1,6 @@
 --- a/Logout.qml
 +++ b/Logout.qml
-@@ -96,48 +96,17 @@
+@@ -96,48 +96,20 @@
          }
      }
 
@@ -13,6 +13,9 @@
 -        color: "black"
 -        opacity: 0.85
 -    }
++    LockBackdrop {
++        anchors.fill: parent
++    }
      MouseArea {
          anchors.fill: parent
          onClicked: root.cancelRequested()
@@ -55,7 +58,7 @@
              //opacity, as visible would re-layout
              opacity: countDownTimer.running ? 1 : 0
              Behavior on opacity {
-@@ -162,13 +131,8 @@
+@@ -162,13 +134,8 @@
              textFormat: Text.PlainText
          }
 
@@ -71,7 +74,7 @@
              font.italic: true
              text: i18ndp("plasma_lookandfeel_org.kde.lookandfeel",
                           "One other user is currently logged in. If the computer is shut down or restarted, that user may lose work.",
-@@ -178,39 +142,24 @@
+@@ -178,39 +145,24 @@
              visible: otherSessionsModel.count > 0 && (sdtype !== ShutdownType.ShutdownTypeNone || root.showAllOptions)
          }
 
@@ -117,7 +120,7 @@
              font.italic: true
              text: i18ndc("plasma_lookandfeel_org.kde.lookandfeel", "%1 is a boot loader entry", "When restarted, the computer will switch to %1.", rebootToBootLoaderEntry)
              textFormat: Text.PlainText
-@@ -220,18 +169,15 @@
+@@ -220,18 +172,15 @@
          GridLayout {
              id: logoutButtonsRow
 
@@ -145,7 +148,7 @@
                  id: suspendButton
                  icon.name: "system-suspend"
                  text: root.showAllOptions ? i18ndc("plasma_lookandfeel_org.kde.lookandfeel", "Suspend to RAM", "Slee&p")
-@@ -242,6 +188,7 @@
+@@ -242,6 +191,7 @@
                  visible: spdMethods.SuspendState && root.showAllOptions
              }
              LogoutButton {
@@ -153,7 +156,7 @@
                  id: hibernateButton
                  icon.name: "system-suspend-hibernate"
                  text: root.showAllOptions ? i18nd("plasma_lookandfeel_org.kde.lookandfeel", "&Hibernate")
-@@ -252,6 +199,7 @@
+@@ -252,6 +202,7 @@
                  visible: spdMethods.HibernateState && root.showAllOptions
              }
              LogoutButton {
@@ -161,7 +164,7 @@
                  id: rebootButton
                  icon.name: softwareUpdatePending ? "system-reboot-update" : "system-reboot"
                  text: {
-@@ -275,6 +223,7 @@
+@@ -275,6 +226,7 @@
                  visible: maysd && (sdtype === ShutdownType.ShutdownTypeReboot || root.showAllOptions)
              }
              LogoutButton {
@@ -169,7 +172,7 @@
                  id: rebootWithoutUpdatesButton
                  icon.name: "system-reboot"
                  text: root.showAllOptions ? i18nd("plasma_lookandfeel_org.kde.lookandfeel", "&Restart")
-@@ -287,6 +236,7 @@
+@@ -287,6 +239,7 @@
                  visible: maysd && softwareUpdatePending && (sdtype === ShutdownType.ShutdownTypeReboot || root.showAllOptions)
              }
              LogoutButton {
@@ -177,7 +180,7 @@
                  id: shutdownButton
                  icon.name: softwareUpdatePending ? "system-shutdown-update" : "system-shutdown"
                  text: {
-@@ -310,6 +260,7 @@
+@@ -310,6 +263,7 @@
                  visible: maysd && (sdtype === ShutdownType.ShutdownTypeHalt || root.showAllOptions)
              }
              LogoutButton {
@@ -185,7 +188,7 @@
                  id: shutdownWithoutUpdatesButton
                  icon.name: "system-shutdown"
                  text: root.showAllOptions ? i18nd("plasma_lookandfeel_org.kde.lookandfeel", "&Shut Down")
-@@ -323,6 +274,7 @@
+@@ -323,6 +277,7 @@
                  visible: maysd && softwareUpdatePending && (sdtype === ShutdownType.ShutdownTypeHalt || root.showAllOptions)
              }
              LogoutButton {
@@ -193,7 +196,7 @@
                  id: logoutButton
                  icon.name: "system-log-out"
                  text: root.showAllOptions ? i18nd("plasma_lookandfeel_org.kde.lookandfeel", "&Log Out")
-@@ -334,6 +286,7 @@
+@@ -334,6 +289,7 @@
                  visible: canLogout && (sdtype === ShutdownType.ShutdownTypeNone || root.showAllOptions)
              }
              LogoutButton {

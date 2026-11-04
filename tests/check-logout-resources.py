@@ -7,8 +7,11 @@ import sys
 
 def check_handlers(before, after):
     # Compare the complete signals, update choices, Escape action and timer.
-    assert before.split('    Rectangle {\n        id: backgroundRect', 1)[0] == after.split('    MouseArea {', 1)[0]
     mouse = '    MouseArea {'
+    old_background = '    Rectangle {\n        id: backgroundRect'
+    backdrop = '    LockBackdrop {\n        anchors.fill: parent\n    }\n'
+    assert old_background in before and after.count(backdrop) == 1
+    assert after.split(mouse, 1)[0] == before.split(old_background, 1)[0] + backdrop
     assert before.split(mouse, 1)[1].split('    UserDelegate {', 1)[0] == after.split(mouse, 1)[1].split('    LeftConfirmation {', 1)[0]
     # All original button instances, their visibility, focus, navigation,
     # and onClicked handlers must be identical apart from their font family.
@@ -28,7 +31,10 @@ def check(workspace, output):
     assert (upstream/'timer.js').read_bytes() == (theme/'timer.js').read_bytes()
     for name in ('MedicalClock.qml', 'MedicalPalette.js'):
         assert (theme/name).read_bytes() == (lock/name).read_bytes(), name
-    print('KDE confirmation handlers and timer preserved; clock and palette match desktop lock.')
+    wallpaper = output / 'share/wallpapers/KaltsitMedicalGreen/contents/images/3840x2160.jpg'
+    assert (theme/'LockBackdrop.qml').is_file()
+    assert (theme/'LockWallpaper.jpg').read_bytes() == wallpaper.read_bytes()
+    print('KDE confirmation handlers and timer preserved; clock, palette and wallpaper match desktop lock.')
 
 
 if __name__ == '__main__':

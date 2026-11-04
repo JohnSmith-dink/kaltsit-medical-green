@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Install the matching KDE confirmation in the lock screen's transparent left column."""
+"""Install the KDE confirmation with the theme's lock wallpaper and left column."""
 import json
 from pathlib import Path
 import shutil
@@ -11,6 +11,7 @@ import tempfile
 ASSETS = Path(__file__).resolve().parents[1] / 'logout'
 THEME = 'share/plasma/look-and-feel/org.xinyan.kaltsit.medicalgreen/contents/logout'
 LOCK = 'share/plasma/shells/org.kde.plasma.desktop/contents/lockscreen'
+WALLPAPER = 'share/wallpapers/KaltsitMedicalGreen/contents/images/3840x2160.jpg'
 
 
 def install(workspace, output, version):
@@ -33,6 +34,7 @@ def install(workspace, output, version):
         # same clock and palette rather than maintaining another copy in source.
         for name in ('MedicalClock.qml', 'MedicalPalette.js'):
             shutil.copyfile(output / LOCK / name, staged / name)
+        shutil.copyfile(output / WALLPAPER, staged / 'LockWallpaper.jpg')
         staged.rename(target)
 
     record = {
@@ -40,11 +42,11 @@ def install(workspace, output, version):
         'plasma_workspace_version': version,
         'source': str(upstream),
         'license': 'Upstream GPL-2.0-or-later headers retained; original layout components MIT',
-        'fullscreen_background': 'removed',
+        'fullscreen_background': '锁屏壁纸（主题自带图，原亮度）',
         'layout': 'SDDM v6 left column with the desktop lock clock',
         'buttons_signals_countdown_keyboard': 'unchanged upstream handlers',
     }
-    (output / 'share/doc/kaltsit-theme/logout-rendering.json').write_text(json.dumps(record, indent=2) + '\n')
+    (output / 'share/doc/kaltsit-theme/logout-rendering.json').write_text(json.dumps(record, ensure_ascii=False, indent=2) + '\n')
 
 
 if __name__ == '__main__':

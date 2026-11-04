@@ -7,7 +7,7 @@
 
 v1.3 新增可选的[本地动态壁纸](docs/MOTION.md)：静音循环、右键暂停/继续、视频不可用时静态回退。
 `kaltsit-motion` 独立安装和启用；公开源码与发行包不含视频，使用时选择自己的本地文件。
-保留原版锁屏与 D1 桌面，不安装启动过渡，不改变面板布局、字体或缩放。
+v1.3 正式版沿用原版锁屏与 D1 桌面。
 发布依据与已验收范围见 [v1.3 发布记录](docs/V1.3-RELEASE.md)；公开版本见 [GitHub Releases](https://github.com/JohnSmith-dink/kaltsit-medical-green/releases)。
 
 开发分支的 Home Manager 可独立设置 `programs.kaltsit-theme.motion.enable = true`，可选 `videoFile` / `posterFile`；只安装资源，默认关闭，不切换壁纸。flake 与同一套 `pkgs` 的示例见[动态壁纸文档](docs/MOTION.md)。
@@ -71,9 +71,11 @@ kaltsit-theme apply --wallpaper /absolute/path/to/wallpaper.png
 |---|---|
 | `core` | 配色、Plasma 样式、控件、窗口装饰与文件夹图标；必需，不能跳过。 |
 | `cursor` | 24 / 32 / 48 / 64 / 96px 动态指针，保留原尺寸选择。 |
-| `wallpaper` / `lockscreen` | 既有 4K 第 707 帧，保持比例裁切；锁屏无额外提亮、压暗或遮罩，保留原生模糊与认证。 |
+| `wallpaper` / `lockscreen` | 既有 4K 第 707 帧，保持比例裁切；医疗白绿锁屏保持壁纸原亮度，使用 Plasma 认证。 |
 | `gtk` | Breeze GTK 配色。 |
 | `ghostty` / `konsole` | 完整浅色 ANSI 配色。 |
+
+开发分支的桌面锁屏和唤醒解锁页采用与 SDDM v6 相同的左侧布局。待机时显示时间和日期，唤醒后在同一列显示头像和密码框。仅在选择医疗白绿锁屏壁纸时生效。
 
 开发分支的退出／重启／关机确认页不绘制整屏遮罩，保持后方壁纸原有亮度。文字采用细浅色描边，图标各自保留局部浅色圆底与焦点边框；原生按钮、取消与倒计时行为不变，不涉及 SDDM 或 Plymouth。
 

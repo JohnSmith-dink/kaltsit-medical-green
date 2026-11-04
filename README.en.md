@@ -7,7 +7,7 @@ Switch explicitly after installation and restore your previous settings. Keep yo
 
 v1.3 adds an optional [local video wallpaper](docs/MOTION.en.md): silent looping, right-click pause/resume and a still fallback when video is unavailable.
 Install and select `kaltsit-motion` separately. Public source and release archives do not include a video; choose your own local file.
-The original lockscreen and D1 desktop remain unchanged. No startup splash is installed, and panel layout, fonts and scale are preserved.
+The v1.3 release uses the original lock screen and D1 desktop.
 See the [v1.3 release evidence](docs/V1.3-RELEASE.md) and [GitHub Releases](https://github.com/JohnSmith-dink/kaltsit-medical-green/releases).
 
 The development branch supports independent `programs.kaltsit-theme.motion.enable = true` with optional `videoFile` / `posterFile`. It installs resources only, defaults off, and never selects a wallpaper. See the [motion guide](docs/MOTION.en.md) for flake and matching `pkgs` examples.
@@ -71,9 +71,11 @@ Restore an active application before changing options or versions. Repeating the
 |---|---|
 | `core` | Colors, Plasma style, widgets, window decoration and folder icons; required and cannot be skipped. |
 | `cursor` | Animated cursors at 24 / 32 / 48 / 64 / 96px, preserving the chosen size. |
-| `wallpaper` / `lockscreen` | Existing 4K frame 707, aspect-preserving crop; no extra lockscreen brightening, dimming or overlays, with native blur and authentication. |
+| `wallpaper` / `lockscreen` | Existing 4K frame 707, aspect-preserving crop; the Medical Green lock screen preserves wallpaper brightness and uses Plasma authentication. |
 | `gtk` | Breeze GTK colors. |
 | `ghostty` / `konsole` | Complete light ANSI palettes. |
+
+The development branch uses the SDDM v6 left column for desktop lock and wake. The idle screen shows the time and date. Waking it reveals the avatar and password field in the same column. This layout applies when the Medical Green lock screen wallpaper is selected.
 
 The development branch draws no full-screen overlay for logout, restart and shutdown confirmation, preserving the wallpaper brightness behind it. Text has a thin light outline; icons retain individual light discs and focus borders. Native button, cancellation and countdown behavior stays unchanged. SDDM and Plymouth are unaffected.
 

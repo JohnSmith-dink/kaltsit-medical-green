@@ -1,0 +1,291 @@
+--- a/LockScreen.qml
++++ b/LockScreen.qml
+@@ -28,7 +28,12 @@
+     implicitWidth: 800
+     implicitHeight: 600
+
+-    LockScreenUi {
++    Loader {
+         anchors.fill: parent
++        focus: true
++        sourceComponent: wallpaper && wallpaper.pluginName === "org.xinyan.kaltsit.medicalgreen.lock"
++                         ? medicalLayout : breezeLayout
++        Component { id: medicalLayout; MedicalLockScreenUi {} }
++        Component { id: breezeLayout; LockScreenUi {} }
+     }
+ }
+--- a/MedicalLockScreenUi.qml
++++ b/MedicalLockScreenUi.qml
+@@ -18,9 +18,14 @@
+
+ import org.kde.plasma.private.sessions
+ import org.kde.breeze.components
++import "MedicalPalette.js" as Palette
+
+ Item {
+     id: lockScreenUi
++    readonly property real leftEdge: width >= 960 ? 72 : Math.max(24, Math.floor(width * 0.075))
++    readonly property real columnWidth: Math.max(1, Math.min(288, width - 2 * leftEdge))
++    readonly property string displayFamily: Qt.fontFamilies().includes("OPPO Sans 4.0")
++                                            ? "OPPO Sans 4.0" : Kirigami.Theme.defaultFont.family
+
+     // If we're using software rendering, draw outlines instead of shadows
+     // See https://bugs.kde.org/show_bug.cgi?id=398317
+@@ -56,7 +61,7 @@
+             if (authenticator.hadPrompt) {
+                 Qt.quit();
+             } else {
+-                mainStack.replace(null, Qt.resolvedUrl("NoPasswordUnlock.qml"),
++                mainStack.replace(null, Qt.resolvedUrl("MedicalNoPasswordUnlock.qml"),
+                     {
+                         userListModel: users
+                     },
+@@ -196,42 +201,14 @@
+
+         Component.onCompleted: launchAnimation.start();
+
+-        KaltsitWallpaperFader {
+-            anchors.fill: parent
+-            state: lockScreenRoot.uiVisible ? "on" : "off"
+-            source: wallpaper
+-            mainStack: mainStack
+-            footer: footer
+-            clock: clock
+-            alwaysShowClock: config.alwaysShowClock && !config.hideClockWhenIdle
+-        }
+-
+-        DropShadow {
+-            id: clockShadow
+-            anchors.fill: clock
+-            source: clock
+-            visible: !lockScreenUi.softwareRendering && config.alwaysShowClock
+-            radius: 7
+-            verticalOffset: 0.8
+-            samples: 15
+-            spread: 0.2
+-            color : Qt.rgba(0, 0, 0, 0.7)
+-            opacity: lockScreenRoot.uiVisible ? 0 : 1
+-            Behavior on opacity {
+-                OpacityAnimator {
+-                    duration: Kirigami.Units.veryLongDuration * 2
+-                    easing.type: Easing.InOutQuad
+-                }
+-            }
+-        }
+-
+-        Clock {
+-            id: clock
+-            property Item shadow: clockShadow
+-            visible: y > 0 && config.alwaysShowClock
+-            anchors.horizontalCenter: parent.horizontalCenter
+-            y: (mainBlock.userList.y + mainStack.y)/2 - height/2
+-            Layout.alignment: Qt.AlignBaseline
++        // The greeter already puts the wallpaper behind this item. Draw the
++        // time directly over it in both states and keep KDE's visibility options.
++        MedicalClock {
++            x: lockScreenUi.leftEdge
++            width: lockScreenUi.columnWidth
++            family: lockScreenUi.displayFamily
++            visible: config.alwaysShowClock && (lockScreenRoot.uiVisible || !config.hideClockWhenIdle)
++                     && (!lockScreenRoot.uiVisible || mainStack.y + (mainStack.currentItem?.userList?.y ?? 0) > height)
+         }
+
+         ListModel {
+@@ -250,17 +227,16 @@
+
+         StackView {
+             id: mainStack
+-            anchors {
+-                left: parent.left
+-                right: parent.right
+-            }
+-            height: lockScreenRoot.height + Kirigami.Units.gridUnit * 3
++            x: lockScreenUi.leftEdge
++            width: lockScreenUi.columnWidth
++            height: lockScreenRoot.height
++            opacity: lockScreenRoot.uiVisible ? 1 : 0
+             focus: true //StackView is an implicit focus scope, so we need to give this focus so the item inside will have it
+
+             // this isn't implicit, otherwise items still get processed for the scenegraph
+             visible: opacity > 0
+
+-            initialItem: MainBlock {
++            initialItem: MedicalMainBlock {
+                 id: mainBlock
+                 lockScreenUiVisible: lockScreenRoot.uiVisible
+
+@@ -295,19 +271,19 @@
+                 }
+
+                 actionItems: [
+-                    ActionButton {
++                    MedicalAction {
+                         text: i18ndc("plasma_shell_org.kde.plasma.desktop", "@action:button", "Slee&p")
+                         icon.name: "system-suspend"
+                         onClicked: root.suspendToRam()
+                         visible: root.suspendToRamSupported
+                     },
+-                    ActionButton {
++                    MedicalAction {
+                         text: i18ndc("plasma_shell_org.kde.plasma.desktop", "@action:button", "&Hibernate")
+                         icon.name: "system-suspend-hibernate"
+                         onClicked: root.suspendToDisk()
+                         visible: root.suspendToDiskSupported
+                     },
+-                    ActionButton {
++                    MedicalAction {
+                         text: i18ndc("plasma_shell_org.kde.plasma.desktop", "@action:button", "Switch &User")
+                         icon.name: "system-switch-user"
+                         onClicked: {
+@@ -320,7 +296,8 @@
+                 Loader {
+                     Layout.topMargin: Kirigami.Units.smallSpacing // some distance to the password field
+                     Layout.fillWidth: true
+-                    Layout.preferredHeight: item ? item.implicitHeight : 0
++                    visible: !!item && item.visible
++                    Layout.preferredHeight: visible ? item.implicitHeight : 0
+                     active: config.showMediaControls
+                     source: "MediaControls.qml"
+                 }
+@@ -357,15 +334,13 @@
+         // Note for contributors: Keep this in sync with SDDM Main.qml footer.
+         RowLayout {
+             id: footer
+-            anchors {
+-                bottom: parent.bottom
+-                left: parent.left
+-                right: parent.right
+-                margins: Kirigami.Units.smallSpacing
+-            }
++            x: lockScreenUi.leftEdge
++            width: lockScreenUi.columnWidth
++            y: Math.min(parent.height - height - 8, mainStack.y + (mainStack.currentItem?.contentBottom ?? 0) + 8)
++            visible: lockScreenRoot.uiVisible
+             spacing: Kirigami.Units.smallSpacing
+
+-            PlasmaComponents3.ToolButton {
++            MedicalToolButton {
+                 id: virtualKeyboardButton
+
+                 focusPolicy: Qt.TabFocus
+@@ -389,7 +364,7 @@
+                 }
+             }
+
+-            PlasmaComponents3.ToolButton {
++            MedicalToolButton {
+                 id: keyboardButton
+
+                 focusPolicy: Qt.TabFocus
+@@ -421,7 +396,13 @@
+                 Layout.fillWidth: true
+             }
+
+-            Battery {}
++            Item {
++                visible: battery.visible
++                implicitWidth: battery.implicitWidth + 10
++                implicitHeight: battery.implicitHeight + 4
++                Rectangle { anchors.fill: parent; radius: 5; color: Qt.alpha(Palette.view, 0.94) }
++                Battery { id: battery; anchors.centerIn: parent }
++            }
+         }
+     }
+ }
+--- a/MedicalMainBlock.qml
++++ b/MedicalMainBlock.qml
+@@ -16,7 +16,9 @@
+
+ import org.kde.breeze.components
+
+-SessionManagementScreen {
++import "MedicalPalette.js" as Palette
++
++MedicalSession {
+     id: sessionManager
+
+     readonly property alias mainPasswordBox: passwordBox
+@@ -53,16 +55,29 @@
+         passwordResult(password);
+     }
+
+-    RowLayout {
++    Item {
+         Layout.fillWidth: true
++        Layout.preferredHeight: 42
++        Rectangle {
++            anchors.fill: parent
++            color: Palette.view
++            radius: 8
++            border.width: passwordBox.activeFocus ? 2 : 1
++            border.color: Palette.accent
++        }
+
+         PlasmaExtras.PasswordField {
+             id: passwordBox
+-            font.pointSize: Kirigami.Theme.defaultFont.pointSize + 1
+-            Layout.fillWidth: true
++            anchors { left: parent.left; right: loginButton.left; top: parent.top; bottom: parent.bottom }
++            leftPadding: 12
++            font.family: lockScreenUi.displayFamily
++            font.pixelSize: 15
++            color: Palette.text
++            placeholderTextColor: Palette.secondary
++            background: Item {}
+             text: PasswordSync.password
+
+-            placeholderText: i18ndc("plasma_shell_org.kde.plasma.desktop", "@info:placeholder in text field", "Password")
++            placeholderText: qsTr("输入密码")
+             focus: true
+             enabled: !authenticator.graceLocked
+
+@@ -112,8 +127,21 @@
+         PlasmaComponents3.Button {
+             id: loginButton
+             Accessible.name: i18ndc("plasma_shell_org.kde.plasma.desktop", "@action:button accessible only", "Unlock")
+-            Layout.preferredHeight: passwordBox.implicitHeight
+-            Layout.preferredWidth: loginButton.Layout.preferredHeight
++            anchors { right: parent.right; rightMargin: 4; verticalCenter: parent.verticalCenter }
++            width: 33; height: 33
++            padding: 5
++            icon.color: Palette.selectedText
++            background: Rectangle {
++                radius: width / 2
++                color: loginButton.hovered || loginButton.down ? Palette.hover : Palette.accent
++                Rectangle {
++                    anchors.fill: parent; anchors.margins: 3
++                    radius: width / 2
++                    color: "transparent"
++                    border.color: Palette.selectedText
++                    border.width: loginButton.activeFocus ? 2 : 0
++                }
++            }
+
+             icon.name: LayoutMirroring.enabled ? "go-previous" : "go-next"
+
+@@ -131,7 +159,13 @@
+         visible: authenticator.authenticatorTypes & kind
+         text: label
+         textFormat: Text.PlainText
+-        horizontalAlignment: Text.AlignHCenter
++        horizontalAlignment: Text.AlignLeft
++        font.family: lockScreenUi.displayFamily
++        font.pixelSize: 14
++        color: Palette.selectedText
++        style: Text.Outline
++        styleColor: Qt.alpha(Palette.text, 0.85)
++        wrapMode: Text.Wrap
+         Layout.fillWidth: true
+
+         RejectPasswordAnimation {
+--- a/MedicalNoPasswordUnlock.qml
++++ b/MedicalNoPasswordUnlock.qml
+@@ -9,7 +9,7 @@
+
+ import org.kde.breeze.components
+
+-SessionManagementScreen {
++MedicalSession {
+     focus: true
+     PlasmaComponents3.Button {
+         id: loginButton

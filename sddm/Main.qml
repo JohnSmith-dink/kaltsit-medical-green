@@ -14,7 +14,7 @@ Item {
     readonly property real surfaceOpacity: 0.90
     readonly property real hoverOpacity: 0.16
     readonly property real labelOpacity: 0.80
-    readonly property real focusOpacity: 0.85
+    readonly property real focusOpacity: 1
     readonly property real bodyOutlineOpacity: 0.85
     readonly property real errorOutlineOpacity: 0.90
     readonly property color bodyOutlineColor: Palette.text
@@ -167,7 +167,7 @@ Item {
             Rectangle {
                 anchors.fill: parent; anchors.margins: -1; radius: 7
                 color: "transparent"; visible: button.activeFocus
-                border.color: Qt.rgba(root.bodyOutlineColor.r, root.bodyOutlineColor.g, root.bodyOutlineColor.b, root.bodyOutlineOpacity)
+                border.color: Qt.rgba(root.bodyOutlineColor.r, root.bodyOutlineColor.g, root.bodyOutlineColor.b, root.focusOpacity)
                 border.width: 3
             }
             Rectangle {

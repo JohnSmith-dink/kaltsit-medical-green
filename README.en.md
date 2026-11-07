@@ -70,11 +70,13 @@ Restore an active application before changing options or versions. Repeating the
 |---|---|
 | `core` | Colors, Plasma style, widgets, window decoration and folder icons; required and cannot be skipped. |
 | `cursor` | Animated cursors at 24 / 32 / 48 / 64 / 96px, preserving the chosen size. |
-| `wallpaper` / `lockscreen` | Existing 4K frame 707, aspect-preserving crop; no extra lockscreen brightening, dimming or overlays, with native blur and authentication. |
+| `wallpaper` / `lockscreen` | Existing 4K frame 707, aspect-preserving crop; the Medical Green lock screen preserves wallpaper brightness and uses Plasma authentication. |
 | `gtk` | Breeze GTK colors. |
 | `ghostty` / `konsole` | Complete light ANSI palettes. |
 
-The theme draws no full-screen overlay for logout, restart and shutdown confirmation, preserving the wallpaper brightness behind it. Text has a thin light outline; icons retain individual light discs and focus borders. Native button, cancellation and countdown behavior stays unchanged. SDDM and Plymouth are unaffected.
+The development branch uses the SDDM v6 left column for desktop lock and wake. The idle screen shows the time and date. Waking it reveals the avatar and password field in the same column. This layout applies when the Medical Green lock screen wallpaper is selected.
+
+The logout, restart and shutdown prompts cover windows and desktop panels with the theme’s bundled lock screen wallpaper at its original brightness. They share the lock screen’s upper-left clock. The avatar, countdown and actions sit in a transparent left column that can scroll for long notices or extra actions. If you choose a custom lock screen wallpaper, the prompts still show the bundled wallpaper.
 
 Repeat `--skip` as needed. Symlink-managed optional configuration skips the whole component and reports why; managed core configuration stops apply before writes.
 Missing lockscreen resources remain an explicit error with zero writes; use `--skip lockscreen` deliberately when needed. Check individual component results: a successful exit does not mean every component was applied.

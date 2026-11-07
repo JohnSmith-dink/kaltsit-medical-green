@@ -18,6 +18,7 @@ stdenvNoCC.mkDerivation {
   nativeBuildInputs = [ makeWrapper ];
   dontBuild = true;
   doCheck = true;
+  doInstallCheck = true;
 
   checkPhase = ''
     runHook preCheck
@@ -36,6 +37,7 @@ stdenvNoCC.mkDerivation {
       ${kdePackages.plasma-desktop} ${kdePackages.plasma-workspace} "$out" \
       ${lib.escapeShellArg kdePackages.plasma-desktop.version} \
       ${lib.escapeShellArg kdePackages.plasma-workspace.version}
+    ${python}/bin/python3 lockscreen/install.py "$out"
     ${python}/bin/python3 scripts/readable-logout.py \
       ${kdePackages.plasma-workspace} "$out" \
       ${lib.escapeShellArg kdePackages.plasma-workspace.version}
@@ -46,6 +48,13 @@ stdenvNoCC.mkDerivation {
       --suffix PATH : ${lib.makeBinPath [ dbus systemd kdePackages.kconfig kdePackages.plasma-workspace kdePackages.qttools ]} \
       --prefix XDG_DATA_DIRS : "$out/share:${kdePackages.breeze}/share:${kdePackages.breeze-icons}/share:${kdePackages.breeze-gtk}/share"
     runHook postInstall
+  '';
+
+  installCheckPhase = ''
+    runHook preInstallCheck
+    ${python}/bin/python3 tests/check-lock-resources.py ${kdePackages.plasma-desktop} "$out"
+    ${python}/bin/python3 tests/check-logout-resources.py ${kdePackages.plasma-workspace} "$out"
+    runHook postInstallCheck
   '';
 
   meta = {

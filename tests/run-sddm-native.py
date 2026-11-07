@@ -120,7 +120,7 @@ def main():
                         sample=sample_region(background,box,scale,layers,roles,(width,height))
                         assert_sample(sample); samples[name]=sample
                         if name in ('sessionSelection','keyboardLayout','shutdownButton','rebootButton','usernameDisplay'):
-                            focus=sample_region(background,box,scale,[(colors['text'],alpha('bodyOutlineOpacity'))],{'border':(colors['selectedText'],3,alpha('focusOpacity'))},(width,height))
+                            focus=sample_region(background,box,scale,[(colors['text'],alpha('focusOpacity'))],{'border':(colors['selectedText'],9,alpha('focusOpacity'))},(width,height))
                             assert_sample(focus); samples[name+'_focus']=focus
                             if name in ('sessionSelection','keyboardLayout'):
                                 label=sample_region(background,box,scale,[(colors['text'],alpha('bodyOutlineOpacity'))],{'label':(colors['view'],4.5,alpha('labelOpacity'))},(width,height))

@@ -1,15 +1,15 @@
-# Local video wallpaper · v1.4.0
+# Local video wallpaper · v1.5.0
 
 `kaltsit-motion` is an optional Plasma wallpaper package. Installing it does not activate it or change the global theme, lockscreen, panel or startup splash.
 
 ## Install and select
 
 Build from the release source with `nix build --no-write-lock-file path:.#kaltsit-motion`.
-Use a v1.4.0 flake input following the system's pinned nixpkgs:
+Place the 1.5.0 candidate source in the relative directory shown below and follow the system’s pinned nixpkgs.
 
 ```nix
 # Add to the system flake inputs; a local path to downloaded source also works.
-inputs.kaltsit.url = "github:JohnSmith-dink/kaltsit-medical-green/v1.4.0";
+inputs.kaltsit.url = "path:./kaltsit-medical-green-1.5.0";
 inputs.kaltsit.inputs.nixpkgs.follows = "nixpkgs";
 ```
 
@@ -128,4 +128,4 @@ Fake ffmpeg tests check arguments and path boundaries; this script has not under
 
 CI boundary: the local real-playback probe using `QT_QPA_PLATFORM=offscreen` and software OpenGL timed out in its first phase. The pure software renderer establishes only static fallback. No playback job was added to the existing `weekly.yml`; `ci.yml` is unchanged. Development did not run GitHub Actions; release build CI is checked separately and is not playback validation. Passing private KWin checks does not establish Ubuntu hosted-runner compatibility.
 
-Current release build evidence: [v1.4 release record](V1.4-RELEASE.md).
+Candidate scope and validation evidence are in the [1.5.0 release record](V1.5.0-RELEASE.md).

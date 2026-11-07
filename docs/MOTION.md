@@ -1,6 +1,6 @@
-# 动态壁纸 · v1.4.0
+# 动态壁纸 · v1.5.0
 
-`kaltsit-motion` 是独立的可选扩展包，版本为 `1.4.0`。
+`kaltsit-motion` 是独立的可选扩展包，版本为 `1.5.0`。
 包含独立的 Plasma 壁纸资源：**医疗白绿 · 动态壁纸**。
 本包只提供动态壁纸，不安装启动画面。
 安装资源不会自动启用；原版锁屏、D1 桌面、启动画面设置、CLI、恢复记录格式不变；Home Manager 仅增加可选资源安装项。
@@ -21,11 +21,11 @@
 nix build --no-write-lock-file path:.#kaltsit-motion
 ```
 
-默认包不含视频，未选视频时显示已有静态壁纸。可通过 flake 引用 v1.4.0，沿用系统锁定的 nixpkgs：
+未选视频时显示已有静态壁纸。将 1.5.0 候选源码放在下例的相对目录中，沿用系统锁定的 nixpkgs。
 
 ```nix
 # 加到系统 flake 的 inputs；也可使用下载后源码的本地 path。
-inputs.kaltsit.url = "github:JohnSmith-dink/kaltsit-medical-green/v1.4.0";
+inputs.kaltsit.url = "path:./kaltsit-medical-green-1.5.0";
 inputs.kaltsit.inputs.nixpkgs.follows = "nixpkgs";
 ```
 
@@ -153,4 +153,4 @@ bash scripts/encode-wallpaper.sh --fps 24 --width 1280 --bitrate 4M /path/to/inp
 
 持续集成边界：本地 `QT_QPA_PLATFORM=offscreen` 加软件 OpenGL 的真实播放探测在首阶段超时；纯软件后端只证明静态回退。因此没有在实际存在的 `weekly.yml` 中新增播放任务，`ci.yml` 行为不变。开发阶段未运行 GitHub Actions；正式发布构建另行核对，不把构建 CI 当作播放验证。独立 KWin 的行为通过不等于 Ubuntu 托管运行器已通过。
 
-当前正式版的版本与构建记录见 [v1.4 发布依据](V1.4-RELEASE.md)。
+候选范围与验证依据见 [1.5.0 记录](V1.5.0-RELEASE.md)。

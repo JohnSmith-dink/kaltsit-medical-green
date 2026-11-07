@@ -19,7 +19,7 @@ Outlines still use [QtQuick Text.Outline](https://doc.qt.io/qt-6.11/qml-qtquick-
 
 ## Install and enable
 
-Set `inputs.kaltsit.url = "github:JohnSmith-dink/kaltsit-medical-green/v1.4.0"` in the system flake, with `inputs.kaltsit.inputs.nixpkgs.follows = "nixpkgs"`, and pass inputs to modules via `specialArgs`. A local path to downloaded source also works.
+Place the 1.5.0 candidate source beside the system flake in `./kaltsit-medical-green-1.5.0`. Set `inputs.kaltsit.url = "path:./kaltsit-medical-green-1.5.0"` and `inputs.kaltsit.inputs.nixpkgs.follows = "nixpkgs"`. Pass the inputs through `specialArgs`.
 
 ```nix
 { inputs, ... }: {

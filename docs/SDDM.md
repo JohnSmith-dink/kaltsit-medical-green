@@ -19,7 +19,7 @@
 
 ## 安装与启用
 
-在系统 flake 中设置 `inputs.kaltsit.url = "github:JohnSmith-dink/kaltsit-medical-green/v1.4.0"`，并让 `inputs.kaltsit.inputs.nixpkgs.follows = "nixpkgs"`；将 inputs 通过 `specialArgs` 传给系统模块。下载的源码也可通过本地 `path` 引用。
+将 1.5.0 候选源码放在相对系统 flake 的 `./kaltsit-medical-green-1.5.0` 目录，设置 `inputs.kaltsit.url = "path:./kaltsit-medical-green-1.5.0"` 和 `inputs.kaltsit.inputs.nixpkgs.follows = "nixpkgs"`，再通过 `specialArgs` 传入 inputs。
 
 ```nix
 { inputs, ... }: {

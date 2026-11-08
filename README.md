@@ -1,12 +1,12 @@
 # 凯尔希 · 医疗白绿 1.5.0
 
-**NixOS / KDE Plasma 6 浅色主题 · 本地发布候选** · [English](README.en.md)
+**NixOS / KDE Plasma 6 浅色主题 · 1.5.0 正式版** · [English](README.en.md)
 
 暖白背景、深灰绿正文、青绿强调色，配合凯尔希壁纸、动态指针与浅色终端。
 安装后主动切换，可恢复之前的设置；面板布局、字体、缩放和指针尺寸继续使用你的选择。
 
 锁屏与唤醒页沿用登录页的左栏。会话确认页在控件后方绘制原亮度的主题锁屏壁纸。SDDM 底部按钮使用两道不透明的焦点边框。
-SDDM 是需主动启用的实验组件，动态壁纸可单独安装。视频和可选的 OPPO 字体由使用者自行提供。[候选版本说明](docs/V1.5.0-RELEASE.md) · [SDDM](docs/SDDM.md) · [动态壁纸](docs/MOTION.md)
+SDDM 是需主动启用的实验组件，动态壁纸可单独安装。视频和可选的 OPPO 字体由使用者自行提供。[版本说明](docs/V1.5.0-RELEASE.md) · [SDDM](docs/SDDM.md) · [动态壁纸](docs/MOTION.md)
 
 [![桌面](previews/v1.2/thumbs/primary/desktop.png)](previews/v1.2/actual/primary/desktop.png)
 
@@ -27,12 +27,12 @@ SDDM 是需主动启用的实验组件，动态壁纸可单独安装。视频和
 
 </details>
 
-这些历史图片记录了源码 `9438a15` 的 v1.2 锁屏和 D1 桌面。1.5.0 候选采用新的锁屏布局。历史画廊包含原图和校验值。[画廊](previews/v1.2/index.html) · [图像来源](previews/v1.2/manifest.json) · [v1.2 验收](docs/V1.2-RELEASE.md)
+这些历史图片记录了源码 `9438a15` 的 v1.2 锁屏和 D1 桌面。1.5.0 采用新的锁屏布局。历史画廊包含原图和校验值。[画廊](previews/v1.2/index.html) · [图像来源](previews/v1.2/manifest.json) · [v1.2 验收](docs/V1.2-RELEASE.md)
 
 ## 安装
 
 支持 x86_64-linux、NixOS 和 Plasma 6。开发版证据覆盖 NixOS 26.05、Plasma 6.6.6 和 Wayland。
-在 1.5.0 候选源码目录中运行以下命令。
+在 1.5.0 源码目录中运行以下命令。
 
 ```sh
 nix build --no-write-lock-file path:.#kaltsit-theme
@@ -81,7 +81,7 @@ kaltsit-theme apply --wallpaper ./wallpaper.png
 
 [![SDDM 测试 VM 原图](previews/sddm/login-v6.png)](previews/sddm/login-v6.png)
 
-1.5.0 候选包含独立的 `kaltsit-sddm` 包和 NixOS 模块，默认关闭。历史虚拟机验证覆盖密码登录及退出返回登录页。此候选的真机验收待完成。
+1.5.0 包含独立的 `kaltsit-sddm` 包和 NixOS 模块，默认关闭。历史虚拟机验证覆盖密码登录及退出返回登录页。2026-11-08，负责人在单屏 Wayland、3120×2080、175% 下反馈登录、锁屏输入与解锁、休眠唤醒及确认页空白点击取消正常；这些是负责人实测反馈，不是自动化像素验收。
 使用既有静态壁纸，安装不会启用 SDDM 服务。安装、VM 验证、首次启用先 build 再 boot 的操作顺序与恢复办法见 [SDDM 指南](docs/SDDM.md)。
 
 ## Home Manager

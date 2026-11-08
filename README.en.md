@@ -1,12 +1,12 @@
 # Kal'tsit Medical Green 1.5.0
 
-**NixOS / KDE Plasma 6 light theme · local release candidate** · [中文](README.md)
+**NixOS / KDE Plasma 6 light theme · 1.5.0 release** · [中文](README.md)
 
 Warm white backgrounds, dark green-gray text and teal accents, with Kal'tsit wallpaper, animated cursors and light terminals.
 Switch explicitly after installation and restore your previous settings. Keep your panel layout, fonts, scale and cursor size.
 
 The lock and wake screens share the login screen’s left column. The session confirmation screen draws the bundled lock wallpaper at its original brightness behind the controls. The SDDM footer uses two opaque focus outlines.
-SDDM is experimental and opt-in. Video wallpaper is a separate optional component. Supply your own video and optional OPPO font. [Candidate scope](docs/V1.5.0-RELEASE.md) · [SDDM](docs/SDDM.en.md) · [Video wallpaper](docs/MOTION.en.md)
+SDDM is experimental and opt-in. Video wallpaper is a separate optional component. Supply your own video and optional OPPO font. [Release notes](docs/V1.5.0-RELEASE.en.md) · [SDDM](docs/SDDM.en.md) · [Video wallpaper](docs/MOTION.en.md)
 
 [![Desktop](previews/v1.2/thumbs/primary/desktop.png)](previews/v1.2/actual/primary/desktop.png)
 
@@ -27,12 +27,12 @@ SDDM is experimental and opt-in. Video wallpaper is a separate optional componen
 
 </details>
 
-These images document the v1.2 lock screen and D1 desktop from source `9438a15`. The 1.5.0 candidate has a new lock screen. The historical gallery includes the original images and their hashes. [Gallery](previews/v1.2/index.html) · [Image provenance](previews/v1.2/manifest.json) · [v1.2 acceptance](docs/V1.2-RELEASE.md)
+These images document the v1.2 lock screen and D1 desktop from source `9438a15`. The 1.5.0 release has a new lock screen. The historical gallery includes the original images and their hashes. [Gallery](previews/v1.2/index.html) · [Image provenance](previews/v1.2/manifest.json) · [v1.2 acceptance](docs/V1.2-RELEASE.md)
 
 ## Install
 
 For x86_64-linux, NixOS and Plasma 6. Development evidence covers NixOS 26.05, Plasma 6.6.6 and Wayland.
-Run the following commands from the 1.5.0 candidate source directory.
+Run the following commands from the 1.5.0 source directory.
 
 ```sh
 nix build --no-write-lock-file path:.#kaltsit-theme
@@ -81,7 +81,7 @@ The base theme package does not include SDDM; see the separate optional login th
 
 [![SDDM test-VM original](previews/sddm/login-v6.png)](previews/sddm/login-v6.png)
 
-The 1.5.0 candidate includes the separate `kaltsit-sddm` package and NixOS module, disabled by default. Earlier VM checks cover password login and return to the greeter. Physical acceptance for this candidate is pending.
+The 1.5.0 release includes the separate `kaltsit-sddm` package and NixOS module, disabled by default. Earlier VM checks cover password login and return to the greeter. On 2026-11-08, the maintainer reported successful login, lock-screen input and unlock, suspend/resume, and blank-area cancellation of the confirmation screen on a single Wayland display at 3120×2080 and 175%. These are maintainer-reported physical checks, not automated pixel acceptance.
 It uses the existing static wallpaper; installation does not enable the SDDM service. See the [SDDM guide](docs/SDDM.en.md) for installation, VM checks, the initial build-then-boot sequence on physical hardware, and recovery.
 
 ## Home Manager

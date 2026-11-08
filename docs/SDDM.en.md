@@ -308,5 +308,5 @@ Before the fix, the shutdown indicator in the error layout reached a minimum of 
 
 ## Known limitations
 
-This is an experimental Qt 6 login theme. Physical hardware, boot-menu rollback, TTY recovery, multiple displays, special input methods and assistive authentication are unverified. The system needs a font supporting Chinese; optional `fontFile` only installs the supplied font and does not change the default family.
+This is an experimental Qt 6 login theme. Build-then-boot deployment and first boot completed on 2026-11-08. The maintainer reported successful login, retry after a wrong password, and lock-screen unlock on a single display at 175%. See the [physical-check scope](V1.5.0-RELEASE.en.md). Full power workflows, boot-menu rollback, TTY recovery, multiple displays, special input methods and assistive authentication remain unverified. The system needs a font supporting Chinese; optional `fontFile` only installs the supplied font and does not change the default family.
 Keyboard layout may appear as unknown in isolated Wayland test-mode; do not interpret it as a physical keyboard layout. SDDM/PAM controls actual authentication. There is no custom fingerprint, smart-card or multi-factor prompt interaction, and no claim of support for those environments.

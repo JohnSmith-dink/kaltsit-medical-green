@@ -1,97 +1,119 @@
-"""Logout rendering must preserve power controls and remain legible."""
+"""Safe package updates and native power routes in the desktop confirmation."""
+import difflib
 import importlib.util
+import json
 from pathlib import Path
+import re
+import shutil
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from test_assets import contrast, read_ini
 
-
 ROOT = Path(__file__).resolve().parents[1]
-spec = importlib.util.spec_from_file_location("readable_logout", ROOT / "scripts/readable-logout.py")
-logout = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(logout)
 
 
-def fixture_sources():
-    main = ('/* SPDX-License-Identifier: GPL-2.0-or-later */\nItem {\n'
-            + logout.UPSTREAM_BACKGROUND + '    UserDelegate { name: kuser.fullName }\n'
-            + ''.join(logout.UPSTREAM_LABEL + '            text: message\n        }\n' for _ in range(5))
-            + ' Timer { onTriggered: remainingTime-- }\n signal rebootRequested()\n}\n')
-    button = '/* upstream */\nActionButton {\n Keys.onPressed: cancelTimer()\n}\n'
-    action = ('/* SPDX-License-Identifier: LGPL-2.0-or-later */\nItem {\n'
-              + logout.UPSTREAM_BUTTON_SURFACE + '\n' + logout.UPSTREAM_BUTTON_TEXT
-              + '\n Keys.onReturnPressed: clicked()\n}\n')
-    user = 'Item {\n' + logout.UPSTREAM_USER_TEXT + '\n Keys.onSpacePressed: clicked()\n}\n'
-    return main, button, action, user
+def load_module(name, path):
+    spec = importlib.util.spec_from_file_location(name, ROOT / path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+logout = load_module('readable_logout', 'scripts/readable-logout.py')
+checks = load_module('check_logout', 'tests/check-logout-resources.py')
 
 
 class LogoutRenderingTests(unittest.TestCase):
-    def test_only_visual_declarations_change(self):
-        main, button, action, user = fixture_sources()
-        rendered = logout.render_logout(main)
-        self.assertNotIn('id: backgroundRect', rendered)
-        self.assertEqual(rendered.replace(logout.OUTLINED_LABEL, logout.UPSTREAM_LABEL)
-                         .replace('KaltsitLogoutUserDelegate', 'UserDelegate'),
-                         main.replace(logout.UPSTREAM_BACKGROUND, ''))
-        self.assertEqual(logout.render_button(button).replace('KaltsitLogoutActionButton', 'ActionButton'), button)
-        self.assertEqual(logout.render_action(action).replace(logout.LOCAL_BUTTON_SURFACE, logout.UPSTREAM_BUTTON_SURFACE)
-                         .replace(logout.LOCAL_BUTTON_TEXT, logout.UPSTREAM_BUTTON_TEXT), action)
-        self.assertEqual(logout.render_user(user).replace(logout.LOCAL_USER_TEXT, logout.UPSTREAM_USER_TEXT), user)
+    def setUp(self):
+        temp = tempfile.TemporaryDirectory()
+        self.addCleanup(temp.cleanup)
+        root = Path(temp.name)
+        self.workspace = root / 'workspace'
+        self.upstream = self.workspace / 'share/plasma/look-and-feel/org.kde.breeze.desktop/contents/logout'
+        self.upstream.mkdir(parents=True)
+        self.original = '/* KDE */\nItem {\n    property string layout: "before"\n    signal rebootRequested()\n}\n'
+        (self.upstream/'Logout.qml').write_text(self.original)
+        (self.upstream/'timer.js').write_bytes(b'// upstream timer\r\n')
+        assets = root/'assets'
+        assets.mkdir()
+        self.changed = self.original.replace('"before"', '"after"')
+        (assets/'layout.patch').write_text(''.join(difflib.unified_diff(self.original.splitlines(True),
+            self.changed.splitlines(True), 'a/Logout.qml', 'b/Logout.qml')))
+        (assets/'LeftConfirmation.qml').write_text('Item {}\n')
+        shutil.copyfile(ROOT/'logout/LockBackdrop.qml', assets/'LockBackdrop.qml')
+        replacement = patch.object(logout, 'ASSETS', assets)
+        replacement.start()
+        self.addCleanup(replacement.stop)
+        self.output = root/'out'
+        (self.output/'share/doc/kaltsit-theme').mkdir(parents=True)
+        (self.output/logout.LOCK).mkdir(parents=True)
+        for name in ('MedicalClock.qml', 'MedicalPalette.js'):
+            (self.output/logout.LOCK/name).write_text('same resource '+name+'\n')
+        self.wallpaper = self.output/logout.WALLPAPER
+        self.wallpaper.parent.mkdir(parents=True)
+        self.wallpaper.write_bytes(b'\xff\xd8wallpaper fixture\xff\xd9')
 
-    def test_install_preserves_timer_and_never_modifies_upstream(self):
-        main, button, action, user = fixture_sources()
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            upstream = root / 'workspace/share/plasma/look-and-feel/org.kde.breeze.desktop/contents/logout'
-            components = root / 'workspace/lib/qt-6/qml/org/kde/breeze/components'
-            upstream.mkdir(parents=True); components.mkdir(parents=True)
-            sources = {upstream / 'Logout.qml': main, upstream / 'LogoutButton.qml': button,
-                       components / 'ActionButton.qml': action, components / 'UserDelegate.qml': user}
-            for path, value in sources.items():
-                path.write_text(value)
-            timer = b'// upstream timer\r\ncallbacks.forEach(c => c());\r\n'
-            (upstream / 'timer.js').write_bytes(timer)
-            upstream.chmod(0o555)
-            output = root / 'out'
-            (output / 'share/doc/kaltsit-theme').mkdir(parents=True)
-            logout.install(root / 'workspace', output, 'test-version')
-            target = output / 'share/plasma/look-and-feel/org.xinyan.kaltsit.medicalgreen/contents/logout'
-            self.assertEqual((target / 'timer.js').read_bytes(), timer)
-            self.assertEqual((target / 'Logout.qml').read_text(), logout.render_logout(main))
-            self.assertTrue((target / 'KaltsitLogoutActionButton.qml').is_file())
-            self.assertTrue((target / 'KaltsitLogoutUserDelegate.qml').is_file())
-            for path, value in sources.items():
-                self.assertEqual(path.read_text(), value)
+    def test_install_preserves_readonly_upstream_and_stages_shared_resources(self):
+        self.upstream.chmod(0o555)
+        logout.install(self.workspace, self.output, 'test')
+        dest = self.output/logout.THEME
+        self.assertEqual((dest/'Logout.qml').read_text(), self.changed)
+        self.assertEqual((self.upstream/'Logout.qml').read_text(), self.original)
+        self.assertEqual((dest/'timer.js').read_bytes(), (self.upstream/'timer.js').read_bytes())
+        self.assertTrue((dest/'LeftConfirmation.qml').exists())
+        self.assertEqual((dest/'LockBackdrop.qml').read_bytes(), (ROOT/'logout/LockBackdrop.qml').read_bytes())
+        self.assertEqual((dest/'LockWallpaper.jpg').read_bytes(), self.wallpaper.read_bytes())
+        record = json.loads((self.output/'share/doc/kaltsit-theme/logout-rendering.json').read_text())
+        self.assertEqual(record['fullscreen_background'], '锁屏壁纸（主题自带图，原亮度）')
+        for name in ('MedicalClock.qml', 'MedicalPalette.js'):
+            self.assertEqual((dest/name).read_bytes(), (self.output/logout.LOCK/name).read_bytes())
 
-    def test_upstream_changes_require_review(self):
-        for function, source in zip((logout.render_logout, logout.render_button,
-                                     logout.render_action, logout.render_user), fixture_sources()):
-            for changed in ('', source + source):
-                with self.subTest(function=function.__name__, source=changed):
-                    with self.assertRaisesRegex(ValueError, 'review required'):
-                        function(changed)
+    def test_changed_kde_layout_fails_without_publishing_a_partial_confirmation(self):
+        (self.upstream/'Logout.qml').write_text('Item { signal logoutRequested() }\n')
         with self.assertRaisesRegex(ValueError, 'review required'):
-            logout.render_logout(fixture_sources()[0].replace('opacity: 0.85', 'opacity: 0.9'))
+            logout.install(self.workspace, self.output, 'test')
+        self.assertFalse((self.output/logout.THEME).exists())
 
-    def test_text_outlines_icons_and_focus_contrast(self):
-        palette = read_ini(ROOT / 'share/color-schemes/KaltsitMedicalGreen.colors')['Colors:Complementary']
-        colors = {key: list(map(int, palette[key].split(',')))
-                  for key in ('BackgroundNormal', 'ForegroundNormal', 'DecorationFocus')}
-        blend = lambda color, base, opacity: [round(opacity * c + (1 - opacity) * b)
-                                             for c, b in zip(color, base)]
-        ratio = lambda a, b: contrast(','.join(map(str, a)), ','.join(map(str, b)))
-        for gray in (0, 128, 255):
-            backdrop = [gray] * 3
-            for opacity in (1.0, 0.75):
-                with self.subTest(backdrop=gray, opacity=opacity):
-                    # Text and its outline inherit the same button opacity.
-                    foreground = blend(colors['ForegroundNormal'], backdrop, opacity)
-                    halo = blend(colors['BackgroundNormal'], backdrop, opacity)
-                    self.assertGreaterEqual(ratio(foreground, halo), 4.5)
-                    disc = blend(colors['BackgroundNormal'], backdrop, 0.96 * opacity)
-                    icon = blend(colors['ForegroundNormal'], disc, opacity)
-                    self.assertGreaterEqual(ratio(icon, disc), 3.0)
-            disc = blend(colors['BackgroundNormal'], backdrop, 0.96)
-            focus = blend(colors['DecorationFocus'], backdrop, 0.96)
-            self.assertGreaterEqual(ratio(focus, disc), 3.0)
+    def test_verifier_detects_a_misrouted_power_button(self):
+        prefix = 'Item {\n    signal rebootRequested()\n    Timer { onTriggered: remainingTime-- }\n'
+        mouse = '    MouseArea {\n        onClicked: root.cancelRequested()\n    }\n'
+        buttons = '            LogoutButton {\n                onClicked: root.rebootRequested()\n            }\n        }\n}\n'
+        old = prefix + '    Rectangle {\n        id: backgroundRect\n    }\n' + mouse + '    UserDelegate {}\n    ColumnLayout {\n' + buttons
+        backdrop = '    LockBackdrop {\n        anchors.fill: parent\n    }\n'
+        new = prefix + backdrop + mouse + '    LeftConfirmation {\n' + buttons
+        checks.check_handlers(old, new)
+        with self.assertRaises(AssertionError):
+            checks.check_handlers(old, new.replace('onClicked: root.rebootRequested()', 'onClicked: root.haltRequested()'))
+        with self.assertRaises(AssertionError):
+            checks.check_handlers(old, new.replace(backdrop + mouse, mouse + backdrop))
+
+    def test_missing_bundled_wallpaper_leaves_no_partial_confirmation(self):
+        self.wallpaper.unlink()
+        with self.assertRaises(FileNotFoundError):
+            logout.install(self.workspace, self.output, 'test')
+        self.assertFalse((self.output/logout.THEME).exists())
+
+    def test_backdrop_is_an_untinted_synchronous_copy_of_the_lock_image(self):
+        source = (ROOT/'logout/LockBackdrop.qml').read_text()
+        # Only a solid fallback and its Image may be drawn; extra layers change the wallpaper.
+        self.assertEqual(re.findall(r'^\s*(\w+)\s*\{', source, re.MULTILINE), ['Rectangle', 'Image'])
+        image = source.split('    Image {', 1)[1]
+        self.assertIn('color: "#17291F"', source.split('    Image {', 1)[0])
+        for prop in ('anchors.fill: parent', 'source: "LockWallpaper.jpg"', 'fillMode: Image.PreserveAspectCrop',
+                     'autoTransform: true', 'asynchronous: false'):
+            self.assertIn(prop, image)
+        self.assertRegex(image, r'onStatusChanged:.*Image\.Error.*console\.warn\(')
+        self.assertNotRegex(source, r'(?i)\b(opacity|layer|tint|gradient|blur|shadereffect)\b')
+
+    def test_outlined_text_icon_and_focus_contrast(self):
+        palette = read_ini(ROOT/'share/color-schemes/KaltsitMedicalGreen.colors')
+        text = list(map(int, palette['Colors:View']['ForegroundNormal'].split(',')))
+        ink = palette['Colors:Selection']['ForegroundNormal']
+        accent = palette['Colors:Button']['DecorationFocus']
+        self.assertGreaterEqual(contrast(ink, accent), 3.0)  # icon on its green disc
+        for backing in (0, 128, 255):
+            outline = ','.join(str(round(c*0.85 + backing*0.15)) for c in text)
+            with self.subTest(backing=backing):
+                self.assertGreaterEqual(contrast(ink, outline), 4.5)  # text and focus ring

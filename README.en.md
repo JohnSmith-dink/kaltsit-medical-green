@@ -1,15 +1,12 @@
-# Kal'tsit Medical Green
+# Kal'tsit Medical Green 1.5.0
 
-**Version 1.4.0 · A light theme for NixOS / KDE Plasma 6** · [中文](README.md)
+**NixOS / KDE Plasma 6 light theme · 1.5.0 release** · [中文](README.md)
 
 Warm white backgrounds, dark green-gray text and teal accents, with Kal'tsit wallpaper, animated cursors and light terminals.
 Switch explicitly after installation and restore your previous settings. Keep your panel layout, fonts, scale and cursor size.
 
-v1.4 adds an opt-in [SDDM login theme](docs/SDDM.en.md): a transparent left column, 72px clock, optical alignment and optional local OPPO Sans.
-Logout/restart/shutdown confirmation preserves wallpaper brightness without a full-screen overlay, using local text outlines and button discs.
-The [video wallpaper](docs/MOTION.en.md) gains battery/lock-state pause, bounded error recovery and Home Manager installation options.
-The original lockscreen and D1 desktop are retained. Public packages include neither videos nor OPPO fonts. SDDM remains an optional experimental component.
-See the [v1.4 release evidence](docs/V1.4-RELEASE.md) and [GitHub Releases](https://github.com/JohnSmith-dink/kaltsit-medical-green/releases).
+The lock and wake screens share the login screen’s left column. The session confirmation screen draws the bundled lock wallpaper at its original brightness behind the controls. The SDDM footer uses two opaque focus outlines.
+SDDM is experimental and opt-in. Video wallpaper is a separate optional component. Supply your own video and optional OPPO font. [Release notes](docs/V1.5.0-RELEASE.en.md) · [SDDM](docs/SDDM.en.md) · [Video wallpaper](docs/MOTION.en.md)
 
 [![Desktop](previews/v1.2/thumbs/primary/desktop.png)](previews/v1.2/actual/primary/desktop.png)
 
@@ -30,14 +27,12 @@ See the [v1.4 release evidence](docs/V1.4-RELEASE.md) and [GitHub Releases](http
 
 </details>
 
-These are the v1.2 original-lockscreen and D1 native isolated captures from source `9438a15`. Version 1.4 retains those visual resources. Static screenshots are not evidence of video playback.
-Click thumbnails for originals. See the [two-resolution gallery](previews/v1.2/index.html) and [image provenance and hashes](previews/v1.2/manifest.json).
-The user has accepted lockscreen brightness, password unlock, D1 appearance and mouse clicks on the physical machine; see [v1.2 release evidence](docs/V1.2-RELEASE.md) for scope.
+These images document the v1.2 lock screen and D1 desktop from source `9438a15`. The 1.5.0 release has a new lock screen. The historical gallery includes the original images and their hashes. [Gallery](previews/v1.2/index.html) · [Image provenance](previews/v1.2/manifest.json) · [v1.2 acceptance](docs/V1.2-RELEASE.md)
 
 ## Install
 
-For x86_64-linux / NixOS / Plasma 6. This round was validated on NixOS 26.05, Plasma 6.6.6 and Wayland.
-Download the desired source version and run from its directory:
+For x86_64-linux, NixOS and Plasma 6. Development evidence covers NixOS 26.05, Plasma 6.6.6 and Wayland.
+Run the following commands from the 1.5.0 source directory.
 
 ```sh
 nix build --no-write-lock-file path:.#kaltsit-theme
@@ -59,7 +54,7 @@ kaltsit-theme restore
 
 # Optional: skip components, or use one image for desktop and lockscreen
 kaltsit-theme apply --skip cursor --skip gtk
-kaltsit-theme apply --wallpaper /absolute/path/to/wallpaper.png
+kaltsit-theme apply --wallpaper ./wallpaper.png
 ```
 
 Restore an active application before changing options or versions. Repeating the same version and options does not replace the original backup.
@@ -70,11 +65,13 @@ Restore an active application before changing options or versions. Repeating the
 |---|---|
 | `core` | Colors, Plasma style, widgets, window decoration and folder icons; required and cannot be skipped. |
 | `cursor` | Animated cursors at 24 / 32 / 48 / 64 / 96px, preserving the chosen size. |
-| `wallpaper` / `lockscreen` | Existing 4K frame 707, aspect-preserving crop; no extra lockscreen brightening, dimming or overlays, with native blur and authentication. |
+| `wallpaper` / `lockscreen` | Existing 4K frame 707, aspect-preserving crop; the Medical Green lock screen preserves wallpaper brightness and uses Plasma authentication. |
 | `gtk` | Breeze GTK colors. |
 | `ghostty` / `konsole` | Complete light ANSI palettes. |
 
-The theme draws no full-screen overlay for logout, restart and shutdown confirmation, preserving the wallpaper brightness behind it. Text has a thin light outline; icons retain individual light discs and focus borders. Native button, cancellation and countdown behavior stays unchanged. SDDM and Plymouth are unaffected.
+The theme uses the SDDM v6 left column for desktop lock and wake. The idle screen shows the time and date. Waking it reveals the avatar and password field in the same column. This layout applies when the Medical Green lock screen wallpaper is selected.
+
+The logout, restart and shutdown prompts cover windows and desktop panels with the theme’s bundled lock screen wallpaper at its original brightness. They share the lock screen’s upper-left clock. The avatar, countdown and actions sit in a transparent left column that can scroll for long notices or extra actions. If you choose a custom lock screen wallpaper, the prompts still show the bundled wallpaper.
 
 Repeat `--skip` as needed. Symlink-managed optional configuration skips the whole component and reports why; managed core configuration stops apply before writes.
 Missing lockscreen resources remain an explicit error with zero writes; use `--skip lockscreen` deliberately when needed. Check individual component results: a successful exit does not mean every component was applied.
@@ -84,7 +81,7 @@ The base theme package does not include SDDM; see the separate optional login th
 
 [![SDDM test-VM original](previews/sddm/login-v6.png)](previews/sddm/login-v6.png)
 
-v1.4 provides a separate `kaltsit-sddm` package and NixOS module, disabled by default. It loaded and completed password login and return from logout in a 1280×800 X11 test VM using NixOS 26.05 / SDDM 0.21.0 / Qt 6.11.2. The test session was xterm. A build-then-boot deployment was also completed on the host; full physical high-DPI greeter acceptance is not recorded.
+The 1.5.0 release includes the separate `kaltsit-sddm` package and NixOS module, disabled by default. Earlier VM checks cover password login and return to the greeter. On 2026-11-08, the maintainer reported successful login, lock-screen input and unlock, suspend/resume, and blank-area cancellation of the confirmation screen on a single Wayland display at 3120×2080 and 175%. These are maintainer-reported physical checks, not automated pixel acceptance.
 It uses the existing static wallpaper; installation does not enable the SDDM service. See the [SDDM guide](docs/SDDM.en.md) for installation, VM checks, the initial build-then-boot sequence on physical hardware, and recovery.
 
 ## Home Manager

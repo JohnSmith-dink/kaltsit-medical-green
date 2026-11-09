@@ -157,6 +157,15 @@ class SddmTests(unittest.TestCase):
                 with self.subTest(boundary=boundary,background=background):
                     self.assertGreaterEqual(contrast(colors[boundary],colors[background]),3)
 
+    def test_focus_rails_are_opaque_and_contrast_with_each_other(self):
+        qml=(ROOT/'sddm/Main.qml').read_text()
+        rails=re.findall(r'border\.color: Qt\.rgba\(root\.(\w+)\.r, [^\n]+?, root\.(\w+)\)',qml)
+        self.assertCountEqual(rails,[('bodyOutlineColor','focusOpacity'),('lightColor','focusOpacity')])
+        self.assertEqual(qml_number('focusOpacity'),1)
+        self.assertEqual(qml_number('bodyOutlineOpacity'),0.85)
+        colors=palette_module.palette(ROOT/'share/color-schemes/KaltsitMedicalGreen.colors')
+        self.assertGreaterEqual(contrast(colors['selectedText'],colors['text']),9)
+
     def test_translucent_controls_contrast_after_compositing(self):
         from PIL import Image, ImageOps
         colors=palette_module.palette(ROOT/'share/color-schemes/KaltsitMedicalGreen.colors')
@@ -183,8 +192,9 @@ class SddmTests(unittest.TestCase):
                         assert_sample(sample_region(frame,box,scale,[(colors[outline],alpha)],
                             {foreground:(colors[foreground],4.5)},(w,h)))
                     assert_sample(sample_region(frame,box,scale,[(colors['text'],qml_number('bodyOutlineOpacity'))],
-                        {'label':(colors['view'],4.5,qml_number('labelOpacity')),
-                         'focus':(colors['selectedText'],3,qml_number('focusOpacity'))},(w,h)))
+                        {'label':(colors['view'],4.5,qml_number('labelOpacity'))},(w,h)))
+                    assert_sample(sample_region(frame,box,scale,[(colors['text'],qml_number('focusOpacity'))],
+                        {'focus':(colors['selectedText'],9,qml_number('focusOpacity'))},(w,h)))
         self.assertGreaterEqual(contrast(colors['selectedText'],colors['accent']),4.5)
 
     def test_outlines_and_input_against_extreme_underlays(self):

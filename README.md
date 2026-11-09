@@ -1,15 +1,12 @@
-# 凯尔希 · 医疗白绿
+# 凯尔希 · 医疗白绿 1.5.0
 
-**Kal'tsit Medical Green 1.4.0 · NixOS / KDE Plasma 6 浅色主题** · [English](README.en.md)
+**NixOS / KDE Plasma 6 浅色主题 · 1.5.0 正式版** · [English](README.en.md)
 
 暖白背景、深灰绿正文、青绿强调色，配合凯尔希壁纸、动态指针与浅色终端。
 安装后主动切换，可恢复之前的设置；面板布局、字体、缩放和指针尺寸继续使用你的选择。
 
-v1.4 新增默认关闭的 [SDDM 登录主题](docs/SDDM.md)：透明左侧登录区、72px 时钟、字形对齐与可选本地 OPPO Sans。
-退出／重启／关机确认页移除整屏遮罩，保留壁纸原亮度，以局部描边和按钮圆底保证可读性。
-[动态壁纸](docs/MOTION.md)增加电池／锁定状态自动暂停、有上限的错误重试和 Home Manager 安装选项。
-原版锁屏与 D1 桌面继续沿用；公开包不附带视频或 OPPO 字体。SDDM 仍为可选实验组件。
-发布范围与实际验证见 [v1.4 发布记录](docs/V1.4-RELEASE.md)；公开版本见 [GitHub Releases](https://github.com/JohnSmith-dink/kaltsit-medical-green/releases)。
+锁屏与唤醒页沿用登录页的左栏。会话确认页在控件后方绘制原亮度的主题锁屏壁纸。SDDM 底部按钮使用两道不透明的焦点边框。
+SDDM 是需主动启用的实验组件，动态壁纸可单独安装。视频和可选的 OPPO 字体由使用者自行提供。[版本说明](docs/V1.5.0-RELEASE.md) · [SDDM](docs/SDDM.md) · [动态壁纸](docs/MOTION.md)
 
 [![桌面](previews/v1.2/thumbs/primary/desktop.png)](previews/v1.2/actual/primary/desktop.png)
 
@@ -30,14 +27,12 @@ v1.4 新增默认关闭的 [SDDM 登录主题](docs/SDDM.md)：透明左侧登�
 
 </details>
 
-以上为 v1.2 的原版锁屏与 D1 原生隔离截图（来源 `9438a15`）；v1.4 沿用这些外观资源。静态截图不表示动态壁纸正在播放。
-点击缩略图查看原图；[双分辨率画廊](previews/v1.2/index.html)与[来源及哈希](previews/v1.2/manifest.json)分别记录原图和缩略图。
-原版锁屏亮度、密码解锁、D1 观感与鼠标点击已通过本机用户验收；范围见 [v1.2 发布依据](docs/V1.2-RELEASE.md)。
+这些历史图片记录了源码 `9438a15` 的 v1.2 锁屏和 D1 桌面。1.5.0 采用新的锁屏布局。历史画廊包含原图和校验值。[画廊](previews/v1.2/index.html) · [图像来源](previews/v1.2/manifest.json) · [v1.2 验收](docs/V1.2-RELEASE.md)
 
 ## 安装
 
-支持 x86_64-linux / NixOS / Plasma 6；本轮已验证 NixOS 26.05、Plasma 6.6.6、Wayland。
-下载需要的版本源码后，在其目录运行：
+支持 x86_64-linux、NixOS 和 Plasma 6。开发版证据覆盖 NixOS 26.05、Plasma 6.6.6 和 Wayland。
+在 1.5.0 源码目录中运行以下命令。
 
 ```sh
 nix build --no-write-lock-file path:.#kaltsit-theme
@@ -59,7 +54,7 @@ kaltsit-theme restore
 
 # 可选：跳过组件，或自选桌面与锁屏共用壁纸
 kaltsit-theme apply --skip cursor --skip gtk
-kaltsit-theme apply --wallpaper /absolute/path/to/wallpaper.png
+kaltsit-theme apply --wallpaper ./wallpaper.png
 ```
 
 有活动恢复记录时，改变选项或版本前先 restore。相同版本、相同选项重复 apply 不覆盖最初备份。
@@ -70,11 +65,13 @@ kaltsit-theme apply --wallpaper /absolute/path/to/wallpaper.png
 |---|---|
 | `core` | 配色、Plasma 样式、控件、窗口装饰与文件夹图标；必需，不能跳过。 |
 | `cursor` | 24 / 32 / 48 / 64 / 96px 动态指针，保留原尺寸选择。 |
-| `wallpaper` / `lockscreen` | 既有 4K 第 707 帧，保持比例裁切；锁屏无额外提亮、压暗或遮罩，保留原生模糊与认证。 |
+| `wallpaper` / `lockscreen` | 既有 4K 第 707 帧，保持比例裁切；医疗白绿锁屏保持壁纸原亮度，使用 Plasma 认证。 |
 | `gtk` | Breeze GTK 配色。 |
 | `ghostty` / `konsole` | 完整浅色 ANSI 配色。 |
 
-退出／重启／关机确认页不绘制整屏遮罩，保持后方壁纸原有亮度。文字采用细浅色描边，图标各自保留局部浅色圆底与焦点边框；原生按钮、取消与倒计时行为不变，不涉及 SDDM 或 Plymouth。
+桌面锁屏和唤醒解锁页采用与 SDDM v6 相同的左侧布局。待机时显示时间和日期，唤醒后在同一列显示头像和密码框。仅在选择医疗白绿锁屏壁纸时生效。
+
+退出、重启和关机确认页使用主题自带的锁屏壁纸盖住窗口和桌面面板，保持壁纸原亮度。左上时钟与桌面锁屏相同，头像、倒计时和操作按钮位于左侧透明列，长提示和更多操作可在列内滚动。使用自定义锁屏壁纸时，确认页仍显示主题自带壁纸。
 
 `--skip` 可重复。可选组件的配置由符号链接管理时，会跳过整个组件并报告；核心配置受管理时，在写入前停止。
 缺失锁屏资源会明确报错并保持零写入；需要跳过时显式使用 `--skip lockscreen`。请检查每个组件的结果，成功退出不等于全部已应用。
@@ -84,7 +81,7 @@ kaltsit-theme apply --wallpaper /absolute/path/to/wallpaper.png
 
 [![SDDM 测试 VM 原图](previews/sddm/login-v6.png)](previews/sddm/login-v6.png)
 
-v1.4 提供独立的 `kaltsit-sddm` 包和 NixOS 模块，默认不启用。已在 NixOS 26.05 / SDDM 0.21.0 / Qt 6.11.2 的 1280×800 X11 测试 VM 中加载并完成密码登录、退出返回；测试会话为 xterm；另已完成本机 build → boot 部署，真实高分屏 greeter 的完整验收仍未记录。
+1.5.0 包含独立的 `kaltsit-sddm` 包和 NixOS 模块，默认关闭。历史虚拟机验证覆盖密码登录及退出返回登录页。2026-11-08，负责人在单屏 Wayland、3120×2080、175% 下反馈登录、锁屏输入与解锁、休眠唤醒及确认页空白点击取消正常；这些是负责人实测反馈，不是自动化像素验收。
 使用既有静态壁纸，安装不会启用 SDDM 服务。安装、VM 验证、首次启用先 build 再 boot 的操作顺序与恢复办法见 [SDDM 指南](docs/SDDM.md)。
 
 ## Home Manager
